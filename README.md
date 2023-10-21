@@ -1,11 +1,9 @@
-# custom-enhancements
-
 
 ## Author(s)
 
 Bruce B. Anderson
 
-PR's [welcome](https://github.com/bahrus/custom-enhancements)
+PR's, Issues [welcome](https://github.com/bahrus/custom-enhancements)
 
 ## Last update
 
@@ -32,7 +30,7 @@ customEnhancements.define(canonicalEnhancementName, class extends ElementEnhance
         // in this example, msgAttr will simply equal 'log-to-console', 
         // but this code is demonstrating how to code defensively, so that
         // the party (or parties) responsible for registering the enhancement 
-        // could be choose to modify the name, either globally, or inside a scoped registry
+        // could choose to modify the name(s), either globally, or inside a scoped registry
         // in a different file.
         enhancedElement.addEventListener('click', e => {
             console.log(enhancedElement.getAttribute(msgAttr)); 
