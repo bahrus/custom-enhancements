@@ -161,7 +161,7 @@ I *think* the solution for this conundrum would be if the build process also rem
     <summary>None, as far as I can see</summary>
 
 > [!NOTE]
-> To my great relief, the main advocate of the "has" proposal and I seem to have found common ground somewhere in the middle, based on observed attributes (which I recently discovered, was there along with the has proposal, I missed it because I was so puzzled by the purpose of the"has" attribute), so the discussion below is considerably less important than it was previously, and is being left for now just in case it helps clarify anything.
+> To my great relief, the main advocate of the "has" proposal and I seem to have found common ground somewhere in the middle, based on observed attributes (which I recently discovered, was there along with the has proposal, I missed it because I was so puzzled by the purpose of the "has" attribute), so the discussion below is considerably less important than it was previously, and is being left for now just in case it helps clarify anything.
 
 From a "developer advocacy" point of view, as the simple example I opened with demonstrates, there doesn't seem to be any benefit to having an extra "has" attribute -- that would just be clumsy and provide more opportunities for conflicts between different teams of developers.
 
