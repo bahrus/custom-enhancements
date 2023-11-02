@@ -7,7 +7,7 @@ PR's, Issues [welcome](https://github.com/bahrus/custom-enhancements)
 
 ## Last update
 
-2023-10-21
+2023-11-2
 
 This is [one](https://github.com/whatwg/html/issues/2271) [of](https://eisenbergeffect.medium.com/2023-state-of-web-components-c8feb21d4f16) [a](https://github.com/WICG/webcomponents/issues/1029) [number](https://github.com/WICG/webcomponents/issues/727) of interesting proposals, one of which (or some combination?) can hopefully get buy-in from all three browser vendors.  This proposal borrows heavily from the others.
 
@@ -60,9 +60,9 @@ Why attachedCallback and not connectedCallback?  Advantages of connectedCallback
 <details>
 <summary>Reasons I think attachedCallback would be clearer</summary>
 
-First, let me emphasize that if the reason for the rather pointed comment was that my using "attachedCallback" was a slight towards the name used for custom elements, nothing could be further from the truth.  If custom elements had chosen "attachedCallback" I might very well have gone for "connectedCallback" in this case.
+First, let me emphasize that if the reason for the rather pointed comment was that my using "attachedCallback" was interpreted as a slight towards the name used for custom elements, nothing could be further from the truth.  If custom elements had chosen "attachedCallback" I might very well have gone for "connectedCallback" in this case.
 
-It just feels different to me.  When a plane lands, it "connects" to the ground.  When we add a  wing to the plane, we are "attaching" a wing.  Or maybe it makes just as much sense to say when a plane lands, it attaches to the ground.  And when we add a wing to the plane, we are "connecting" the wing.  Again, different.  Using the same term for both would be confusing, I think, for that reason.  (In this analogy, the "ground" is the DOM fragment, the wing is the "enhancement").
+It just feels different to me.  When a plane lands, it "connects" to the ground.  When we add a wing to the plane, we are "attaching" a wing.  Or maybe it makes just as much sense to say when a plane lands, it attaches to the ground.  And when we add a wing to the plane, we are "connecting" the wing.  Again, different.  Using the same term for both would be confusing, I think, for that reason.  (In this analogy, the "ground" is the DOM fragment, the wing is the "enhancement").
 
 As this proposal currently stands, the signatures are different, which again, lends itself to thinking the names should also be different.
 
@@ -159,7 +159,7 @@ I *think* the solution for this conundrum would be if the build process also rem
     <summary>None, as far as I can see</summary>
 
 > [!NOTE]
-> To my great relief, the main advocate of the "has" proposal and I seem to have found common ground somewhere in the middle, based on observed attributes (which I recently discovered, was there along with the has proposal, I missed it because I was so puzzled by the purpose of the "has" attribute), so the discussion below is considerably less important than it was previously, and is being left for now just in case it helps clarify anything.
+> To my great relief, the main advocate of the "has" proposal and I seem to have found common ground somewhere in the middle, based on observed attributes (which I recently discovered, was there al along with the has proposal, I missed it because I was so puzzled by the purpose of the "has" attribute), so the discussion below is considerably less important than it was previously, and is being left for now just in case it helps clarify anything.
 
 From a "developer advocacy" point of view, as the simple example I opened with demonstrates, there doesn't seem to be any benefit to having an extra "has" attribute -- that would just be clumsy and provide more opportunities for conflicts between different teams of developers.
 
@@ -262,7 +262,7 @@ The requirement for the prefix can be dropped only if built-in elements are targ
 
 Another aspect of this proposal that I think should be considered is that as the template instantiation proposal gels, looking for opportunities for these enhancements to play a role in the template instantiation process would be great. Many of the most popular such libraries do provide similar binding support as what template instantiation aims to support.  Basically, look for opportunities to make custom element enhancements serve the dual purpose of making template instantiation extendable, especially if that adds even a small benefit to performance.
 
-## A note about naming
+## A note about naming, part II
 
 I started this journey placing great emphasis on the HTML attribute aspect of this, but as the concepts have marinated over time, I think it is a mistake to over emphasize that aspect.  The fundamental thing we are trying to do is to enhance existing elements, not attach strings to them.  
 
@@ -272,15 +272,21 @@ When we enhance existing elements during template instantiation, the attributes 
 
 Granted, the majority of enhancements would likely fit our common idea of what constitutes a ["behavior"](https://www.brainbell.com/tutors/XML/XML_Book_B/DHTML_Behaviors.htm#:~:text=DHTML%20Behaviors%20are%20lightweight%20components%20that%20extend%20the,referenced%20in%20Internet%20Explorer%205%20by%20using%20styles.).
 
-But enhancements could also include specifying some common theme onto a white label web component, and contorting the language to make those sound like behaviors doesn't sound right:  "Be Picasso blue-period looking" for example.
+I think it is quite fine to use the term "behaviors" informally, just as we use "web components" to describe things informally, even though "customElements" is the formal api name.
 
-Some could be adding some common paragraph containing copyright text.  The dictionary defines behaviors as something associated with actions, so does that apply here?
+But enhancements could also include specifying some common theme onto a white label web component, and contorting the language to make those sound like behaviors doesn't sound right:  "Be Picasso blue-period looking" for example.  I actually think this objection touches on a fairly important concern I have with the term behavior.  "Don't judge a book by its cover" seems to run amiss with the idea that affecting how an element looks should be called a "behavior."
+
+The word "behavior" makes what we are doing quite adjacent to things that tie in closely with humans (and other living beings).  In fact, I've personally found it somewhat amusing to search for [names](https://github.com/bahrus?tab=repositories&q=be-&type=&language=&sort=) that apply both to DOM elements as well as (human) behavior, where it makes sense, and where it is appropriate.  But this close connection should give us pause.  We should acknowledge this connection, especially as it will likely affect our subconscious, including our dreams (or possibly nightmares).  
+
+Yes, we should welcome the ability to explain complex things in terms we can relate to as human beings, so use of the term "behaviors" should certainly not be out of bounds.  But we should remember that the things we are talking about, even if they have children, siblings and parents, are not in fact human beings, and using a more generic term (enhancements) when it comes to more formal settings (ike the actual API) would help with that.  It also expands our range of analogies we can reach for.  Recall my analogy earlier, that when a plane (DOM element) lands it "connects" to the ground (DOM fragment), and when we "enhance" the plane with a wing, we are attaching the wing.  Does it make sense to refer to a wing as a "behavior"?
+
+Some enhancements could be adding some common paragraph containing copyright text.  The dictionary defines behaviors as something associated with actions, so does that apply here?
 
 Many are adding binding support to elements, which may or not resonate with developers as being a "behavior".
 
 So "enhancements" seems to cover all bases.
 
-Others prefer "behaviors", I'm open to both.
+Others prefer "behaviors" (but the others who do seem to think it is of zero consequence, whereas I think there is some substantial consequence to the decision, if that counts for anything), I'm open to both, maybe my reasoning above is wrong (but no one has yet to address my concerns head on).
 
 Choosing the right name seems important, as it ought to align somewhat with the reserved sub-property of the element, as well as the reserved prefix for attributes (think data- / dataset).
 
@@ -296,11 +302,11 @@ Choosing the right name seems important, as it ought to align somewhat with the 
 
 ## Use of enh-* prefix for server-rendered progressive enhancement of custom elements should be required (or strongly suggested?)
 
-The reason the prefix enh-* should be required is this:
+The reason the prefix enh-* should be required, or at least strongly suggested is this:
 
 1.  If enh-* is only encouraged the way data-* is encouraged, at least we could still count on custom element authors likely avoiding that prefix when defining their custom attributes associated with their element, to avoid confusion, making the "ownership" clear.
 2.  But should a custom enhancement author choose a name that happens to coincide with one of the attribute names of another author's custom element, which seems quite likely to happen frequently, it still leaves the messy situation that the custom element's attribute gets improperly flagged as an enhancement.
-3.  However, it could be argued, depending on how smoothly working with scoped registry proves to be in this context, that such catastrophes could be averted using the scoped registry.  So maybe it shouldn't be required, and may seem silly for developers working in a closed environment, with enhancements they have no interest in publishing for general consumption.  But even so, I think it would be quite useful for the platform to at a minimum provide for a key prefix that developers can use to help avoid having to be always on the watch out for such collisions (which might not become immediately apparent until some user discovers it in production).
+3.  However, it could be argued, depending on how smoothly working with scoped registry proves to be in this context, that such catastrophes could be averted using the scoped registry.  This proposal provides out-of-the-box support for renaming any and all the attributes associated with an enhancement.  So maybe it shouldn't be required, and may seem silly for developers working in a closed environment, with enhancements they have no interest in publishing for general consumption.  But even so, I think it would be quite useful for the platform to at a minimum provide for a key prefix that developers can use to help avoid having to be always on the watch out for such collisions (which might not become immediately apparent until some user discovers it in production).
 
 ## Global api's.
 
@@ -324,7 +330,7 @@ customEnhancements.define('steel', SteelEnhancer, {
 Going backwards, the third parameter is indicating to match on all element tag names (the default).  But the platform will only tie the knot when it encounters any of the attributes from the observedAttributes list passed into the define method (if any).  Enhancements are not required to specify any attributes, as they are not intrinsically dependent on them.  Examples of enhancements which wouldn't want to burden the browser with searching for some attribute for no reason, are enhancements that are only expecting to be invoked programmatically by other enhancements (or by custom elements or frameworks).
 
 >[!NOTE]
->Bear in mind that if no "enhances" value is specified (the default), and if observedAttributes is also not specified, the platform will *not* automatically enhance every element.  The platform will only act when it finds a matching attribute.  But it will **allow** enhancements to be programmatically attached by the developer on all element types in that scenario.  In fact, the platform will **ignore** the observedAttributes criteria altogether when the developer programmatically attaches an enhancement, only using the "enhances" value (combined with the static values specified by the enhancement author) to prevent unauthorized enhancements. 
+>Bear in mind that if no "enhances" value is specified (the default), and if observedAttributes is also not specified or is empty, the platform will *not* automatically enhance every element.  The platform will only act when it finds a matching attribute.  But it will **allow** enhancements to be programmatically attached by the developer on all element types in that scenario.  In fact, the platform will **ignore** the observedAttributes criteria altogether when the developer programmatically attaches (connects?) an enhancement, only using the "enhances" value (combined with the static values specified by the enhancement author) to prevent unauthorized enhancements. 
 
 I recommend that the developer use a logical naming convention for all these attributes -- maybe they should all be prefixed with the name of the package, for example.  The reason for this is that I suspect, even with the power of the scoped registry, life will still be simpler that way.
 
