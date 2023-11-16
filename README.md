@@ -7,7 +7,7 @@ PR's, Issues [welcome](https://github.com/bahrus/custom-enhancements)
 
 ## Last update
 
-2023-11-2
+2023-11-16
 
 This is [one](https://github.com/whatwg/html/issues/2271) [of](https://eisenbergeffect.medium.com/2023-state-of-web-components-c8feb21d4f16) [a](https://github.com/WICG/webcomponents/issues/1029) [number](https://github.com/WICG/webcomponents/issues/727) of interesting proposals, one of which (or some combination?) can hopefully get buy-in from all three browser vendors.  This proposal borrows heavily from the others.
 
@@ -159,7 +159,7 @@ I *think* the solution for this conundrum would be if the build process also rem
     <summary>None, as far as I can see</summary>
 
 > [!NOTE]
-> To my great relief, the main advocate of the "has" proposal and I seem to have found common ground somewhere in the middle, based on observed attributes (which I recently discovered, was there al along with the has proposal, I missed it because I was so puzzled by the purpose of the "has" attribute), so the discussion below is considerably less important than it was previously, and is being left for now just in case it helps clarify anything.
+> To my great relief, the main advocate of the "has" proposal and I seem to have found common ground somewhere in the middle, based on observed attributes (which I recently discovered, was there all along with the has proposal, I missed it because I was so puzzled by the purpose of the "has" attribute), so the discussion below is considerably less important than it was previously, and is being left for now just in case it helps clarify anything.
 
 From a "developer advocacy" point of view, as the simple example I opened with demonstrates, there doesn't seem to be any benefit to having an extra "has" attribute -- that would just be clumsy and provide more opportunities for conflicts between different teams of developers.
 
@@ -749,7 +749,7 @@ I do think the detachedCallback should be associated in some way with the discon
 
 On the other hand, I could see scenarios where the enhancement would want to know that its host has been disconnected.  So the custom enhancement should have a way of being notified that this transfer took place.
 
-My (naive?) recommendation is that the platform add an event that can be subscribed to for elements:  Elements currently have a built-in property, "isConnected".  It would be great if the elements also emitted a standard event when the element becomes [connected and (possibly another) event when it becomes disconnected](https://twitter.com/jaffathecake/status/1521023821003767808).
+My (naive?) recommendation is that the platform add an event that can be subscribed to for elements:  Elements currently have a built-in property, "isConnected".  It would be great if the elements also emitted a standard event when the element becomes [connected and (possibly another)](https://github.com/whatwg/dom/issues/533) [event when it becomes disconnected](https://twitter.com/jaffathecake/status/1521023821003767808).
 
 ## How to programmatically detach an enhancement
 
