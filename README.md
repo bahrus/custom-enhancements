@@ -7,7 +7,7 @@ PR's, Issues [welcome](https://github.com/bahrus/custom-enhancements)
 
 ## Last update
 
-2023-11-16
+2024-02-12
 
 This is [one](https://github.com/whatwg/html/issues/2271) [of](https://eisenbergeffect.medium.com/2023-state-of-web-components-c8feb21d4f16) [a](https://github.com/WICG/webcomponents/issues/1029) [number](https://github.com/WICG/webcomponents/issues/727) of interesting proposals, one of which (or some combination?) can hopefully get buy-in from all three browser vendors.  This proposal borrows heavily from the others.
 
@@ -75,7 +75,7 @@ Anyway, as I said, I think that decision should be of little consequence, so ple
 
 Why ElementEnhancement and not CustomAttribute? This proposal **does** "break" if we change it to that name, and the good news is there are some viable, interesting proposals, linked above, which take that approach.  I think this naming convention, which may take a little bit of getting used to, based on current parlance, aligns much better with the ultimate goal of this proposal.  This proposal sees custom attributes as a means to an end, just as "custom tag name" is a means to a more abstract end:  A custom (HTML) Element. 
 
-Also, a single element enhancement can "own" multiple attributes (for complex enhancements).
+Also, a single element enhancement can "own" multiple attributes (for enhancements that are particularly semantic in nature).
 
 Why not use a static observedAttributes property, why is that part of the registration function?  I thought it should be a static property, out of habit, but then finally realized (hopefully correctly) that in this case, we want consumers of the package to be able to override the default canonical names, as part of the scoped element registry solution, and even as part of the desire to make the class be "side effect" free.  The role these attributes is playing is much more similar to the name of a custom element, whose name is exclusively registered in the define function, so I now strongly believe, the same must be done for these "custom attributes" associated with the enhancement.  But because we are talking about an array of strings that can be renamed, we need to think of that array as a tuple of strings.
 
@@ -89,7 +89,7 @@ This cautionary note is only applicable for enhancements you wish to make public
  
 
 > [!NOTE]
-> I agree 100% with others that these proposals must wait on scoped registry being fully settled.  In the above example, we have two strings that we need to protect from colliding with other enhancements (and with attributes of the elements themselves):  The name of the enhancement - "logger" - and the attribute(s) tied to it, if any:  'log-to-console'.  Both will need to be considered as far as best ways of managing these within each Shadow scope.  It may be that the easiest solution will require some sort of pattern between the name of the enhancement and the attributes associated with that name (for example, insisting that the name of the enhancement matches the beginning of the camelCased strings of all the "owned" attributes).  This proposal, for now, opts to allow the developer to name them in the way that makes most sense to the author, with the hope that this can survive scrutiny when considering scoped registries and concerns about name-spacing.
+> I agree 100% with others that these proposals must wait on scoped registry being fully settled.  In the above example, we have two strings that we need to protect from colliding with other enhancements (and with attributes of the (custom) elements themselves):  The name of the enhancement - "logger" - and the attribute(s) tied to it, if any:  'log-to-console'.  Both will need to be considered as far as best ways of managing these within each Shadow scope.  It may be that the easiest solution will require some sort of pattern between the name of the enhancement and the attributes associated with that name (for example, insisting that the name of the enhancement matches the beginning of the camelCased strings of all the "owned" attributes).  This proposal, for now, opts to allow the developer to name them in the way that makes most sense to the author, with the hope that this can survive scrutiny when considering scoped registries and concerns about name-spacing.
 
 
 ## ElementEnhancement API Shape
@@ -191,7 +191,7 @@ Or perhaps there's a desire to be even more like the has solution and provide fo
 
 which this proposal also supports.
 
-So what would make much more sense to me is rather than having a "has" requirement, to instead insist that all the attributes that a single enhancement "observes" begin with the same stem (be-intl in this case), presumably tied to the package of the enhancement.  This proposal is not yet advocating *enforcing* such a rule, but I am weighing the pro's and con's of such a rule, and am much more in favor of that kind of restriction, vs, extra (seemingly unneeded) complexity that a "has" attribute requirement would introduce, that flies in the face of industry practice over several decades.
+So what would make much more sense to me is rather than having a "has" requirement, to instead insist that all the attributes that a single enhancement "observes" begin with the same stem (be-intl in this case), presumably tied to the package of the enhancement.  This proposal is not yet advocating *enforcing* such a rule, but I am weighing the pro's and con's of such a rule, and am much more in favor of that kind of restriction, vs, extra (seemingly unneeded) complexity that a "has" attribute requirement would introduce.
 
 The only argument I see, honestly, in favor of the "has" requirement, would be simply to make things easier for the browser's parsing, but, again, I think that needs to be backed up by quite solid evidence and a kind of desperate last resort scenario.
 
