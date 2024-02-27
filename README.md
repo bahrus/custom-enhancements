@@ -361,6 +361,7 @@ oInput.enhancements.withSteel = new AluminumEnhancer()
 
 it would throw an error.
 
+
 ## Attachment methods of the enhancements property
 
 Unlike dataset, the enhancements property, added to the Element prototype, would have several methods available, making it easy for developers / frameworks to reference and even attach enhancements (without the need for attributes), for example during template instantiation (or later).
