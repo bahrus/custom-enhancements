@@ -18,26 +18,26 @@ This proposal just continues to be my view of the **best** approach, and I don't
 Say all you need to do is to create an isolated behavior/enhancement/hook/whatever associated with an attribute, say "log-to-console" anytime the user clicks on elements adorned with that attribute, where we can specify the message.  Here's how that would be done with this proposal.  It could be done more simply, with hard coded values, and without the commentary noise, so please allow for that when weighing the complexity. 
 
 ```JS
-//canonical name of our "custom prop", accessible via oElement.enhancements[enhancement], 
-//which is where we will find an instance of the class defined below.
-export const canonicalEnhancementName = 'logger'; 
-//canonical name(s) of our custom attribute(s)
-export const canonicalObservedAttributes = ['log-to-console']; 
-customEnhancements.define(canonicalEnhancementName, class extends ElementEnhancement {
+customEnhancements.define('logger', class extends ElementEnhancement {
+    #message: string;
+    get message(){
+        return this.#message;
+    }
+    set message(newVal){
+        this.#message = newVal;
+    }
     attachedCallback(enhancedElement: Element, enhancementInfo: EnhancementInfo){
-        const {observedAttributes, enhancement} = enhancementInfo;
-        const [msgAttr] = observedAttributes; 
-        // in this example, msgAttr will simply equal 'log-to-console', 
-        // but this code is demonstrating how to code defensively, so that
-        // the party (or parties) responsible for registering the enhancement 
-        // could choose to modify the name(s), either globally, or inside a scoped registry
-        // in a different file.
         enhancedElement.addEventListener('click', e => {
-            console.log(enhancedElement.getAttribute(msgAttr)); 
+            console.log(this.message); 
         });
     }
 }, {
-    observedAttributes: canonicalObservedAttributes
+    observedAttributes: {
+        base: 'log-to-console',
+        map: {
+            '0,0': 'message'
+        }
+    }
 });
 ```
 
