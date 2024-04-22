@@ -26,7 +26,7 @@ customEnhancements.define('logger', class extends ElementEnhancement {
     set message(newVal){
         this.#message = newVal;
     }
-    attachedCallback(enhancedElement: Element, enhancementInfo: EnhancementInfo){
+    attachedCallback(enhancedElement: Element){
         enhancedElement.addEventListener('click', e => {
             console.log(this.message); 
         });
