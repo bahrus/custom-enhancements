@@ -18,26 +18,26 @@ This proposal just continues to be my view of the **best** approach, and I don't
 Say all you need to do is to create an isolated behavior/enhancement/hook/whatever associated with an attribute, say "log-to-console" anytime the user clicks on elements adorned with that attribute, where we can specify the message.  Here's how that would be done with this proposal.  It could be done more simply, with hard coded values, and without the commentary noise, so please allow for that when weighing the complexity. 
 
 ```JS
-customEnhancements.define('logger', class extends ElementEnhancement {
-    #message: string;
-    get message(){
-        return this.#message;
-    }
-    set message(newVal){
-        this.#message = newVal;
-    }
-    attachedCallback(enhancedElement: Element){
+//canonical name of our "custom prop", accessible via oElement.enhancements[enhancement], 
+//which is where we will find an instance of the class defined below.
+export const canonicalEnhancementName = 'logger'; 
+//canonical name(s) of our custom attribute(s)
+export const canonicalObservedAttributes = ['log-to-console']; 
+customEnhancements.define(canonicalEnhancementName, class extends ElementEnhancement {
+    attachedCallback(enhancedElement: Element, enhancementInfo: EnhancementInfo){
+        const {observedAttributes, enhancement} = enhancementInfo;
+        const [msgAttr] = observedAttributes; 
+        // in this example, msgAttr will simply equal 'log-to-console', 
+        // but this code is demonstrating how to code defensively, so that
+        // the party (or parties) responsible for registering the enhancement 
+        // could choose to modify the name(s), either globally, or inside a scoped registry
+        // in a different file.
         enhancedElement.addEventListener('click', e => {
-            console.log(this.message); 
+            console.log(enhancedElement.getAttribute(msgAttr)); 
         });
     }
 }, {
-    observedAttributes: {
-        base: 'log-to-console',
-        map: {
-            '0,0': 'message'
-        }
-    }
+    observedAttributes: canonicalObservedAttributes
 });
 ```
 
@@ -203,7 +203,38 @@ Since this proposal is focusing somewhat on managing attributes, it is reasonabl
 
 And for clarity, the "house words" for this proposal are "Custom Prop + 0 or more Custom Attributes => Custom Enhancement".  The custom prop refers to the name of the enhancement, which, as will be discussed below, provides the key off of the "enhancements" sub-object of the element.  But within that "custom prop" resides a rich universe of properties defined within the user defined class, and as we've seen, the api shape for that class is almost identical to custom elements.  So it makes sense also to look for better ergonomics as far as defining properties, some of which may pair with observed attributes for custom enhancements, just as much as it does for custom elements.
 
-I like the promising ideas presented [here](https://github.com/WICG/webcomponents/issues/1029) as far as providing declarative support for managing properties and attributes.  Based on the reasoning above, I think it makes sense to consider such [improvements to custom elements themselves](https://github.com/WICG/webcomponents/issues/1045), and I see no reason not to carry over such ideas to custom enhancements.  Or maybe it makes more sense to "pilot" such ideas on custom enhancements, and then apply to custom elements.  I think those ideas are 100% compatible with this proposal, and shouldn't break it in any way.  
+I like the promising ideas presented [here](https://github.com/WICG/webcomponents/issues/1029) as far as providing declarative support for managing properties and attributes.  Based on the reasoning above, I think it makes sense to consider such [improvements to custom elements themselves](https://github.com/WICG/webcomponents/issues/1045), and I see no reason not to carry over such ideas to custom enhancements.  Or maybe it makes more sense to "pilot" such ideas on custom enhancements, and then apply to custom elements.  I think those ideas are 100% compatible with this proposal, and shouldn't break it in any way. 
+
+The way I think this could look would be something like (for the simplest scenario):
+
+
+```JS
+customEnhancements.define('logger', class extends ElementEnhancement {
+    #message: string;
+    get message(){
+        return this.#message;
+    }
+    set message(newVal){
+        this.#message = newVal;
+    }
+    attachedCallback(enhancedElement: Element){
+        enhancedElement.addEventListener('click', e => {
+            console.log(this.message); 
+        });
+    }
+}, {
+    attrProps: [{
+        base: 'log-to-console',
+        map: {
+            message: [0, 0]
+        }
+    }]
+});
+```
+
+Why [0, 0]?  Think gps coordinates, only the first number is the index of the branch, and the second number is the index of the leaf.  If the enhancement only has a single attribute (like our opening example), where there *are* no branches and leaves, this would map the value of that attribute directly to the "point of origin"  - the log-console attribute.
+
+
 
 ## Backdrop
 
