@@ -244,7 +244,7 @@ I *think* the solution for this conundrum would be if the build process also rem
 ###  What, if any, are the benefits of having a "has" attribute?
 
 > [!NOTE]
-> To my great (temporary) relief, the main advocate of the "has" proposal and I seemed, for a short while at least, to have found common ground somewhere in the middle, based on observed attributes (which I recently discovered, was there all along with the has proposal, I missed it because I was so puzzled by the purpose of the "has" attribute), I should also point out that this proposal no longer considers "observedAttributes" to be the right model for this problem space, meaning a consensus appears even more precarious than before.
+> To my great (temporary) relief, the main advocate of the "has" proposal and I seemed, for a short while at least, to have found common ground somewhere in the middle, based on observed attributes (which I recently discovered, was there all along with the has proposal, I missed it because I was so puzzled by the purpose of the "has" attribute). I should also point out that this proposal no longer considers the flat "observedAttributes" array to be the right model for this problem space, meaning a consensus appears even more precarious than before.
 
 From a "developer advocacy" point of view, as the simple example I opened with demonstrates, there doesn't seem to be any benefit to having an extra "has" attribute -- that would just be clumsy and provide more opportunities for conflicts between different teams of developers.
 
