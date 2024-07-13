@@ -58,13 +58,13 @@ It would be great if we could use a short attribute name, like "log".  That can 
 
 While supporting single word attributes for custom elements, that could conflict with future global attributes is a bit dicey, that ship has sailed, and we view it as similar to key words in JavaScript, just a risk we have agreed is acceptable.
 
-This proposal views the risks as too high to do that when we move on to enhancing higher-order components, especially as the platform is happily introducing more of them.  There is an informal understanding that built-in attributes won't have dashes in them (e.g. onclick, etc), except once in a blue moon (aria-*) so insisting on dashes in this context seems prudent.
-
-However, I've become that there is another informal understanding -- that the platform will only use ASCII characters for future attributes.
+This proposal views the risks as too high to do that when we move on to enhancing higher-order components, especially as the platform is happily introducing more of them (🥳).  There is an informal understanding that built-in attributes won't have dashes in them (e.g. onclick, etc), except once in a blue moon (aria-*) so insisting on dashes in this context seems prudent.
 
 The extra enh- is there to avoid conflicting with attributes that a custom element author may be using, so one of the aspects of this proposal is to suggest that the platform reserve "enh-" prefix similar to how it reserved "data-".
 
-So developers wanting to capitalize on that and benefit from shorter names could define, under this proposal, an alternative mapping for example:
+However, I've become aware that there is another informal understanding -- that the platform will only use ASCII characters for future attributes.
+
+So developers wanting to capitalize on that and benefit from shorter names could define, under this proposal, an alternative mapping.  For example:
 
 ```JS
 export const enhancementInfo = {
@@ -87,7 +87,7 @@ Some risks to doing this:
 
 1.  It may break xml (like svg tags)
 2.  It is even farther away from being "HTML5 compliant"
-3.  Clashes between different libraries are extremely likely to occur (the shorter the name, the less the ability to "reserve" the name in npm or some other package manager), which is why we look closely at this issue in this proposal, and posit that a solution to scoped registry should ideally be shipping and proven before moving on to this problem space.
+3.  Clashes between different libraries are extremely likely to occur (the shorter the name, the less the ability to "reserve" the name in npm or some other package manager), which is why we posit that a solution to scoped registry should ideally be shipping and proven before shipping this problem space.
 
 It doesn't seem to me that any of these concerns would "block" the platform from doing its thing, so this proposal opts to empower the developer to take these risks.
 
