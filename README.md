@@ -49,7 +49,9 @@ customEnhancements.define(enhancementInfo);
 
 ...
 
-<some-custom-element enh-log-to-console="clicked on some custom element"></some-custom-element>
+<some-custom-element 
+    enh-log-to-console="clicked on some custom element">
+</some-custom-element>
 ```
 
 Done!
