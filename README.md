@@ -567,7 +567,7 @@ I'm encountering a small number of use cases where we want enhancements to "do i
 const detachedEnhancement = await oElement.enhancements.whenDetached(enhancementInfo);
 ```
 
-I think we would want this to remove the attribute also, if applicable.
+I think we would want this to remove the associated attribute(s) also, if applicable.
 
 ## How an enhancement class indicates it has hydrated 
 
