@@ -164,9 +164,12 @@ class MyEnhancement extends ElementEnhancement {
     } 
 	
 	attributeChangedCallback(
-        coordinates: `{branchitude: number}.{leafitude: number}`, 
-        oldValue: string, newValue: string) { 
-        
+        coordinates: `{branchitude: number}.{leafitude: number}`,
+        oldValue: string, 
+        newValue: string.
+        attrNode: Node,
+        ) { 
+        ...
     }
 
     //  Entirely optional filtering conditions for when the enhancement should be
@@ -241,6 +244,16 @@ Or perhaps there's a desire to be even more like the has solution and provide fo
 ```
 
 which this proposal also supports.
+
+Even better, this proposal supports emoji's:
+
+```html
+<time lang="ar-EG" 
+    datetime=2011-11-18T14:54:39.929Z 
+    🌐=long 🌐-year=numeric 🌐-month=long
+    🌐-day=numeric>
+</time>
+```
 
 So what would make much more sense to me is rather than having a "has" requirement, to instead insist that all the attributes that a single enhancement "observes" begin with the same stem (be-intl in this case), presumably tied to the package of the enhancement.  This proposal is not yet advocating *enforcing* such a rule, but I am weighing the pro's and con's of such a rule, and am much more in favor of that kind of restriction, vs, extra (seemingly unneeded) complexity that a "has" attribute requirement would introduce.
 
