@@ -262,7 +262,7 @@ Even better, this proposal supports emoji's:
 ```html
 <time lang="ar-EG" 
     datetime=2011-11-18T14:54:39.929Z 
-    🌐=long 🌐-year=numeric 🌐-month=long
+    🌐-weekday=long 🌐-year=numeric 🌐-month=long
     🌐-day=numeric>
 </time>
 ```
