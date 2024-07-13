@@ -414,7 +414,7 @@ const enhancementInstance = await oElement.enhancements.whenAttached(enhancement
 const enhancementInstance = await oElement.enhancements.whenResolved(enhancementInfo);
 ```
 
-Both of these methods will see if the enhancement has already been attached, and if so, pass that back.  If not, the method will cause an instance of the class constructor returned by the enhancer option, then call attachedCallback and attributeChangedCallback (if applicable) in the same order as is done with custom elements, before returning the instance.
+Both of these methods would see if the enhancement has already been attached, and if so, pass that back.  If not, the method will cause an instance of the class constructor returned by the enhancer option, then call attachedCallback and attributeChangedCallback (if applicable) in the same order as is done with custom elements, before returning the instance.
 
 The whenResolved promise is returned after the developer sets:
 
@@ -445,6 +445,8 @@ class ElementEnhancement extends EventTarget {
 The whenResolved method would throw an error (catcheable via try/catch with await or .catch() if using the more traditional promise approach) when the developer sets this.resolved = false;
 
 The purpose of having this "whenResolved" feature is explained towards the end of this proposal.
+
+I think it would be quite reasonable for these methods to automatically call customEnhancements.define if the platform sees that the enhancementInfo hasn't yet been defined, and has no namespace conflicts with other enhancements.
  
 ## A helper property to make setting properties easier.
 
