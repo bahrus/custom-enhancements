@@ -56,9 +56,9 @@ Done!
 
 ## Why the long attribute names?
 
-It would be great if we could use a short attribute name, like "log".  That can be done for custom elements, why not custom enhancements?  This is especially important to consider because, as we will see, this proposal supports multiple attributes "owned" by an enhancement.
+It would be great if we could use a short attribute name, like "log".  That can be done for custom elements, why not custom enhancements?  This is especially important to consider because, as we will see, this proposal supports multiple attributes "owned" by an enhancement, so allowing for small names would help reduce carpal syndrome.
 
-While supporting single word attributes for custom elements that could conflict with future global attributes is a bit dicey, that ship has sailed, and I view it as similar to key words in JavaScript, just a risk we have agreed is acceptable.
+While it is a bit dicey to be supporting these single word attributes for custom elements, that could conflict with future global attributes, that ship has sailed, and I view it as similar to key words in JavaScript, just a risk we have agreed is acceptable.
 
 This proposal views the risks of following suit as too high when we move on to enhancing higher-order components, especially as the platform is happily introducing more of them (🥳).  There is an informal understanding that built-in attributes won't have dashes in them (e.g. onclick, etc), except once in a blue moon (aria-*) so insisting on dashes in this context seems prudent.
 
@@ -134,12 +134,21 @@ This cautionary note is only applicable for enhancements you wish to make public
 
 ```JS
 const enhancementInfo: EnhancementInfo = {
+    //required
     enhKey: 'greetings',
+    //optional
     base: ['greetings'],
-    branches: [[':'], ['', 'hello', 'goodbye'], //optional front delimiter of :
-    leaves: {
-        hello: [['--'], 'how-are-you', 'hows-it-going'] //optional front delimiter of --
+    //optional
+    branches: {
+        in: [, '', 'hello', 'goodbye'],
+        withPrefix: ':' //optional, assume dash(-) if undefined 
     },
+    //optional 
+    leaves: {
+        in: ['how-are-you', 'hows-it-going'],
+        withPrefix: '--' //optional, assume dash(-) if undefined 
+    },
+    //optional
     map: {
         '0.0': {
             instanceOf: 'Object',
@@ -147,11 +156,11 @@ const enhancementInfo: EnhancementInfo = {
         },
         '1.0': {
             instanceOf: 'Boolean',
-            mapsTo: isHello
+            mapsTo: 'isHello'
         },
         '2.0': {
             instanceOf: 'String',
-            mapsTo: firstHelloGreeting
+            mapsTo: 'firstHelloGreeting'
         }
     }
     //entirely optional
@@ -225,7 +234,7 @@ I *think* the solution for this conundrum would be if the build process also rem
 ###  What, if any, are the benefits of having a "has" attribute?
 
 > [!NOTE]
-> To my great (temporary) relief, the main advocate of the "has" proposal and I seemed, for a short while at least, to have found common ground somewhere in the middle, based on observed attributes (which I recently discovered, was there all along with the has proposal, I missed it because I was so puzzled by the purpose of the "has" attribute), so the discussion below is considerably less important than it was previously, and is being left for now just in case it helps clarify anything.
+> To my great (temporary) relief, the main advocate of the "has" proposal and I seemed, for a short while at least, to have found common ground somewhere in the middle, based on observed attributes (which I recently discovered, was there all along with the has proposal, I missed it because I was so puzzled by the purpose of the "has" attribute), so the discussion below is considerably less important than it was previously, and is being left for now just in case it helps clarify anything.  This proposal no longer considers "observedAttributes" to be the right model for this problem space, meaning a consensus appears even more tenuous than before.
 
 From a "developer advocacy" point of view, as the simple example I opened with demonstrates, there doesn't seem to be any benefit to having an extra "has" attribute -- that would just be clumsy and provide more opportunities for conflicts between different teams of developers.
 
@@ -234,7 +243,7 @@ I amended this proposal, though, to support multiple attributes for a single enh
 1.  The values can be simple strings / numbers / boolean, vs JSON.  
 2.  Some frameworks may prefer to modify state via attributes instead of properties.
 
-However, I think by supporting multiple attributes, requiring that they have dashes, and knowing that developers will go out of their way to avoid clashing with other libraries, we can achieve the same effect without telling the entire IT industry that their way of doing things is wrong.  **Almost no one is using a "has" attribute, so we should, I think, bend over backwards to not impose a new requirement in order to utilize the platform, without an extremely strong reason**.  So with this proposal, we can have attributes that naturally group together.  To take one very practical example where this makes sense:  Suppose we want to provide a userland implementation of [this proposal](https://github.com/whatwg/html/issues/2404).  We could define it like this, which this proposal supports:
+However, I think by supporting multiple attributes, requiring that they have dashes or at least one non ascii character, and knowing that developers will go out of their way to avoid clashing with other libraries, we can achieve the same effect without telling the entire IT industry that their way of doing things is wrong.  **Almost no one is using a "has" attribute, so we should, I think, bend over backwards to not impose a new requirement in order to utilize the platform, without an extremely strong reason**.  So with this proposal, we can have attributes that naturally group together.  To take one very practical example where this makes sense:  Suppose we want to provide a userland implementation of [this proposal](https://github.com/whatwg/html/issues/2404).  We could define it like this, which this proposal supports:
 
 ```html
 <time lang="ar-EG" 
@@ -257,7 +266,7 @@ Or perhaps there's a desire to be even more like the has solution and provide fo
 
 which this proposal also supports.
 
-Even better, this proposal supports emoji's:
+Even better, this proposal supports emoji's, which allows for quite short attribute names:
 
 ```html
 <time lang="ar-EG" 
@@ -267,7 +276,7 @@ Even better, this proposal supports emoji's:
 </time>
 ```
 
-So what would make much more sense to me is rather than having a "has" requirement, to instead insist that all the attributes that a single enhancement "observes" begin with the same base (be-intl or 🌐 in this case), presumably tied to the package of the enhancement.  This proposal is now advocating enforcing such a rule as far as help with parsing and automated attachment.
+So what would make much more sense to me is rather than having a "has" requirement, to instead insist that all the attributes that a single enhancement "observes" begin with the same base (be-intl or 🌐 in this case), presumably tied to the package of the enhancement.  This proposal is now advocating enforcing such a rule, at least if the developer wishes to receive help from the platform with parsing and automated attachment.
 
 ### Better ergonomics for managing attribute changes
 
