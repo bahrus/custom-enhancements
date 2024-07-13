@@ -543,7 +543,7 @@ Note that the enhancement class corresponding to this attribute may specify a de
 
 The problem with using this inline binding in our template, which we might want to repeat hundreds or thousands of times in the document, is that each time we clone the template, we would be copying that attribute along with it, and we would need to parse the values.
 
-Because this proposal is advocating that the EnhancementInfo interface that is passed into the define method has enough information to map from the attribute to the parsed property, it's my view that this would allow template instantiation supported by the platform (or userland implementations) to avoid unnecessary string parsing, by making judicious use of caching.
+Because this proposal is advocating that the EnhancementInfo interface that is passed into the define method has enough information to map from the attribute to the parsed properties, it's my view that this would allow template instantiation supported by the platform (or userland implementations) to avoid unnecessary string parsing, by making judicious use of caching.
 
 ## DetachedCallback lifecycle event
 
