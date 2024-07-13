@@ -142,6 +142,20 @@ const enhancementInfo: EnhancementInfo = {
     leaves: {
         hello: ['--', 'how-are-you', 'hows-it-going']
     },
+    map: {
+        '0.0': {
+            instanceOf: 'Object',
+            mapsTo: '.'
+        },
+        '1.0': {
+            instanceOf: 'Boolean',
+            mapsTo: isHello
+        },
+        '2.0': {
+            instanceOf: 'String',
+            mapsTo: firstHelloGreeting
+        }
+    }
     //entirely optional
     allowedInstanceTypes: [            
         HTMLInputElement, 
