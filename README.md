@@ -16,15 +16,11 @@ This is [one](https://github.com/whatwg/html/issues/2271) [of](https://eisenberg
 Say all you need to do is to create an isolated behavior/enhancement/hook/whatever associated with an attribute, say "log-to-console" anytime the user clicks on elements adorned with that attribute, where we can specify the message.  Here's how that would be done with this proposal.  It could be done more simply, with hard coded values, and without the commentary noise, so please allow for that when weighing the complexity. 
 
 ```JS
-//canonical name of our "custom prop", accessible via oElement.enhancements[enhancement], 
-//which is where we will find an instance of the class defined below.
-export const canonicalEnhancementName = 'logger'; 
-//canonical name(s) of our custom attribute(s)
-export const canonicalObservedAttributes = ['log-to-console']; 
-
 export const enhancementInfo = {
-    enhKey: 'logger',
-    base: 'log-to-console',
+    //canonical name of our "custom prop", accessible via oElement.enhancements[enhancement], 
+    //which is where we will find an instance of the class defined below.
+    enhKey: 'logger', 
+    base: 'log-to-console', //canonical name(s) of our (base) custom attribute
 }
 customEnhancements.define(enhancementInfo, class extends ElementEnhancement {
     attachedCallback(enhancedElement: Element, enhancementInfo: EnhancementInfo){
