@@ -387,7 +387,7 @@ Others prefer "behaviors" (but the others who do seem to think it is of zero con
 
 Choosing the right name seems important, as it ought to align somewhat with the reserved sub-property of the element, as well as the reserved prefix for attributes (think data- / dataset).
 
-## Should use of enh-* prefix for server-rendered progressive enhancement of custom elements should be required (or strongly suggested?)
+## Should use of enh-* prefix for server-rendered (progressive) enhancement of custom elements be required (or even strongly suggested?)
 
 The reason I think it would be reasonable for the prefix enh-* to be required, or at least strongly suggested is this:
 
