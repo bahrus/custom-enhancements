@@ -7,7 +7,7 @@ PR's, Issues [welcome](https://github.com/bahrus/custom-enhancements)
 
 ## Last update
 
-2024-02-12
+2024-07-13
 
 This is [one](https://github.com/whatwg/html/issues/2271) [of](https://eisenbergeffect.medium.com/2023-state-of-web-components-c8feb21d4f16) [a](https://github.com/WICG/webcomponents/issues/1029) [number](https://github.com/WICG/webcomponents/issues/727) of interesting proposals, one of which (or some combination?) can hopefully get buy-in from all three browser vendors.  This proposal borrows heavily from the others.
 
@@ -24,15 +24,14 @@ export const enhancementInfo = {
 }
 customEnhancements.define(enhancementInfo, class extends ElementEnhancement {
     attachedCallback(enhancedElement: Element, enhancementInfo: EnhancementInfo){
-        const {observedAttributes, enhancement} = enhancementInfo;
-        const [msgAttr] = observedAttributes; 
-        // in this example, msgAttr will simply equal 'log-to-console', 
+        const {base} = enhancementInfo;
+        // in this example, base will simply equal 'log-to-console', 
         // but this code is demonstrating how to code defensively, so that
         // the party (or parties) responsible for registering the enhancement 
         // could choose to modify the name(s), either globally, or inside a scoped registry
         // in a different file.
         enhancedElement.addEventListener('click', e => {
-            console.log(enhancedElement.getAttribute(msgAttr)); 
+            console.log(enhancedElement.getAttribute(base) || enhancedElement.getAttribute(`enh-${base}`)); 
         });
     }
 });
@@ -49,6 +48,42 @@ customEnhancements.define(enhancementInfo, class extends ElementEnhancement {
 ```
 
 Done!
+
+## Why the long attribute names?
+
+It would be great if we could use a short attribute name, like "log".  That can be done for custom elements, why not custom enhancements?  This is especially important to consider because, as we will see, this proposal supports multiple attributes "owned" by an enhancement.
+
+While supporting single word attributes for custom elements, that could conflict with future global attributes is a bit dicey, that ship has sailed, and we view it as similar to key words in JavaScript, just a risk we have agreed is acceptable.
+
+This proposal views the risks as too high to do that when we move on to enhancing higher-order components, especially as the platform is happily introducing more of them.  There is an informal understanding that built-in attributes won't have dashes in them (e.g. onclick, etc), except once in a blue moon (aria-*) so insisting on dashes in this context seems prudent.
+
+However, I've become that there is another informal understanding -- that the platform will only use ASCII characters for future attributes.
+
+The extra enh- is there to avoid conflicting with attributes that a custom element author may be using, so one of the aspects of this proposal is to suggest that the platform reserve "enh-" prefix similar to how it reserved "data-".
+
+So developers wanting to capitalize on that and benefit from shorter names could define, under this proposal, an alternative mapping for example:
+
+```JS
+export const enhancementInfo = {
+    enhKey: '🪵', 
+    base: '🪵'
+}
+```
+
+```HTML
+<svg 🪵="clicked on an svg"></svg>
+    ...
+<div 🪵="clicked on a div"></div>
+
+...
+
+Or developers could use single words using the small latin characters.  Or an emoji followed by ascii characters.  Whatever character sets the platform says it will never tap into.
+
+Some risks to doing this:
+
+1.  It may break xml (like svg tags)
+2.  It is even farther away from being "HTML5 compliant"
+3.  Clashes between different libraries are extremely likely to occur, which is why we look closely at this issue in this proposal, and posit that a solution to scoped registry should ideally be shipping and proven before moving on to this problem space. 
 
 ## A note about naming, part I
 
