@@ -220,7 +220,7 @@ I *think* the solution for this conundrum would be if the build process also rem
 </details>
 
 >[!NOTE]
->Bear in mind that if no "enhances" value is specified (the default), and if observedAttributes is also not specified or is empty, the platform will *not* automatically enhance every element.  The platform will only act when it finds a matching attribute.  But it will **allow** enhancements to be programmatically attached by the developer on all element types in that scenario.  In fact, the platform will **ignore** the observedAttributes criteria altogether when the developer programmatically attaches (connects?) an enhancement, only using the "enhances" value (combined with the static values specified by the enhancement author) to prevent unauthorized enhancements. 
+>Bear in mind that if no "allowedCSSMatches/allowedInstanceTypes" is specified (the default), and if the "base/branches/leaves" option is also not specified or is empty, the platform will *not* automatically enhance every element.  The platform will only act when it finds a matching attribute pattern.  But it will **allow** enhancements to be programmatically attached by the developer on all element types in that scenario.  In fact, the platform will **ignore** the base/branches/leaves criteria altogether when the developer programmatically attaches (connects?) an enhancement, only using the "allowed*" value(s) (combined with the static values specified by the enhancement author) to prevent unauthorized enhancements. 
 
 ###  What, if any, are the benefits of having a "has" attribute?
 
