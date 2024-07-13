@@ -200,6 +200,7 @@ class MyEnhancement extends ElementEnhancement {
         attrNode: Node,
         ) { 
         ...
+        }
     }
 
     //  Entirely optional filtering conditions for when the enhancement should be
