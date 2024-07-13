@@ -21,7 +21,7 @@ export const enhancementInfo = {
     //which is where we will find an instance of the class defined below.
     enhKey: 'logger', 
     base: 'log-to-console', //canonical name of our (base) custom attribute.
-    enhancer: () => {
+    enhancer: async () => {
         return class extends ElementEnhancement {
             attachedCallback(enhancedElement: Element, enhancementInfo: EnhancementInfo){
                 const {base} = enhancementInfo;
