@@ -221,13 +221,13 @@ I *think* the solution for this conundrum would be if the build process also rem
 
 </details>
 
+>[!NOTE]
+>Bear in mind that if no "enhances" value is specified (the default), and if observedAttributes is also not specified or is empty, the platform will *not* automatically enhance every element.  The platform will only act when it finds a matching attribute.  But it will **allow** enhancements to be programmatically attached by the developer on all element types in that scenario.  In fact, the platform will **ignore** the observedAttributes criteria altogether when the developer programmatically attaches (connects?) an enhancement, only using the "enhances" value (combined with the static values specified by the enhancement author) to prevent unauthorized enhancements. 
+
 ###  What, if any, are the benefits of having a "has" attribute?
 
-<details>
-    <summary>None, as far as I can see</summary>
-
 > [!NOTE]
-> To my great relief, the main advocate of the "has" proposal and I seem to have found common ground somewhere in the middle, based on observed attributes (which I recently discovered, was there all along with the has proposal, I missed it because I was so puzzled by the purpose of the "has" attribute), so the discussion below is considerably less important than it was previously, and is being left for now just in case it helps clarify anything.
+> To my great (temporary) relief, the main advocate of the "has" proposal and I seemed, for a short while at least, to have found common ground somewhere in the middle, based on observed attributes (which I recently discovered, was there all along with the has proposal, I missed it because I was so puzzled by the purpose of the "has" attribute), so the discussion below is considerably less important than it was previously, and is being left for now just in case it helps clarify anything.
 
 From a "developer advocacy" point of view, as the simple example I opened with demonstrates, there doesn't seem to be any benefit to having an extra "has" attribute -- that would just be clumsy and provide more opportunities for conflicts between different teams of developers.
 
@@ -273,45 +273,13 @@ So what would make much more sense to me is rather than having a "has" requireme
 
 The only argument I see, honestly, in favor of the "has" requirement, would be simply to make things easier for the browser's parsing, but, again, I think that needs to be backed up by quite solid evidence and a kind of desperate last resort scenario.
 
-</details>
-
 ### Better ergonomics for specifying the attribute format?
 
-Since this proposal is focusing somewhat on managing attributes, it is reasonable to see if it makes sense to dovetail this proposal with some related areas for improvement. 
+Since this proposal is focusing somewhat on managing attributes, it is including some  additional support beyond what custom elements currently provide, as far as making them easier to manage. 
 
 And for clarity, the "house words" for this proposal are "Custom Prop + 0 or more Custom Attributes => Custom Enhancement".  The custom prop refers to the name of the enhancement, which, as will be discussed below, provides the key off of the "enhancements" sub-object of the element.  But within that "custom prop" resides a rich universe of properties defined within the user defined class, and as we've seen, the api shape for that class is almost identical to custom elements.  So it makes sense also to look for better ergonomics as far as defining properties, some of which may pair with observed attributes for custom enhancements, just as much as it does for custom elements.
 
 I like the promising ideas presented [here](https://github.com/WICG/webcomponents/issues/1029) as far as providing declarative support for managing properties and attributes.  Based on the reasoning above, I think it makes sense to consider such [improvements to custom elements themselves](https://github.com/WICG/webcomponents/issues/1045), and I see no reason not to carry over such ideas to custom enhancements.  Or maybe it makes more sense to "pilot" such ideas on custom enhancements, and then apply to custom elements.  I think those ideas are 100% compatible with this proposal, and shouldn't break it in any way. 
-
-The way I think this could look would be something like (for the simplest scenario):
-
-
-```JS
-customEnhancements.define('logger', class extends ElementEnhancement {
-    #message: string;
-    get message(){
-        return this.#message;
-    }
-    set message(newVal){
-        this.#message = newVal;
-    }
-    attachedCallback(enhancedElement: Element){
-        enhancedElement.addEventListener('click', e => {
-            console.log(this.message); 
-        });
-    }
-}, {
-    attrProps: [{
-        base: 'log-to-console',
-        map: {
-            message: [0, 0]
-        }
-    }]
-});
-```
-
-Why [0, 0]?  Think gps coordinates, only the first number is the index of the branch, and the second number is the index of the leaf.  If the enhancement only has a single attribute (like our opening example), where there *are* no branches and leaves, this would map the value of that attribute directly to the "point of origin"  - the log-console attribute.
-
 
 
 ## Backdrop
@@ -399,19 +367,9 @@ Others prefer "behaviors" (but the others who do seem to think it is of zero con
 
 Choosing the right name seems important, as it ought to align somewhat with the reserved sub-property of the element, as well as the reserved prefix for attributes (think data- / dataset).
 
-## Highlights of this proposal:
+## Should use of enh-* prefix for server-rendered progressive enhancement of custom elements should be required (or strongly suggested?)
 
-1.  Adds a similar property as dataset to all Elements, called "enhancements", off of which template instantiation can pass properties needed by the enhancement class instance (even if the enhancement hasn't loaded yet -- lazy property setting, in other words).  
-2.  Sub-properties of the enhancements property can be reserved for only one specific class prototype, based on the customEnhancements.define method, with the scoped registry solution adopted.  It prevents others from using the same path with an instance of a different class.  
-3.  Can be used during template instantiation to attach behaviors (and other aspects) to built-in and custom elements (no attributes required, as that may be inefficient -- some musings on what might be effective are outlined below).
-4.  Instantiates an instance of the class and attaches it to the reserved sub-property of enhancements, when the live DOM tree encounters any of the (enh- prefixed) observed attributes specified in the class.
-5.  Classes extend ElementEnhancement class, which extends EventTarget.
-6.  These classes will want to define a callback, "attachedCallback" (or connectedCallback if that ruffles some feathers). The callback will pass in the matching target element, as well as the scoped registry name associated with the class for the Shadow DOM  realm, and initial values that were already sent to it, in absentia, via the "enhancements" property gateway.  This callback can be invoked during template instantiation, or can progressively upgrade from server-rendered HTML with the observed attribute(s).
-7.  AttributeChangedCallback method with three parameters (index, oldValue, newValue) is supported in addition.  Yes, the first parameter is a number!
-
-## Use of enh-* prefix for server-rendered progressive enhancement of custom elements should be required (or strongly suggested?)
-
-The reason the prefix enh-* should be required, or at least strongly suggested is this:
+The reason I think it would be reasonable for the prefix enh-* to be required, or at least strongly suggested is this:
 
 1.  If enh-* is only encouraged the way data-* is encouraged, at least we could still count on custom element authors likely avoiding that prefix when defining their custom attributes associated with their element, to avoid confusion, making the "ownership" clear.
 2.  But should a custom enhancement author choose a name that happens to coincide with one of the attribute names of another author's custom element, which seems quite likely to happen frequently, it still leaves the messy situation that the custom element's attribute gets improperly flagged as an enhancement.
@@ -419,65 +377,21 @@ The reason the prefix enh-* should be required, or at least strongly suggested i
 
 ## Global api's.
 
-All of the customElements methods would have a corresponding method in customEnhancements:
+All of the customElements methods would have a corresponding method in customEnhancements.  For example:
 
 1.  customEnhancements.define
 2.  customEnhancements.whenDefined
 3.  customEnhancements.upgrade
 
-The same solution for scoped registries is applied to these methods.
-
-Let's take a close look at what the define method should look like:
-
-```JavaScript
-customEnhancements.define('steel', SteelEnhancer, {
-    enhances: '*', //the default
-    observedAttributes: ['with-steel']
-});
-```
-
-Going backwards, the third parameter is indicating to match on all element tag names (the default).  But the platform will only tie the knot when it encounters any of the attributes from the observedAttributes list passed into the define method (if any).  Enhancements are not required to specify any attributes, as they are not intrinsically dependent on them.  Examples of enhancements which wouldn't want to burden the browser with searching for some attribute for no reason, are enhancements that are only expecting to be invoked programmatically by other enhancements (or by custom elements or frameworks).
-
->[!NOTE]
->Bear in mind that if no "enhances" value is specified (the default), and if observedAttributes is also not specified or is empty, the platform will *not* automatically enhance every element.  The platform will only act when it finds a matching attribute.  But it will **allow** enhancements to be programmatically attached by the developer on all element types in that scenario.  In fact, the platform will **ignore** the observedAttributes criteria altogether when the developer programmatically attaches (connects?) an enhancement, only using the "enhances" value (combined with the static values specified by the enhancement author) to prevent unauthorized enhancements. 
-
-I recommend that the developer use a logical naming convention for all these attributes -- maybe they should all be prefixed with the name of the package, for example.  The reason for this is that I suspect, even with the power of the scoped registry, life will still be simpler that way.
-
-We can also filter out element types we have no intention of enhancing:
-
-```JavaScript
-customEnhancements.define('withSteel', SteelEnhancer, {
-    enhances: { //optional
-        cssMatches: 'input,textarea',
-        instanceOf: [HTMLMarqueeElement]
-    },
-    observedAttributes: ['with-steel']
-
-});
-```
-
-This enhances option (combined with the static properties of the class) is a binding contract -- the platform won't allow enhancements to take place outside these conditions, if specified.  The cssMatches and instanceOf form an "or" condition (same with static class specifiers).  But an "and" condition is applied to the enhancement restrictions specified in the registration, and the enhancement restrictions specified by the class static properties (supportedInstanceTypes, supportedCSSMatches.)  I.e. both the enhancement author and the enhancement registrar (doing the registering) must opt-in. 
-
-The second parameter is the class, which must extend ElementEnhancement.
-
-The first parameter, gives the key off the enhancements object on the element where the enhancement should land (subject to murky scoped registry rules).  It can be a single word (subject to change as scope registry solution is integrated). 
-
-If some other developer attempts to "hijack" this property extension:
-
-```JavaScript
-oInput.enhancements.withSteel = new AluminumEnhancer()
-```
-
-it would throw an error.
-
+The same solution for scoped registries would be applied to these methods.
 
 ## Attachment methods of the enhancements property
 
 Unlike dataset, the enhancements property, added to the Element prototype, would have several methods available, making it easy for developers / frameworks to reference and even attach enhancements (without the need for attributes), for example during template instantiation (or later).
 
 ```JavaScript
-const enhancementInstance = await oElement.enhancements.whenAttached('withSteel');
-const enhancementInstance = await oElement.enhancements.whenResolved('withSteel');
+const enhancementInstance = await oElement.enhancements.whenAttached(enhancementInfo);
+const enhancementInstance = await oElement.enhancements.whenResolved(enhancementInfo);
 ```
 
 Both of these methods will see if the enhancement has already been attached, and if so, pass that back.  If not, the method will cause an instance of the class SteelEnhancer to be instantiated, then call attachedCallback and attributeChangedCallback (if applicable) in the same order as is done with custom elements, before returning the instance.
@@ -514,7 +428,7 @@ The purpose of having this "whenResolved" feature is explained towards the end o
  
 ## A helper property to make setting properties easier.
 
-In addition to the two methods above, the enhancements property would contain a property which returns a proxy, which can then dynamically return an instance of the enhancement, if the enhancement has already attached.  If it hasn't attached yet, it will return either an empty object, or whatever value has been placed there previously.
+In addition to the two methods above, the enhancements property would contain a lazy property which would return/instantiate a proxy if invoked/retrieved, which can then dynamically return an instance of the enhancement, if the enhancement has already attached.  If it hasn't attached yet, it will return either an empty object, or whatever value has been placed there previously.
 
 This would allow consumers of the enhancement to pass property values (and only property values) ahead of the upgrade (or after the upgrade), so that no "await" is necessary:
 
@@ -605,247 +519,7 @@ Note that the enhancement class corresponding to this attribute may specify a de
 
 The problem with using this inline binding in our template, which we might want to repeat hundreds or thousands of times in the document, is that each time we clone the template, we would be copying that attribute along with it, and we would need to parse the values.
 
-So I have two possible suggestions for addressing this issue, both designed to optimize this situation (however, I'm speculating a bit what would be effective here, as I say, I'm not an expert in this field):
-
-## Solution 1 (probably not the right solution)
-
-<details>
-    <summary>Since this probably isn't the right solution, hiding it, just in case it helps anyone.</summary>
-
-We move out those settings to a JSON-like structure that can be associated with the template instantiation: 
-
-```JSON
-[
-    {
-        "make": {
-            "button": [
-                {
-                    "beEnhancedBy": "counter",
-                    "having": {
-                        "transform": {
-                            "span": "value"
-                        }
-                    }
-                }
-            ]
-        }
-    }
-
-]
-```
-
-
-We'll refer to the structure above as the "template instantiation manifest" [TIM].
-
-So now our template is back to the original, with less bulk:
-
-```html
-<template>
-    <div>
-        <span></span>
-        <button></button>
-    </div>
-    <section>
-        <span></span>
-        <button></button>
-    </section>
-<template>
-```
-
-Less bulk means faster to clone, less strain on the eye!
-
-But again, I'm not an expert on performance.  I'm not certain this would produce performance benefits.  While the template might be smaller, the performance benefits from the smaller template might be more than offset by the cost of locating the "part" to apply the settings to.
-
-So the rest of this discussion goes out on a limb and assumes there is a performance benefit, just in case.
-
-The same argument (excessive string parsing) can be (more weakly) applied to custom elements or even built-in attributes. For example:
-
-Instead of:
-
-```html
-<template>
-    <input readonly disabled validate placeholder="Please enter the city in which you were born.">
-</template>
-```
-
-We can do:
-
-```html
-<template>
-    <input>
-</template>
-```
-
-together with our template instantiation manifest:
-
-```JSON
-[
-    {
-        "make": {
-            "input": [
-                {
-                    "beAssigned": {
-                        "readOnly": true,
-                        "disabled": true,
-                        "validate": true,
-                        "placeholder": "Please enter the city in which you were born."
-                    }
-                }
-            ]
-        }
-    }
-
-]
-```
-
-The chances that this improves performance is probably even lower than for JSON based attributes, but just wanted to suggest investigating the possibility.
-
-This proposal is **not** advocating always limiting the TIM structure to JSON (serializable) structures.  For declarative web components, that would be the preference, or even the requirement, but we could also use the same structure with non-JSON serializable entities as well, when conditions warrant.
-
-What the template instantiation process would do with this mapping, as it takes into account the TIM structure is:
-
-1.  Use CSS queries (or parts) to find all matching elements within the template clone ("button") in this case.
-2.  For each such button element it finds ("oButton"), carefully pass in the associated settings via the "enhancements" gateway property, with the help of template parts, if applicable.
-
-## How exactly would this attribute extraction be orchestrated for custom enhancements?
-
-Going back to the custom enhancement attributes...
-
-From my experience, the **ideal** approach, from a developer experience point of view, is if the built-in template instantiation could intelligently decide, when it encounters these custom enhancement attributes, to  quietly pull out the inline attributes and form this TIM object in memory, leaving the developer oblivious to this whole issue.
-
-In the example I gave, I had two buttons with identical attributes, which seems like a rare thing to happen in a template, so automating the detection of identical attributes, and formulating the most optimal css query to apply the settings to, seems like a lot of work with little benefit.
-
-It's possible that extracting out the attribute only results in savings if it is of a certain size.
-
-And here's the rub -- we can't, I don't think, insist that every custom enhancement vendor use JSON attributes.  The best thing I can suggest (and it is a bit iffy) is to assume that if the attribute is of the form [...] or {} then *try* doing a JSON.parse.  If one of those tests fails, just leave the attribute in place, and let the vendor cache as necessary.
-
-...which takes us to
-
-</details>
-
-## Solution 2 (closer to the right solution?):
-
-What I described in Solution 1 seemed too difficult to me, when I got down to implementing it in my POC.  What I implemented instead, still assumes that there's a benefit in eliminating all the attributes from the final DOM (the more attributes, the bulkier the clone, the larger the memory footprint of the DOM, the more work css querying has to do, etc).
-
-So what I did, essentially, was this:
-
-As a custom enhancement vendor, I took the time to implement, with custom enhancements I anticipated would be used thousands of times on a page, an internal, bespoke way of caching attributes globally, so that if a template repeats thousands of times, if I'm passed in the same attribute, I look for the the parsed object from my cache, and if not found, do the parse, and cache it (basically, memoization).  So this could be a pattern we recommend as a best practice way of optimizing performance when it seems warranted.
-
-As far as the help the platform's template instantiation would provide:
-
-Say our template looks as follows:
-
-```html
-<template>
-    <div enhancement-1=clob1 enhancement-2=clob2 enhancement-3=clob3 etc></div>
-</template>
-```
-
-This is only done for custom attributes that have already been registered.
-
-We turn that template into something like this, using a temporary, internal attribute, say "enhancements":
-
-```html
-<template>
-     <div enhancements=ff3a5f86-7136-4d63-a959-60433a71e16d></div>
-</template>
-```
-
-(I think it's better to use a global counter, not a guid, because it's smaller,  but using a guid for clarity)
-
-... and we maintain a lookup from that guid to the cached attributes for that element.
-
-Then when we instantiate the template, we search globally for all "enhancements" attributes, do a look up for what the original attributes were, and instantiate the enhancement class instances.
-
-Solution 2, option a:
-
-Invoke the attribute changed callback on each of them, exactly as if that original attribute that the developer specified was there on the element, even though it isn't, really. 
-
-Solution 2, option b:
-
-Now should we really call "attributeChangedCallback" when there isn't really such an attribute on the element?  Would that not confuse the developer?
-
-Instead of "attributeChangedCallback", I think it would be better to pass that in to the attachedCallback as an additional parameter for this scenario.
-
-Either way, we remove the "enhancements" attribute so what we end up with is a clean div in the live DOM tree:
-
-```html
-<html>
-    ...
-    <body>
-        ...
-        <div></div>
-    </body>
-</html>
-```
-
-with all the enhancements enhancing away on the div.
-
-Now with all of these solutions, some custom enhancement vendors might complain, saying "hey, I need that attribute to stay on the element, why are you doing that?" so maybe it should be something that is configurable per enhancement?  Perhaps they want to use this attribute in their styling, for example.
-
-That is one of the reasons that I proposed above that we only apply this optimization for enhancements that have already been registered.  Since it's already been registered, the vendor could specify the rule in a config static property of the class:
-
-```JavaScript
-class WithSteel extends ElementEnhancement {
-    static get config() {
-        return {
-            leaveAttr: true
-        }
-        
-    }
-}
-```
-
-... or more simply:
-
-```JavaScript
-class WithSteel extends ElementEnhancement {
-    static config = {leaveAttrs: true}
-}
-```
-
-The other reason for only doing it only for registered enhancements, is it means no guesswork is involved in determining which attributes are meant to be enhancements.
-
-I suspect this "config" static property will grow to have other settings, especially as it integrates with template instantiation binding.
-
-For example, we may want to be able to specify whether it doesn't make sense for the enhancement to be applied during template instantiation, that it only makes sense to get attached when the element being enhanced becomes connected to the live DOM tree.  I have found one such use case with [be-a-beacon](https://github.com/bahrus/be-a-beacon).  So suggested name for that decision:  attachWhenConnected:
-
-```JavaScript
-class WithSteel extends ElementEnhancement {
-    static config = {
-        leaveAttr: true,
-        attachWhenConnected: true
-    }
-}
-```
-
-
-## AttachedCallback signature
-
-I propose the attached (and detached) callback signature look as follows:
-
-```TypeScript
-interface ElementEnhancement{
-    ...
-    attachedCallback(enhancedElement: Element, enhancementInfo: EnhancementInfo);
-    detachedCallback(enhancedElement: Element, enhancementInfo: EnhancementInfo);
-    ...
-}
-
-interface EnhancementInfo {
-    enhancement: string; //'withSteel'
-    initialPropValues: any; //{ carbonPercent = 0.2}
-    templateAttrs: Map<string, string>;
-    observedAttributes: string[];
-}
-
-```
-
-The enhancement string, and observedAttributes array of strings would, I think, be critical for "self-awareness", particularly for scenarios where the implementation of the enhancement is separated from the code that registers it, and also for being aware of the name of the enhancement and observedAttributes within the context of the scoped registry.
-
-The initialPropValues field of EnhancementInfo would be the object properties that had been passed in to oElement.enhancements.withSteel placeholder prior to the enhancement getting attached.
-
-The templateAttrs would be the original attribute strings that were removed from the template, following Solution 2b above.  This would be undefined for server rendered HTML (and would instead be passed during the attributeChangedCallback).
+Because this proposal is advocating that the EnhancementInfo interface that is passed into the define method has enough information to map from the attribute to the parsed property, it's my view that is would allow template instantiation supported by the platform (or userland implementations) to avoid unnecessary string parsing, by making judicious use of caching.
 
 ## DetachedCallback lifecycle event
 
@@ -853,7 +527,7 @@ When would the detachedCallback method be called?
 
 This is an area likely to require some critical feedback from browser vendors, but I will nevertheless express some thoughts on the matter.
 
-One time it definitely would **not** be called is if the enh-* attribute, if present, is removed from the enhanced element, since as we've discussed, the custom attribute aspect is only one way to attach an enhancement.  A developer may want to remove the attribute to reduce clutter, without jeopardizing the enhancement.
+One time it definitely would **not** be called is if the (enh-*) attributes, if present, are removed from the enhanced element, since as we've discussed, the custom attribute aspect is only one way to attach an enhancement.  A developer may want to remove the attributes to reduce clutter, or before transferring to another Shadow DOM realm to avoid unexpected side effects of being transported in.
 
 I do think the detachedCallback should be associated in some way with the disconnectedCallback method of the enhanced custom element (or the equivalent for built-in elements).  However, there's a scenario where a custom element's disconnectedCallback is called, where we don't necessarily want to fully "dump" the enhancement -- when the element is moved from one parent container to another (within a Shadow DOM realm or even crossing Shadow DOM boundaries.)  To me, it would be ideal if the enhancement could remain attached in this circumstance, as if nothing happened.  
 
@@ -866,7 +540,7 @@ My (naive?) recommendation is that the platform add an event that can be subscri
 I'm encountering a small number of use cases where we want enhancements to "do its thing", and then opt for early retirement.  The use cases I've encountered this with is primarily focused around an enhancement that does something with server-rendered HTML, which then goes idle afterwards, possibly to be replaced by a different kind of enhancement during template instantiation.  So I think it should be possible to do this via:
 
 ```JavaScript
-const detachedEnhancement = await oElement.enhancements.whenDetached('withSteel');
+const detachedEnhancement = await oElement.enhancements.whenDetached(enhancementInfo);
 ```
 
 I think we would want this to remove the attribute also, if applicable.
