@@ -170,8 +170,14 @@ const enhancementInfo: EnhancementInfo = {
         SomeAlreadyLoadedCustomElementClass
     ],
     //entirely optionl
-    allowedCSSMatches: 'input, textarea'
+    allowedCSSMatches: 'input, textarea',
+    enhancer: async () => {
+        return MyEnhancement
+    }
 };
+type branchitude = number;
+type leafitude = number;
+type AttrCoordinates = `{branchitude}.{leafitude}`;
 class MyEnhancement extends ElementEnhancement {
 
     static config = {};
@@ -185,7 +191,7 @@ class MyEnhancement extends ElementEnhancement {
     } 
 	
 	attributeChangedCallback(
-        coordinates: `{branchitude: number}.{leafitude: number}`,
+        coordinates: AttrCoordinates,
         oldValue: string, 
         newValue: string.
         attrNode: Node,
@@ -405,7 +411,7 @@ const enhancementInstance = await oElement.enhancements.whenAttached(enhancement
 const enhancementInstance = await oElement.enhancements.whenResolved(enhancementInfo);
 ```
 
-Both of these methods will see if the enhancement has already been attached, and if so, pass that back.  If not, the method will cause an instance of the class SteelEnhancer to be instantiated, then call attachedCallback and attributeChangedCallback (if applicable) in the same order as is done with custom elements, before returning the instance.
+Both of these methods will see if the enhancement has already been attached, and if so, pass that back.  If not, the method will cause an instance of the class constructor returned by the enhancer option, then call attachedCallback and attributeChangedCallback (if applicable) in the same order as is done with custom elements, before returning the instance.
 
 The whenResolved promise is returned after the developer sets:
 
