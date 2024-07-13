@@ -29,8 +29,7 @@ export const enhancementInfo = {
                 // but this code is demonstrating how to code defensively, so that
                 // the party (or parties) responsible for registering the enhancement 
                 // could choose to modify the name(s), either globally, 
-                // or inside a scoped registry
-                // in a different file.
+                // or inside a scoped registry in a different file.
                 enhancedElement.addEventListener('click', e => {
                     console.log(
                         enhancedElement.getAttribute(base) 
