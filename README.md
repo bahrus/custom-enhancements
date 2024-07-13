@@ -20,21 +20,24 @@ export const enhancementInfo = {
     //canonical name of our "custom prop", accessible via oElement.enhancements[enhancement], 
     //which is where we will find an instance of the class defined below.
     enhKey: 'logger', 
-    base: 'log-to-console', //canonical name(s) of our (base) custom attribute
-}
-customEnhancements.define(enhancementInfo, class extends ElementEnhancement {
-    attachedCallback(enhancedElement: Element, enhancementInfo: EnhancementInfo){
-        const {base} = enhancementInfo;
-        // in this example, base will simply equal 'log-to-console', 
-        // but this code is demonstrating how to code defensively, so that
-        // the party (or parties) responsible for registering the enhancement 
-        // could choose to modify the name(s), either globally, or inside a scoped registry
-        // in a different file.
-        enhancedElement.addEventListener('click', e => {
-            console.log(enhancedElement.getAttribute(base) || enhancedElement.getAttribute(`enh-${base}`)); 
-        });
+    base: 'log-to-console', //canonical name(s) of our (base) custom attribute,
+    enhancer: () => {
+        return class extends ElementEnhancement {
+            attachedCallback(enhancedElement: Element, enhancementInfo: EnhancementInfo){
+                const {base} = enhancementInfo;
+                // in this example, base will simply equal 'log-to-console', 
+                // but this code is demonstrating how to code defensively, so that
+                // the party (or parties) responsible for registering the enhancement 
+                // could choose to modify the name(s), either globally, or inside a scoped registry
+                // in a different file.
+                enhancedElement.addEventListener('click', e => {
+                    console.log(enhancedElement.getAttribute(base) || enhancedElement.getAttribute(`enh-${base}`)); 
+                });
+            }
+        }
     }
-});
+}
+customEnhancements.define(enhancementInfo);
 ```
 
 ```HTML
