@@ -267,11 +267,9 @@ Even better, this proposal supports emoji's:
 </time>
 ```
 
-So what would make much more sense to me is rather than having a "has" requirement, to instead insist that all the attributes that a single enhancement "observes" begin with the same stem (be-intl in this case), presumably tied to the package of the enhancement.  This proposal is not yet advocating *enforcing* such a rule, but I am weighing the pro's and con's of such a rule, and am much more in favor of that kind of restriction, vs, extra (seemingly unneeded) complexity that a "has" attribute requirement would introduce.
+So what would make much more sense to me is rather than having a "has" requirement, to instead insist that all the attributes that a single enhancement "observes" begin with the same base (be-intl or 🌐 in this case), presumably tied to the package of the enhancement.  This proposal is now advocating enforcing such a rule as far as help with parsing and automated attachment.
 
-The only argument I see, honestly, in favor of the "has" requirement, would be simply to make things easier for the browser's parsing, but, again, I think that needs to be backed up by quite solid evidence and a kind of desperate last resort scenario.
-
-### Better ergonomics for specifying the attribute format?
+### Better ergonomics for managing attribute changes
 
 Since this proposal is focusing somewhat on managing attributes, it is including some  additional support beyond what custom elements currently provide, as far as making them easier to manage. 
 
