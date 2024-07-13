@@ -28,7 +28,8 @@ export const enhancementInfo = {
                 // in this example, base will simply equal 'log-to-console', 
                 // but this code is demonstrating how to code defensively, so that
                 // the party (or parties) responsible for registering the enhancement 
-                // could choose to modify the name(s), either globally, or inside a scoped registry
+                // could choose to modify the name(s), either globally, 
+                // or inside a scoped registry
                 // in a different file.
                 enhancedElement.addEventListener('click', e => {
                     console.log(
@@ -297,7 +298,6 @@ I agree with others that the support that the platform currently provides for ma
 I like the promising ideas presented [here](https://github.com/WICG/webcomponents/issues/1029) as far as providing declarative support for managing properties and attributes.  Based on the reasoning above, I think it makes sense to consider such [improvements to custom elements themselves](https://github.com/WICG/webcomponents/issues/1045), and I see no reason not to carry over such ideas to custom enhancements, which this proposal does in fact do (with some variations where it makes sense).  
 
 Or maybe it would make more sense to "pilot" such ideas on custom enhancements, and then apply to custom elements.  I think those ideas are 100% compatible with this proposal, and shouldn't break it in any way. 
-
 
 ## Backdrop
 
