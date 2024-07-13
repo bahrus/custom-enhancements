@@ -17,7 +17,7 @@ Say all you need to do is to create an isolated behavior/enhancement/hook/whatev
 
 ```JS
 export const enhancementInfo = {
-    //canonical name of our "custom prop", accessible via oElement.enhancements[enhancement], 
+    //name of our "custom prop", accessible via oElement.enhancements[enhancement], 
     //which is where we will find an instance of the class defined below.
     enhKey: 'logger', 
     base: 'log-to-console', //canonical name(s) of our (base) custom attribute,
