@@ -280,11 +280,15 @@ So what would make much more sense to me is rather than having a "has" requireme
 
 ### Better ergonomics for managing attribute changes
 
-Since this proposal is focusing somewhat on managing attributes, it is including some  additional support beyond what custom elements currently provide, as far as making them easier to manage. 
+This proposal is focusing somewhat on managing attributes, similar to custom elements.  
 
-And for clarity, the "house words" for this proposal are "Custom Prop + 0 or more Custom Attributes => Custom Enhancement".  The custom prop refers to the name of the enhancement, which, as will be discussed below, provides the key off of the "enhancements" sub-object of the element.  But within that "custom prop" resides a rich universe of properties defined within the user defined class, and as we've seen, the api shape for that class is almost identical to custom elements.  So it makes sense also to look for better ergonomics as far as defining properties, some of which may pair with observed attributes for custom enhancements, just as much as it does for custom elements.
+And for clarity, the "house words" for this proposal are "Custom Prop + 0 or more Custom Attributes => Custom Enhancement".  The custom prop refers to the name of the enhancement, which, as will be discussed below, provides the key off of the "enhancements" sub-object of the element.  But within that "custom prop" resides a rich universe of properties defined within the user defined class, and as we've seen, the api shape for that class is almost identical to custom elements.  
 
-I like the promising ideas presented [here](https://github.com/WICG/webcomponents/issues/1029) as far as providing declarative support for managing properties and attributes.  Based on the reasoning above, I think it makes sense to consider such [improvements to custom elements themselves](https://github.com/WICG/webcomponents/issues/1045), and I see no reason not to carry over such ideas to custom enhancements.  Or maybe it makes more sense to "pilot" such ideas on custom enhancements, and then apply to custom elements.  I think those ideas are 100% compatible with this proposal, and shouldn't break it in any way. 
+I agree with others that the support that the platform currently provides too little  support for managing attributes with custom elements effectively.  So further compounding that shortcoming by creating a whole new api without additional support doesn't seem right. So it makes sense also to look for better ergonomics as far as defining properties, some of which may pair with observed attributes for custom enhancements, just as much as it does for custom elements.
+
+I like the promising ideas presented [here](https://github.com/WICG/webcomponents/issues/1029) as far as providing declarative support for managing properties and attributes.  Based on the reasoning above, I think it makes sense to consider such [improvements to custom elements themselves](https://github.com/WICG/webcomponents/issues/1045), and I see no reason not to carry over such ideas to custom enhancements, which this proposal does in fact do (with some variations where it makes sense).  
+
+Or maybe it makes more sense to "pilot" such ideas on custom enhancements, and then apply to custom elements.  I think those ideas are 100% compatible with this proposal, and shouldn't break it in any way. 
 
 
 ## Backdrop
