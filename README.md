@@ -83,7 +83,9 @@ Some risks to doing this:
 
 1.  It may break xml (like svg tags)
 2.  It is even farther away from being "HTML5 compliant"
-3.  Clashes between different libraries are extremely likely to occur, which is why we look closely at this issue in this proposal, and posit that a solution to scoped registry should ideally be shipping and proven before moving on to this problem space. 
+3.  Clashes between different libraries are extremely likely to occur (the shorter the name, the less the ability to "reserve" the name in npm or some other package manager), which is why we look closely at this issue in this proposal, and posit that a solution to scoped registry should ideally be shipping and proven before moving on to this problem space.
+
+It doesn't seem to me that any of these concerns would "block" the platform from doing its thing, so this proposal opts to empower the developer to take these risks.
 
 ## A note about naming, part I
 
