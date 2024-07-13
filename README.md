@@ -58,7 +58,7 @@ Done!
 
 It would be great if we could use a short attribute name, like "log".  That can be done for custom elements, why not custom enhancements?  This is especially important to consider because, as we will see, this proposal supports multiple attributes "owned" by an enhancement.
 
-While supporting single word attributes for custom elements, that could conflict with future global attributes is a bit dicey, that ship has sailed, and we view it as similar to key words in JavaScript, just a risk we have agreed is acceptable.
+While supporting single word attributes for custom elements that could conflict with future global attributes is a bit dicey, that ship has sailed, and we view it as similar to key words in JavaScript, just a risk we have agreed is acceptable.
 
 This proposal views the risks as too high to do that when we move on to enhancing higher-order components, especially as the platform is happily introducing more of them (🥳).  There is an informal understanding that built-in attributes won't have dashes in them (e.g. onclick, etc), except once in a blue moon (aria-*) so insisting on dashes in this context seems prudent.
 
