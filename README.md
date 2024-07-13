@@ -76,6 +76,7 @@ export const enhancementInfo = {
 <div 🪵="clicked on a div"></div>
 
 ...
+```
 
 Or developers could use single words using the small latin characters.  Or an emoji followed by ascii characters.  Whatever character sets the platform says it will never tap into.
 
@@ -129,12 +130,14 @@ This cautionary note is only applicable for enhancements you wish to make public
 ## ElementEnhancement API Shape
 
 ```JS
-const canonicalObservedAttributes: [string, string, ..., string] = [
-    'my-canonical-attr-1',
-    'my-canonical-attr-2',
-    ...
-    'my-canonical-attr-n',
-];
+const enhancementInfo: EnhancementInfo = {
+    enhKey: 'greetings',
+    base: ['greetings'],
+    branches: [[':'], ['', 'hello', 'goodbye'],
+    leaves: {
+        hello: ['--', 'how-are-you', 'hows-it-going']
+    }
+};
 class MyEnhancement extends ElementEnhancement {
 
     static config = {};
@@ -147,9 +150,10 @@ class MyEnhancement extends ElementEnhancement {
         //or disconnectedCallback if that is clearer.
     } 
 	
-	attributeChangedCallback(idx: number, oldValue: string, newValue: string) { 
-        // Called whenever the attribute(s) values change
-        const canonicalAttrName = canonicalObservedAttributes[idx];
+	attributeChangedCallback(
+        coordinates: `{branchitude: number}.{leafitude: number}`, 
+        oldValue: string, newValue: string) { 
+        
     }
 
     //  Entirely optional filtering conditions for when the enhancement should be
