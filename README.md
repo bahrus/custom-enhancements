@@ -136,9 +136,9 @@ This cautionary note is only applicable for enhancements you wish to make public
 const enhancementInfo: EnhancementInfo = {
     enhKey: 'greetings',
     base: ['greetings'],
-    branches: [[':'], ['', 'hello', 'goodbye'],
+    branches: [[':'], ['', 'hello', 'goodbye'], //optional front delimiter of :
     leaves: {
-        hello: ['--', 'how-are-you', 'hows-it-going']
+        hello: [['--'], 'how-are-you', 'hows-it-going'] //optional front delimiter of --
     },
     map: {
         '0.0': {
@@ -429,17 +429,17 @@ In addition to the two methods above, the enhancements property would contain a 
 This would allow consumers of the enhancement to pass property values (and only property values) ahead of the upgrade (or after the upgrade), so that no "await" is necessary:
 
 ```JavaScript
-oElement.enhancements.setPropsFor.withSteel.carbonPercent = 0.2;
+oElement.enhancements.setPropsFor.steelEnhancer.carbonPercent = 0.2;
 ```
 
 These value settings would either get applied directly to oElement.enhancements.withSteel if it has already been attached.  Or, if it hasn't been attached yet, the browser would set (or merge) the value into the property, and begin attaching the enhancement in the background:
 
 ```JavaScript
-if(oElement.enhancements.withSteel === undefined) {
-    oElement.enhancements.withSteel = {};
+if(oElement.enhancements.steelEnhancer=== undefined) {
+    oElement.enhancements.steelEnhancer = {};
     // invoke some method asynchronously in the background to attach the enhancement.
 } 
-oElement.enhancements.withSteel.carbonPercent = 0.2;
+oElement.enhancements.steelEnhancer.carbonPercent = 0.2;
 
 ```
 
