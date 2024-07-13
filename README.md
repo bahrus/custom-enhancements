@@ -458,8 +458,6 @@ This would allow consumers of the enhancement to pass property values (and only 
 oElement.enhancements.setPropsFor.steelEnhancer.carbonPercent = 0.2;
 ```
 
-The attaching in the background convenience would only be possible if the developer has already registered the customEnhancement via customEnhancements.define or one of the two methods mentioned above - oElement.enhancements.whenAttached and oElement.enhancements.whenResolved.  So the platform could skip that step if no matching enhancement is found in the registry.
-
 These value settings would either get applied directly to oElement.enhancements.withSteel if it has already been attached.  Or, if it hasn't been attached yet, the browser would set (or merge) the value into the property, and begin attaching the enhancement in the background:
 
 ```JavaScript
@@ -472,6 +470,8 @@ oElement.enhancements.steelEnhancer.carbonPercent = 0.2;
 ```
 
 The object would sit there, ready to be absorbed into the enhancement during the attachedCallback handshake, which could happen right away if already loaded, or whenever the customEnhancements.whenDefined is resolved for this enhancement.
+
+The attaching in the background convenience would only be possible if the developer has already registered the customEnhancement via customEnhancements.define or one of the two methods mentioned above - oElement.enhancements.whenAttached and oElement.enhancements.whenResolved.  So the platform could skip that step if no matching enhancement is found in the registry.
 
 Due to this property, setPropsFor, being a proxy, the convenience of this approach likely comes at a cost.  Proxies do impose a bit of a performance penalty, so a framework or library that uses this feature would be well-advised to add a little bit of nuance to the code, to set properties directly to the enhancement once it is known that the enhancement has attached.  For example, use this property the first time setting a property value, and then more directly for subsequent times.  Or, alternatively, implement the identical logic described above within the library code, thus avoiding the use of this special property altogether.
 
