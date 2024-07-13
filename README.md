@@ -458,6 +458,8 @@ This would allow consumers of the enhancement to pass property values (and only 
 oElement.enhancements.setPropsFor.steelEnhancer.carbonPercent = 0.2;
 ```
 
+The attaching in the background convenience would only be possible if the developer has already registered the customEnhancement via customEnhancements.define or one of the two methods mentioned above - oElement.enhancements.whenAttached and oElement.enhancements.whenResolved.  So the platform could skip that step if no matching enhancement is found in the registry.
+
 These value settings would either get applied directly to oElement.enhancements.withSteel if it has already been attached.  Or, if it hasn't been attached yet, the browser would set (or merge) the value into the property, and begin attaching the enhancement in the background:
 
 ```JavaScript
