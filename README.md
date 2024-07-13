@@ -240,7 +240,7 @@ I *think* the solution for this conundrum would be if the build process also rem
 ###  What, if any, are the benefits of having a "has" attribute?
 
 > [!NOTE]
-> To my great (temporary) relief, the main advocate of the "has" proposal and I seemed, for a short while at least, to have found common ground somewhere in the middle, based on observed attributes (which I recently discovered, was there all along with the has proposal, I missed it because I was so puzzled by the purpose of the "has" attribute), so the discussion below is considerably less important than it was previously, and is being left for now just in case it helps clarify anything.  I should also point out that this proposal no longer considers "observedAttributes" to be the right model for this problem space, meaning a consensus appears even more tenuous than before.
+> To my great (temporary) relief, the main advocate of the "has" proposal and I seemed, for a short while at least, to have found common ground somewhere in the middle, based on observed attributes (which I recently discovered, was there all along with the has proposal, I missed it because I was so puzzled by the purpose of the "has" attribute), I should also point out that this proposal no longer considers "observedAttributes" to be the right model for this problem space, meaning a consensus appears even more precarious than before.
 
 From a "developer advocacy" point of view, as the simple example I opened with demonstrates, there doesn't seem to be any benefit to having an extra "has" attribute -- that would just be clumsy and provide more opportunities for conflicts between different teams of developers.
 
@@ -284,6 +284,8 @@ Even better, this proposal supports emoji's, which allows for quite short attrib
 
 So what would make much more sense to me is rather than having a "has" requirement, to instead insist that all the attributes that a single enhancement "observes" begin with the same base (be-intl or 🌐 in this case), presumably tied to the package of the enhancement.  This proposal is now advocating enforcing such a rule, at least if the developer wishes to receive help from the platform with parsing and automated attachment.
 
+The reason that the flat observedAttributes approach used for custom elements doesn't quite fit the bill, is that I think it will be quite natural for developers to start by doing something with the base attribute, like supporting a JSON structure for all the properties, then decide "you know, it would be helpful to provide a more semantic api where the aspects of the enhancement can be specified individually" and kind of slap it on.  Such is not the case with custom elements. 
+
 ### Better ergonomics for managing attribute changes
 
 This proposal is focusing somewhat on managing attributes, similar to custom elements.  
@@ -294,7 +296,7 @@ I agree with others that the support that the platform currently provides too li
 
 I like the promising ideas presented [here](https://github.com/WICG/webcomponents/issues/1029) as far as providing declarative support for managing properties and attributes.  Based on the reasoning above, I think it makes sense to consider such [improvements to custom elements themselves](https://github.com/WICG/webcomponents/issues/1045), and I see no reason not to carry over such ideas to custom enhancements, which this proposal does in fact do (with some variations where it makes sense).  
 
-Or maybe it makes more sense to "pilot" such ideas on custom enhancements, and then apply to custom elements.  I think those ideas are 100% compatible with this proposal, and shouldn't break it in any way. 
+Or maybe it would make more sense to "pilot" such ideas on custom enhancements, and then apply to custom elements.  I think those ideas are 100% compatible with this proposal, and shouldn't break it in any way. 
 
 
 ## Backdrop
