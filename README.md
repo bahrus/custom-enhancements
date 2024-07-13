@@ -383,7 +383,7 @@ Many are adding binding support to elements, which may or not resonate with deve
 
 So "enhancements" seems to cover all bases.
 
-Others prefer "behaviors" (but the others who do seem to think it is of zero consequence, whereas I think there is some substantial consequence to the decision, if that counts for anything), I'm open to both, maybe my reasoning above is wrong (but no one has yet to address my concerns head on).
+Others prefer "behaviors" (but the others who do seem to think it is of zero consequence, whereas I think there is some substantial consequence to the decision, if that counts for anything). I'm open to both, maybe my reasoning above is wrong (but no one has yet to address my concerns head on).
 
 Choosing the right name seems important, as it ought to align somewhat with the reserved sub-property of the element, as well as the reserved prefix for attributes (think data- / dataset).
 
