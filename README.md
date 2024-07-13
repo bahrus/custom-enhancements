@@ -31,7 +31,9 @@ export const enhancementInfo = {
                 // could choose to modify the name(s), either globally, or inside a scoped registry
                 // in a different file.
                 enhancedElement.addEventListener('click', e => {
-                    console.log(enhancedElement.getAttribute(base) || enhancedElement.getAttribute(`enh-${base}`)); 
+                    console.log(
+                        enhancedElement.getAttribute(base) 
+                        || enhancedElement.getAttribute(`enh-${base}`)); 
                 });
             }
         }
@@ -139,7 +141,15 @@ const enhancementInfo: EnhancementInfo = {
     branches: [[':'], ['', 'hello', 'goodbye'],
     leaves: {
         hello: ['--', 'how-are-you', 'hows-it-going']
-    }
+    },
+    //entirely optional
+    allowedInstanceTypes: [            
+        HTMLInputElement, 
+        HTMLTextArea, 
+        SomeAlreadyLoadedCustomElementClass
+    ],
+    //entirely optionl
+    allowedCSSMatches: 'input, textarea'
 };
 class MyEnhancement extends ElementEnhancement {
 
