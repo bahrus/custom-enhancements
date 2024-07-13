@@ -175,7 +175,8 @@ const enhancementInfo: EnhancementInfo = {
     allowedCSSMatches: 'input, textarea',
     enhancer: async () => {
         return MyEnhancement
-    }
+    },
+    initPropVals: any //set during the runtime handshake
 };
 type branchitude = number;
 type leafitude = number;
