@@ -20,7 +20,7 @@ export const enhancementInfo = {
     //name of our "custom prop", accessible via oElement.enhancements[enhancement], 
     //which is where we will find an instance of the class defined below.
     enhKey: 'logger', 
-    base: 'log-to-console', //canonical name(s) of our (base) custom attribute.
+    base: 'log-to-console', //canonical name of our (base) custom attribute.
     enhancer: () => {
         return class extends ElementEnhancement {
             attachedCallback(enhancedElement: Element, enhancementInfo: EnhancementInfo){
