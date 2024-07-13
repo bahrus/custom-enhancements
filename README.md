@@ -11,8 +11,6 @@ PR's, Issues [welcome](https://github.com/bahrus/custom-enhancements)
 
 This is [one](https://github.com/whatwg/html/issues/2271) [of](https://eisenbergeffect.medium.com/2023-state-of-web-components-c8feb21d4f16) [a](https://github.com/WICG/webcomponents/issues/1029) [number](https://github.com/WICG/webcomponents/issues/727) of interesting proposals, one of which (or some combination?) can hopefully get buy-in from all three browser vendors.  This proposal borrows heavily from the others.
 
-This proposal just continues to be my view of the **best** approach, and I don't think [I'm alone](https://github.com/WICG/webcomponents/issues/1029#issuecomment-1728875331), at least in the important things. 
-
 ## Custom Attributes For [Simple Enhancements](https://www.w3.org/TR/design-principles/#simplicity)
 
 Say all you need to do is to create an isolated behavior/enhancement/hook/whatever associated with an attribute, say "log-to-console" anytime the user clicks on elements adorned with that attribute, where we can specify the message.  Here's how that would be done with this proposal.  It could be done more simply, with hard coded values, and without the commentary noise, so please allow for that when weighing the complexity. 
@@ -23,7 +21,12 @@ Say all you need to do is to create an isolated behavior/enhancement/hook/whatev
 export const canonicalEnhancementName = 'logger'; 
 //canonical name(s) of our custom attribute(s)
 export const canonicalObservedAttributes = ['log-to-console']; 
-customEnhancements.define(canonicalEnhancementName, class extends ElementEnhancement {
+
+export const enhancementInfo = {
+    enhKey: 'logger',
+    base: 'log-to-console',
+}
+customEnhancements.define(enhancementInfo, class extends ElementEnhancement {
     attachedCallback(enhancedElement: Element, enhancementInfo: EnhancementInfo){
         const {observedAttributes, enhancement} = enhancementInfo;
         const [msgAttr] = observedAttributes; 
@@ -36,8 +39,6 @@ customEnhancements.define(canonicalEnhancementName, class extends ElementEnhance
             console.log(enhancedElement.getAttribute(msgAttr)); 
         });
     }
-}, {
-    observedAttributes: canonicalObservedAttributes
 });
 ```
 
