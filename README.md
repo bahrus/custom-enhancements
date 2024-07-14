@@ -226,7 +226,7 @@ const enhancementInfo: EnhancementInfo = {
         //prefix assumed to be '-' if not specified
         prefix: ':',
         names: ['', 'hello', 'goodbye'],
-    }
+    },
     //optional 
     leaves: {
         //prefix assumed to be '-' if not specified
