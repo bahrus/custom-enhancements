@@ -255,6 +255,8 @@ as this would allow for more readable syntax:
     enh_my-greetings:good-bye="select from funny section"
     enh_my-greetings:good-bye---last-words="smell you later"
 >
+...
+</your-custom-element>
 ```
 
 ### Filter support with supportedInstanceTypes, supportedCSSMatches
