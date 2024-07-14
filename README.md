@@ -123,32 +123,24 @@ So why not use the customElements' registry, why come up with a new registry, cu
 
 The bottom line is I don't think the slight differences with custom elements make this proposal any more complex than defining a custom element.
 
-The only cautionary note I have is that because of the complete flexibility this proposal provides as far as allowing users of a custom enhancement to choose their own custom attribute names, that may differ from the canonical names (optionally) provided as a helpful constant in the class, the developer will probably want to be a bit cautious when declaring a public attribute that the enhancement supports, kind of like defining columns of a database table.  Like the database columns of a table example, adding additional attributes will be easy as pie.  Removing an attribute, though, could break compatibility.  So maybe when introducing a new attribute, give it some time to mature, test it out with your own stuff first, and once you are convinced the need for the attribute is here to stay, only then release the new version that supports the new attribute.
-
-This cautionary note is only applicable for enhancements you wish to make public and have it be widely used.
- 
-
 > [!NOTE]
-> I agree 100% with others that these proposals must wait on scoped registry being fully settled.  In the above example, we have two strings that we need to protect from colliding with other enhancements (and with attributes of the (custom) elements themselves):  The name of the enhancement - "logger" - and the attribute(s) tied to it, if any:  'log-to-console'.  Both will need to be considered as far as best ways of managing these within each Shadow scope.  It may be that the easiest solution will require some sort of pattern between the name of the enhancement and the attributes associated with that name (for example, insisting that the name of the enhancement matches the beginning of the camelCased strings of all the "owned" attributes).  This proposal, for now, opts to allow the developer to name them in the way that makes most sense to the author, with the hope that this can survive scrutiny when considering scoped registries and concerns about name-spacing.
+> I agree 100% with others that scoped registry being fully settled before some combination of these proposals get rolled out into production.  In the above example, we have two strings that we need to protect from colliding with other enhancements (and with attributes of the (custom) elements themselves):  The name of the enhancement - "logger" - and the attribute(s) tied to it, if any:  'log-to-console'.  Both will need to be considered as far as best ways of managing these within each Shadow scope.  It may be that the easiest solution will require some sort of pattern between the name of the enhancement and the attributes associated with that name (for example, insisting that the name of the enhancement matches the beginning of the camelCased strings of all the "owned" attributes).  This proposal, for now, opts to allow the developer to name them in the way that makes most sense to the author, with the hope that this can survive scrutiny when considering scoped registries and concerns about name-spacing.
 
 
 ## ElementEnhancement API Shape
 
-```JS
+```TypeScript
 const enhancementInfo: EnhancementInfo = {
     //required
     enhKey: 'greetings',
     //optional
-    base: ['greetings'],
+    base: ['my-greetings'],
     //optional
-    branches: {
-        in: [, '', 'hello', 'goodbye'],
-        withPrefix: ':' //optional, assume dash(-) if undefined 
-    },
+    branches: ['', 'hello', 'goodbye'],
     //optional 
     leaves: {
-        in: ['how-are-you', 'hows-it-going'],
-        withPrefix: '--' //optional, assume dash(-) if undefined 
+        hello: ['', 'how-are-you', 'hows-it-going'],
+        goodbye: ['', 'last-words', 'scene-transition'] 
     },
     //optional
     map: {
@@ -164,17 +156,17 @@ const enhancementInfo: EnhancementInfo = {
             instanceOf: 'String',
             mapsTo: 'firstHelloGreeting'
         }
-    }
+    },
     //entirely optional
     allowedInstanceTypes: [            
         HTMLInputElement, 
         HTMLTextArea, 
         SomeAlreadyLoadedCustomElementClass
     ],
-    //entirely optionl
+    //entirely optional
     allowedCSSMatches: 'input, textarea',
     enhancer: async () => {
-        return MyEnhancement
+        return MyEnhancementClassConstructor
     },
     initPropVals: any //set during the runtime handshake
 };
@@ -200,7 +192,6 @@ class MyEnhancement extends ElementEnhancement {
         attrNode: Node,
         ) { 
         ...
-        }
     }
 
     //  Entirely optional filtering conditions for when the enhancement should be
@@ -220,6 +211,53 @@ class MyEnhancement extends ElementEnhancement {
 
 }
 ```
+
+At the risk of overwhelming the reader, I want to amend the api above with a little completely optional nuance to allow for different attribute delimiters at different levels of the hierarchy:
+
+```JS
+const enhancementInfo: EnhancementInfo = {
+    base: {
+        //prefix assumed to be '-' if not specified
+        prefix: '_', 
+        name: 'my-greetings',
+    },
+    //optional
+    branches: {
+        //prefix assumed to be '-' if not specified
+        prefix: ':',
+        names: ['', 'hello', 'goodbye'],
+    }
+    //optional 
+    leaves: {
+        //prefix assumed to be '-' if not specified
+        hello: {
+            prefix: '--',
+            names: ['', 'how-are-you', 'hows-it-going']
+        },
+        goodbye:{
+            prefix: '---',
+            names: ['', 'last-words', 'scene-transition']
+        }
+        
+    },
+
+};
+
+```
+
+as this would allow for more readable syntax:
+
+```html
+<your-custom-element 
+    enh_my-greetings="courtesy of hallmark" 
+    enh_my-greetings:hello="select from gloomy section"
+    enh_my-greetings:hello--how-are-you="one day closer to death"
+    enh_my-greetings:good-bye="select from funny section"
+    enh_my-greetings:good-bye---last-words="smell you later"
+>
+```
+
+### Filter support with supportedInstanceTypes, supportedCSSMatches
 
 Having filtering support is there to benefit the developer first and foremost -- the developer is essentially publishing a "contract" of what kinds of elements they can support.  The idea for using supportedInstanceTypes, proposed [here](https://github.com/WICG/webcomponents/issues/1029) seems like it has some quite positive benefits:
 
