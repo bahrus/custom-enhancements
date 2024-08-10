@@ -138,7 +138,7 @@ const enhancementInfo: EnhancementInfo = {
     //optional 
     leaves: {
         hello: ['', 'how-are-you', 'hows-it-going'],
-        goodbye: ['', 'last-words', 'scene-transition'] 
+        goodbye: ['', 'last-words', 'ps'] 
     },
     //optional
     map: {
@@ -238,7 +238,7 @@ const enhancementInfo: EnhancementInfo = {
         },
         goodbye:{
             prefix: '---',
-            names: ['', 'last-words', 'scene-transition']
+            names: ['', 'last-words', 'ps']
         }
         
     },
