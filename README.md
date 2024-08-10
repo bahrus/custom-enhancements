@@ -21,21 +21,19 @@ export const enhancementInfo = {
     //which is where we will find an instance of the class defined below.
     enhKey: 'logger', 
     base: 'log-to-console', //canonical name of our (base) custom attribute.
-    enhancer: async () => {
-        return class extends ElementEnhancement {
-            attachedCallback(enhancedElement: Element, enhancementInfo: EnhancementInfo){
-                const {base} = enhancementInfo;
-                // in this example, base will simply equal 'log-to-console', 
-                // but this code is demonstrating how to code defensively, so that
-                // the party (or parties) responsible for registering the enhancement 
-                // could choose to modify the name(s), either globally, 
-                // or inside a scoped registry in a different file.
-                enhancedElement.addEventListener('click', e => {
-                    console.log(
-                        enhancedElement.getAttribute(base) 
-                        || enhancedElement.getAttribute(`enh-${base}`)); 
-                });
-            }
+    enhancer: class extends ElementEnhancement {
+        attachedCallback(enhancedElement: Element, enhancementInfo: EnhancementInfo){
+            const {base} = enhancementInfo;
+            // in this example, base will simply equal 'log-to-console', 
+            // but this code is demonstrating how to code defensively, so that
+            // the party (or parties) responsible for registering the enhancement 
+            // could choose to modify the name(s), either globally, 
+            // or inside a scoped registry in a different file.
+            enhancedElement.addEventListener('click', e => {
+                console.log(
+                    enhancedElement.getAttribute(base) 
+                    || enhancedElement.getAttribute(`enh-${base}`)); 
+            });
         }
     }
 }
@@ -165,6 +163,10 @@ const enhancementInfo: EnhancementInfo = {
     ],
     //entirely optional
     allowedCSSMatches: 'input, textarea',
+    //required.
+    //Can point directly to an already loaded Class constructor, or
+    //as shown below, it can point to an async loader that allows
+    //for lazy loading on demand.
     enhancer: async () => {
         return MyEnhancementClassConstructor
     },
