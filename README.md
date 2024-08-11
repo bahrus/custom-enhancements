@@ -635,21 +635,21 @@ But for now, the way this feature can be used is with a bespoke custom enhanceme
 
 ## Support for a view model web component / enhancement tied to the itemscope attribute.
 
-There are many scenarios where it makes to have one "central" enhancement, that frameworks / libraries can expect, that manages the data or view model for the built-in element -- scenarios where we can't wrap the element inside a custom element.
+There are many scenarios where it makes sense to have one "central" enhancement, that frameworks / libraries can expect, that manages the data or view model for the built-in element -- scenarios where we can't wrap the element inside a custom element.
 
-This proposal is advocating enhancing the itemscope attribute, so that it can optionally specify the name of a custom element or custom enhancement to automatically attach to the top level of element, which frameworks could then easily pass values to.  For example, with lit-html:
+This proposal is advocating enhancing the itemscope attribute, so that it can optionally specify the name of a custom element or custom enhancement to automatically attach to the top level of the element to a officially recognized property name (name tbd), which frameworks could then easily pass values to.  For example, with lit-html:
 
 ```JavaScript
 html`
 <table>
     <thead><th>Name</th><th>SSN Number</thead>
-    <tbody 🫚>
+    <tbody>
 ${myList.map(item => html`
     <tr itemscope=my-item .tbd=${item}>
         <td itemprop=name>
             ${item.name}
         </td>
-        <td>${item.ssn}</td>
+        <td itemprop=ssn>${item.ssn}</td>
     </tr>
 `)}
     </tbody>
@@ -661,7 +661,8 @@ What this would do:
 
 1.  If my-item is a custom element, use that.  Otherwise, check if a custom enhancement with that name exists in the registry.
 2.  In the case that my-item is a custom element, use document.createElement('my-item') to generate the custom element.  The custom element's attach method could choose to place itself somewhere inside the element it is adorning.
-3.  Before merging, attach whatever properties were passed to the "tbd" placeholder.
+3.  Before attaching, merge whatever properties were passed to the "tbd" placeholder.
+4.  After the attachment, "setting" the property to an object would **not** replace the custom element/enhancement with the object, but rather the setter for "tbd" would interject, and do an Object.assign of the passed in object into the custom element/enhancement instance.
 
 What the real name of "tbd" should be is completely open in my mind.  Nothing jumps out at me as the "correct" answer.  Names that would make sense to me are:  "host", "vm", "viewModel", "scope", or "ish" -- short for itemscope host.
 
