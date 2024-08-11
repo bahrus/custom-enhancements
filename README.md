@@ -5,9 +5,9 @@ Bruce B. Anderson
 
 PR's, Issues [welcome](https://github.com/bahrus/custom-enhancements)
 
-## Last update
+Last update
 
-2024-07-13
+2024-08-13
 
 This is [one](https://github.com/whatwg/html/issues/2271) [of](https://eisenbergeffect.medium.com/2023-state-of-web-components-c8feb21d4f16) [a](https://github.com/WICG/webcomponents/issues/1029) [number](https://github.com/WICG/webcomponents/issues/727) of interesting proposals, one of which (or some combination?) can hopefully get buy-in from all three browser vendors.  This proposal borrows heavily from the others.
 
@@ -632,6 +632,39 @@ In order to avoid that, we need to schedule them in sequence.  This means that w
 I have a heavy suspicion that as the platform builds out template instantiation and (hopefully) includes something close to this solution as far as plug-in's, there will arise other reasons to support this feature.
 
 But for now, the way this feature can be used is with a bespoke custom enhancement, such as [be-promising](https://github.com/bahrus/be-promising#be-promising).
+
+## Support for a view model web component / enhancement tied to the itemscope attribute.
+
+There are many scenarios where it makes to have one "central" enhancement, that frameworks / libraries can expect, that manages the data or view model for the component -- scenarios where we can't wrap the element inside a custom element.
+
+This proposal is advocating enhancing the itemscope attribute to be able to specify the name of a custom element or custom enhancement to automatically attach to the top level of element, which frameworks could already pass values to:
+
+```JavaScript
+html`
+<table>
+    <thead><th>Name</th><th>SSN Number</thead>
+    <tbody 🫚>
+${myList.map(item => html`
+    <tr itemscope=my-item .tbd=${item}>
+        <td itemprop=name>
+            ${item.name}
+        </td>
+        <td>${item.ssn}</td>
+    </tr>
+`)}
+    </tbody>
+</table>
+`
+```
+
+What this would do:  
+
+1.  If my-item is a custom element, use that.  Otherwise, check if a custom enhancement with that name exists in the registry.
+2.  In the case that my-item is a custom element, use document.createElement('my-item') to generate the custom element.  The custom element's attach method could choose to place itself somewhere inside the element it is adorning.
+3.  Before merging, attach whatever properties were passed to the "tbd" placeholder.
+
+What the real name of "tbd" should be is completely open.  Names that would make sense to me are:  "host", "vm", "scope", or "ish" -- short for itemscope host.
+
 
 ## Open Questions
 
