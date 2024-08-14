@@ -132,7 +132,7 @@ const enhancementInfo: EnhancementInfo = {
     //required
     enhKey: 'greetings',
     //optional
-    base: ['my-greetings'],
+    base: 'my-greetings',
     //optional
     branches: ['', 'hello', 'goodbye'],
     //optional 
@@ -294,6 +294,7 @@ I amended this proposal, though, to support multiple attributes for a single enh
 
 1.  The values can be simple strings / numbers / boolean, vs JSON.  
 2.  Some frameworks may prefer to modify state via attributes instead of properties.
+3.  Styling may benefit as well.
 
 However, I think by supporting multiple attributes, requiring that they have dashes or at least one non ascii character, and knowing that developers will go out of their way to avoid clashing with other libraries, we can achieve the same effect without telling the entire IT industry that their way of doing things is wrong.  **Almost no one is using a "has" attribute, so we should, I think, bend over backwards to not impose a new requirement in order to utilize the platform, without an extremely strong reason**.  So with this proposal, we can have attributes that naturally group together.  To take one very practical example where this makes sense:  Suppose we want to provide a userland implementation of [this proposal](https://github.com/whatwg/html/issues/2404).  We could define it like this, which this proposal supports:
 
