@@ -7,7 +7,7 @@ PR's, Issues [welcome](https://github.com/bahrus/custom-enhancements)
 
 Last update
 
-2024-08-13
+2024-08-30
 
 This is [one](https://github.com/whatwg/html/issues/2271) [of](https://eisenbergeffect.medium.com/2023-state-of-web-components-c8feb21d4f16) [a](https://github.com/WICG/webcomponents/issues/1029) [number](https://github.com/WICG/webcomponents/issues/727) of interesting proposals, one of which (or some combination?) can hopefully get buy-in from all three browser vendors.  This proposal borrows heavily from the others.
 
@@ -58,9 +58,9 @@ Done!
 
 It would be great if we could use a short attribute name, like "log".  That can be done for custom elements, why not custom enhancements?  This is especially important to consider because, as we will see, this proposal supports multiple attributes "owned" by an enhancement, so allowing for small names would help reduce carpal syndrome.
 
-While it is a bit dicey to be supporting these single word attributes for custom elements, that could conflict with future global attributes, that ship has sailed, and I view it as similar to key words in JavaScript, just a risk we have agreed is acceptable.
+While it is a bit dicey to be supporting these single word attributes for custom elements, attributes that could conflict with future global attributes, that ship has sailed, and I view it as similar to key words in JavaScript, just a risk we have agreed is acceptable.
 
-This proposal views the risks of following suit as too high when we move on to enhancing higher-order components, especially as the platform is happily introducing more of them (🥳).  There is an informal understanding that built-in attributes won't have dashes in them (e.g. onclick, etc), except once in a blue moon (aria-*) so insisting on dashes in this context seems prudent.
+This proposal views the risks of following suit as being too high when we move on to enhancing higher-order components, especially as the platform is happily introducing more of them (🥳).  There is an informal understanding that built-in attributes won't have dashes in them (e.g. onclick, etc), except once in a blue moon (aria-*) so insisting on dashes in this context seems prudent.
 
 The extra enh- is there to avoid conflicting with attributes that a custom element author may be using, so one of the aspects of this proposal is to suggest that the platform reserve "enh-" prefix similar to how it reserved "data-".
 
@@ -108,6 +108,8 @@ As this proposal currently stands, the signatures are different, which again, le
 
 Attaching (connecting?) a cross-cutting concern on top of an existing element feels like attaching Shadow DOM.  If we weren't living in such troubled times, I would have seriously considered calling the class ElementHorcrux rather than ElementEnhancement, just to fully cement my amateur status.
 
+In addition, it feels like the equivalent of ["attachExternals"](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/attachInternals)
+
 Anyway, as I said, I think that decision should be of little consequence, so please replace it with whatever name you like.  That's my amateur take.
 
 </details>
@@ -122,7 +124,7 @@ So why not use the customElements' registry, why come up with a new registry, cu
 The bottom line is I don't think the slight differences with custom elements make this proposal any more complex than defining a custom element.
 
 > [!NOTE]
-> I agree 100% with others that scoped registry being fully settled before some combination of these proposals get rolled out into production.  In the above example, we have two strings that we need to protect from colliding with other enhancements (and with attributes of the (custom) elements themselves):  The name of the enhancement - "logger" - and the attribute(s) tied to it, if any:  'log-to-console'.  Both will need to be considered as far as best ways of managing these within each Shadow scope.  It may be that the easiest solution will require some sort of pattern between the name of the enhancement and the attributes associated with that name (for example, insisting that the name of the enhancement matches the beginning of the camelCased strings of all the "owned" attributes).  This proposal, for now, opts to allow the developer to name them in the way that makes most sense to the author, with the hope that this can survive scrutiny when considering scoped registries and concerns about name-spacing.
+> I agree 100% with others that scoped registry being fully settled before some combination of these proposals get rolled out into production would appear to be the wise course of action.  In the above example, we have two strings that we need to protect from colliding with other enhancements (and with attributes of the (custom) elements themselves):  The name of the enhancement - "logger" - and the attribute(s) tied to it, if any:  'log-to-console'.  Both will need to be considered as far as best ways of managing these within each Shadow scope.  It may be that the easiest solution will require some sort of pattern between the name of the enhancement and the attributes associated with that name (for example, insisting that the name of the enhancement matches the beginning of the camelCased strings of all the "owned" attributes).  This proposal, for now, opts to allow the developer to name them in the way that makes most sense to the author, with the hope that this can survive scrutiny when considering scoped registries and concerns about name-spacing.
 
 
 ## ElementEnhancement API Shape
@@ -331,7 +333,7 @@ Even better, this proposal supports emoji's, which allows for quite short attrib
 
 So what would make much more sense to me is rather than having a "has" requirement, to instead insist that all the attributes that a single enhancement "observes" begin with the same base (be-intl or 🌐 in this case), presumably tied to the package of the enhancement.  This proposal is now advocating enforcing such a rule, at least if the developer wishes to receive help from the platform with parsing and automated attachment.
 
-The reason that the flat observedAttributes approach used for custom elements doesn't quite fit the bill, is that I think it will be quite natural for developers to start by doing something with the base attribute, like supporting a JSON structure for all the properties, then decide "you know, it would be helpful to provide a more semantic api where the aspects of the enhancement can be specified individually" and kind of slap it on.  Such is not the case with custom elements. 
+The reason that the flat observedAttributes approach used for custom elements doesn't quite fit the bill, is that I think it will be quite natural for developers to start by doing something with the base attribute, like supporting a JSON structure for all the properties, then decide "you know, it would be helpful to provide a more semantic vocabulary where the aspects of the enhancement can be specified individually" and kind of slap it on.  Such is not the case with custom elements. 
 
 ### Better ergonomics for managing attribute changes
 
@@ -361,7 +363,7 @@ A close examination of these solutions usually indicates that the problem WebKit
 
 Another example:  Currently if I go to https://walmart.com and right click and inspect their tile elements, I see some "react fiber" objects attached (__reactFiber$...), full of properties like memoizedProps, refs (a function) etc.  And reactProps (__reactProps$...), also a function prototype containing properties and methods. 
 
-Other examples include closure, wiz, knockout.js, JQueryUI, also using names that typically start with an underscore.
+Other examples include closure, wiz, knockout.js, JQueryUI, HTMX, also using names that typically start with an underscore (HTMX uses dashes in the property name).
 
 Clearly, they don't want to "break the web" with these naming conventions, but combine two such libraries together, and chances arise of a conflict.  And such naming conventions don't lend themselves to a very attractive api when being passed values from externally (such as via a framework).
 
