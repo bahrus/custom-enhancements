@@ -124,7 +124,7 @@ So why not use the customElements' registry, why come up with a new registry, cu
 The bottom line is I don't think the slight differences with custom elements make this proposal any more complex than defining a custom element.
 
 > [!NOTE]
-> I agree 100% with others that scoped registry being fully settled before some combination of these proposals get rolled out into production would appear to be the wise course of action.  In the above example, we have two strings that we need to protect from colliding with other enhancements (and with attributes of the (custom) elements themselves):  The name of the enhancement - "logger" - and the attribute(s) tied to it, if any:  'log-to-console'.  Both will need to be considered as far as best ways of managing these within each Shadow scope.  It may be that the easiest solution will require some sort of pattern between the name of the enhancement and the attributes associated with that name (for example, insisting that the name of the enhancement matches the beginning of the camelCased strings of all the "owned" attributes).  This proposal, for now, opts to allow the developer to name them in the way that makes most sense to the author, with the hope that this can survive scrutiny when considering scoped registries and concerns about name-spacing.
+> I agree 100% with others that scoped registry being fully settled before some combination of these proposals get rolled out into production would appear to be the wise course of action.  In the above example, we have two strings that we need to protect from colliding with other enhancements (and with attributes of the (custom) elements themselves):  The name of the enhancement - "logger" - and the attribute(s) tied to it, if any:  'log-to-console'.  Both will need to be considered as far as best ways of managing these within each Shadow scope.  It may be that the easiest solution will require some sort of pattern between the name of the enhancement and the attributes associated with that name (for example, insisting that the name of the enhancement matches the beginning of the camelCased strings of all the "owned" attributes).  This proposal, opts to allow the developer to name the enhPropKey independent of how the attributes are named.  The attributes for a single enhancement must share the same base.  Other enhancements can share that same base, but base-branch-leaf combos should not be discouraged (but not forbidden) to overlap between different enhancements.  Each enhancement must have a unique enhKey value within a Shadow Realm.
 
 
 ## ElementEnhancement API Shape
@@ -682,7 +682,7 @@ To be able to distinguish that:
 
 I propose:
 
-1.  The base Event object gets an additional property:  "enh", which is where we pass in the enhPropKey mentioned earlier.
+1.  The base Event object gets an additional property:  "enh", which is where we pass in the enhKey mentioned earlier.
 2.  The base Enhancement class has a method "channelEvent" that is a simple wrapper around "dispatchEvent" but inserts the name of the enhPropKey into the enh property of the event.
 
 
