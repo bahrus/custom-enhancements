@@ -667,34 +667,24 @@ What this would do:
 3.  Before attaching, merge whatever properties were passed to the "tbd" placeholder.
 4.  After the attachment, "setting" the property to an object would **not** replace the custom element/enhancement with the object, but rather the setter for "tbd" would interject, and do an Object.assign of the passed in object into the custom element/enhancement instance.
 
-What the real name of "tbd" should be is completely open in my mind.  Nothing jumps out at me as the "correct" answer.  Names that would make sense to me are:  "host", "vm", "viewModel", "scope", or "ish" -- short for itemscope host.
+What the real name of "tbd" should be is completely open in my mind.  Nothing jumps out at me as the "correct" answer.  Names that would make sense to me are:  "host", "vm", "viewModel", "scope", or "ish" -- short for itemscope host.  I guess I'm leaning towards the latter -- it is short, and is kind of a play on "is".
 
+## Namespacing events
 
-## Open Questions
+Because custom enhancements extend the EventTarget, it is quite possible (and probably optimal) to subscribe to events directly from the enhancement, as we've seen above with the "resolved" event.
 
+However, I've encountered quite a few use cases where we want the enhancement to dispatch an event from the element it adorns.
 
-### Question 1: Should any formal support be provided for dispatching namespaced events from the element being enhanced?
+To be able to distinguish that:
 
-Since the ElementEnhancement class extends EventTarget, we can directly subscribe to events from the enhancement.  Is this enough, though?
+1.  The event was initiated by an enhancement
+2.  Uniquely identify which enhancement issued the event within a ShadowDOM realm
 
-What if we need the enhancement to dispatch an event that can bubble up the DOM tree, or be able to be "captured" if not bubbling?
+I propose:
 
-I think dispatching events from the enhanced element seems in keeping with the notion that we are enhancing the element, and that platform name-spacing of such events would be beneficial.
+1.  The base Event object gets an additional property:  "enh", which is where we pass in the enhPropKey mentioned earlier.
+2.  The base Enhancement class has a method "channelEvent" that is a simple wrapper around "dispatchEvent" but inserts the name of the enhPropKey into the enh property of the event.
 
-I propose that the ElementEnhancement base class have a method:  dispatchEventFromEnhancedElement that  would prefix the name of all events dispatched through this method, according to the endorsed naming convention.  The code for this method would look roughly as follows:
-
-```TypeScript
-class ElementEnhancement{
-    ...
-    dispatchEventFromEnhancedElement(type: string, init?: CustomEventInit){
-        const prefixedType = 'enhanced' + this.enhancementInfo.enhancement + '.' + type;
-        const evt = init !== undefined ? new CustomEvent(prefixedType, init) : new Event(prefixedType);
-        this.#enhancedElement.dispatchEvent(evt);
-    }
-}
-```
-
-So for the withSteel enhancement, if we call this method with type = "carbonPercentChanged", the event type would be namespaced to enhanced.withSteel.carbonPercentChanged.
 
 
 
