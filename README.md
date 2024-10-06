@@ -691,7 +691,7 @@ This proposal is advocating that these enhancements can serve two purposes "isom
 
 But there's at least one fundamental difference between these two scenarios -- The template instantiation process typically originates from trusted script, which can in turn validate if needed the integrity of the template it is instantiating.
 
-For some enhancements, the server rendered (or imported) HTML really should be vetted first before applying the enhancement.
+In contrast, for some enhancements, the server rendered (or imported) HTML really should be vetted first before applying the enhancement.  We need an established protocol for how this vetting can take place
 
 
 
