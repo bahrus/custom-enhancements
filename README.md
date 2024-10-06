@@ -13,7 +13,7 @@ This is [one](https://github.com/whatwg/html/issues/2271) [of](https://eisenberg
 
 ## Custom Attributes For [Simple Enhancements](https://www.w3.org/TR/design-principles/#simplicity)
 
-Say all you need to do is to create an isolated behavior/enhancement/hook/whatever associated with an attribute, say "log-to-console" anytime the user clicks on elements adorned with that attribute, where we can specify the message.  Here's how that would be done with this proposal.  It could be done more simply, with hard coded values, and without the commentary noise, so please allow for that when weighing the complexity. 
+Say all you need to do is to create an isolated behavior/enhancement/hook/whatever associated with an attribute -- say "log-to-console".  It enhances elements adorned with that attribute, logging the value of the attribute to the console when the element is clicked.  Here's how that would be done with this proposal.  It could be done more simply, with hard coded values, and without the commentary noise, so please allow for that when weighing the complexity. 
 
 ```JS
 export const enhancementInfo = {
@@ -640,7 +640,7 @@ But for now, the way this feature can be used is with a bespoke custom enhanceme
 
 There are many scenarios where it makes sense to have one "central" enhancement, that frameworks / libraries can expect, that manages the data or view model for the built-in element -- scenarios where we can't wrap the element inside a custom element.
 
-This proposal is advocating enhancing the itemscope attribute, so that it can optionally specify the name of a custom element or custom enhancement to automatically attach to the top level of the element to a officially recognized property name (name tbd), which frameworks could then easily pass values to.  For example, with lit-html:
+This proposal is advocating enhancing the itemscope attribute, so that it can optionally specify the name of a custom element or custom enhancement to automatically attach to the top level of the element to an officially recognized property name (name tbd), which frameworks could then easily pass values to.  For example, with lit-html:
 
 ```JavaScript
 html`
@@ -684,6 +684,14 @@ I propose:
 
 1.  The base Event object gets an additional property:  "enh", which is where we pass in the enhKey mentioned earlier.
 2.  The base Enhancement class has a method "channelEvent" that is a simple wrapper around "dispatchEvent" but inserts the name of the enhKey into the enh property of the event.
+
+## Security considerations
+
+This proposal is advocating that these enhancements can serve two purposes "isomorphically" -- they can be used as "plug-ins" during the (future platform-based) template instantiation process.  And they can (progressively) enhance server rendered HTML.
+
+But there's at least one fundamental difference between these two scenarios -- The template instantiation process typically originates from trusted script, which can in turn validate if needed the integrity of the template it is instantiating.
+
+For some enhancements, the server rendered (or imported) HTML really should be vetted first before applying the enhancement.
 
 
 
