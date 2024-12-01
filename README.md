@@ -88,8 +88,9 @@ Or developers could use single words using the small latin characters.  Or an em
 Some risks to doing this:
 
 1.  It may break xml (like svg tags)
-2.  It is even farther away from being "HTML5 compliant"
-3.  Clashes between different libraries are extremely likely to occur (the shorter the name, the less the ability to "reserve" the name in npm or some other package manager), which is why we posit that a solution to scoped registry should ideally be shipping and proven before shipping this problem space.
+2.  Programmatically setting such attributes seems to be currently impossible.
+3.  It is even farther away from being "HTML5 compliant"
+4.  Clashes between different libraries are extremely likely to occur (the shorter the name, the less the ability to "reserve" the name in npm or some other package manager), which is why we posit that a solution to scoped registry should ideally be shipping and proven before shipping this problem space.
 
 It doesn't seem to me that any of these concerns would "block" the platform from doing its thing, so this proposal opts to empower the developer to take these risks.
 
