@@ -1,5 +1,4 @@
-
-## Author(s)
+## Author
 
 Bruce B. Anderson
 
