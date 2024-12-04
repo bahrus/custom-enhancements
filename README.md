@@ -5,9 +5,7 @@ Bruce B. Anderson
 
 PR's, Issues [welcome](https://github.com/bahrus/custom-enhancements)
 
-Last update
-
-2024-08-30
+Last update: Dec 3, 2024
 
 This is [one](https://github.com/whatwg/html/issues/2271) [of](https://eisenbergeffect.medium.com/2023-state-of-web-components-c8feb21d4f16) [a](https://github.com/WICG/webcomponents/issues/1029) [number](https://github.com/WICG/webcomponents/issues/727) of interesting proposals, one of which (or some combination?) can hopefully get buy-in from all three browser vendors.  This proposal borrows heavily from the others.
 
@@ -88,7 +86,7 @@ Or developers could use single words using the small latin characters.  Or an em
 Some risks to doing this:
 
 1.  It may break xml (like svg tags)
-2.  Programmatically setting such attributes seems to be currently impossible.
+2.  Programmatically setting such attributes seems to be currently impossible.  This is particularly problematic if the developer wishes to update the value of said attribute via client side scripting.
 3.  It is even farther away from being "HTML5 compliant"
 4.  Clashes between different libraries are extremely likely to occur (the shorter the name, the less the ability to "reserve" the name in npm or some other package manager), which is why we posit that a solution to scoped registry should ideally be shipping and proven before shipping this problem space.
 
@@ -153,7 +151,7 @@ const enhancementInfo: EnhancementInfo = {
             instanceOf: 'Boolean',
             mapsTo: 'isHello'
         },
-        '2.0': {
+        '1.1': {
             instanceOf: 'String',
             mapsTo: 'firstHelloGreeting'
         }
@@ -637,6 +635,39 @@ I have a heavy suspicion that as the platform builds out template instantiation 
 
 But for now, the way this feature can be used is with a bespoke custom enhancement, such as [be-promising](https://github.com/bahrus/be-promising#be-promising).
 
+## Support for "defer-[base]"
+
+Along the lines of the discussion above about loading enhancements in a predictable sequence, I've encountered some compelling use cases where we want to "defer" loading of a server-rendered attribute-based enhancement.  For example, a peer web component may want to tap into events that an enhancement fires, and not miss any events it may fire prior to the peer web component becoming upgraded.
+
+A related requirement has been identified by the web community, called [defer-hydration](https://github.com/webcomponents-cg/community-protocols/blob/main/proposals/defer-hydration.md).  While the use case is a bit different, the end requirement is quite similar.
+
+To support this important use case, we propose the pattern:  defer-[base].  Until the attribute is removed from the element, then whenAttached / whenResolved methods discussed above cannot proceed:
+
+
+```html
+<form
+    defer-be-reformable
+    be-reformable='{
+        "baseLink": "newton-microservice",
+        "path": "api/v2/:operation/:expression",
+    }'
+>
+    <label for=operation>
+        Operation:
+        <input :operation value=integrate>
+    </label>
+    
+    <label for=expression>
+        Expression:
+        <input :expression value="x^2">
+    </label>
+    
+    <noscript>
+        <button type=submit>Submit</button>
+    </noscript>
+</form>
+```
+
 ## Support for a view model web component / enhancement tied to the itemscope attribute.
 
 There are many scenarios where it makes sense to have one "central" enhancement, that frameworks / libraries can expect, that manages the data or view model for the built-in element -- scenarios where we can't wrap the element inside a custom element.
@@ -686,13 +717,7 @@ I propose:
 1.  The base Event object gets an additional property:  "enh", which is where we pass in the enhKey mentioned earlier.
 2.  The base Enhancement class has a method "channelEvent" that is a simple wrapper around "dispatchEvent" but inserts the name of the enhKey into the enh property of the event.
 
-## Security considerations
 
-This proposal is advocating that these enhancements can serve two purposes "isomorphically" -- they can be used as "plug-ins" during the (future platform-based) template instantiation process.  And they can (progressively) enhance server rendered HTML.
-
-But there's at least one fundamental difference between these two scenarios -- The template instantiation process typically originates from trusted script, which can in turn validate if needed the integrity of the template it is instantiating.
-
-In contrast, for some enhancements, the server rendered (or imported) HTML really should be vetted first before applying the enhancement.  We need an established protocol for how this vetting can take place
 
 
 
