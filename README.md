@@ -666,7 +666,11 @@ To support this important use case, we propose the pattern:  defer-[base].  Unti
         <button type=submit>Submit</button>
     </noscript>
 </form>
+
+<for-fetch></for-fetch>
 ```
+
+The attribute could also be used for purposes of disabling functionality within the element.
 
 ## Support for a view model web component / enhancement tied to the itemscope attribute.
 
