@@ -719,9 +719,3 @@ I propose:
 
 1.  The base Event object gets an additional property:  "enh", which is where we pass in the enhKey mentioned earlier.
 2.  The base Enhancement class has a method "channelEvent" that is a simple wrapper around "dispatchEvent" but inserts the name of the enhKey into the enh property of the event.
-
-
-
-
-
-
