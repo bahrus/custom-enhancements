@@ -4,7 +4,7 @@ Bruce B. Anderson
 
 PR's, Issues [welcome](https://github.com/bahrus/custom-enhancements)
 
-Last update: Dec 3, 2024
+Last update: April 14, 2025
 
 This is [one](https://github.com/whatwg/html/issues/2271) [of](https://eisenbergeffect.medium.com/2023-state-of-web-components-c8feb21d4f16) [a](https://github.com/WICG/webcomponents/issues/1029) [number](https://github.com/WICG/webcomponents/issues/727) of interesting proposals, one of which (or some combination?) can hopefully get buy-in from all three browser vendors.  This proposal borrows heavily from the others.
 
@@ -28,8 +28,9 @@ export const enhancementInfo = {
             // or inside a scoped registry in a different file.
             enhancedElement.addEventListener('click', e => {
                 console.log(
-                    enhancedElement.getAttribute(base) 
-                    || enhancedElement.getAttribute(`enh-${base}`)); 
+                       enhancedElement.getAttribute(`enh-${base}`)
+                    || enhancedElement.getAttribute(base)
+                ); 
             });
         }
     }
@@ -704,9 +705,9 @@ What this would do:
 
 What the real name of "tbd" should be is completely open in my mind.  Nothing jumps out at me as the "correct" answer.  Names that would make sense to me are:  "host", "vm", "viewModel", "scope", or "ish" -- short for itemscope host.  I guess I'm leaning towards the latter -- it is short, and is kind of a play on "is".
 
-Another name to be determined is the name of an event to dispatch from the enhanced element, indicating this special handshake has completed.  Suggestion:  "ishAttached".
+Another name to be determined is the name of an event to dispatch from the enhanced element, indicating this special handshake has completed.  Suggestion: If "ish" is chosen for tbd, use "ishAttached".
 
-Finally, another open question related to this proposal addendum is whether support for attributes "owned" by such enhancements would be supported, and what the pattern should be for the name.  I would propose ish- as the base.
+Finally, another open question related to this proposal addendum is whether support for attributes "owned" by such enhancements would be supported, and what the pattern should be for the name.  I would propose that if the name for "tbd" is "ish", for example, that "ish-" serve as the only  allowed "base" in the discussion above, and we continue to support branch and leaf attribute extensions.
 
 ## Namespacing events
 
