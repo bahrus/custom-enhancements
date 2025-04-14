@@ -704,6 +704,10 @@ What this would do:
 
 What the real name of "tbd" should be is completely open in my mind.  Nothing jumps out at me as the "correct" answer.  Names that would make sense to me are:  "host", "vm", "viewModel", "scope", or "ish" -- short for itemscope host.  I guess I'm leaning towards the latter -- it is short, and is kind of a play on "is".
 
+Another name to be determined is the name of an event to dispatch from the enhanced element, indicating this special handshake has completed.  Suggestion:  "ishAttached".
+
+Finally, another open question related to this proposal addendum is whether support for attributes "owned" by such enhancements would be supported, and what the pattern should be for the name.  I would propose ish- as the base.
+
 ## Namespacing events
 
 Because custom enhancements extend the EventTarget, it is quite possible (and probably optimal) to subscribe to events directly from the enhancement, as we've seen above with the "resolved" event.
