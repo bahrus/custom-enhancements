@@ -4,7 +4,7 @@ Bruce B. Anderson
 
 PR's, Issues [welcome](https://github.com/bahrus/custom-enhancements)
 
-Last update: April 14, 2025
+Last update: April 17, 2025
 
 This is [one](https://github.com/whatwg/html/issues/2271) [of](https://eisenbergeffect.medium.com/2023-state-of-web-components-c8feb21d4f16) [a](https://github.com/WICG/webcomponents/issues/1029) [number](https://github.com/WICG/webcomponents/issues/727) of interesting proposals, one of which (or some combination?) can hopefully get buy-in from all three browser vendors.  This proposal borrows heavily from the others.
 
@@ -58,7 +58,7 @@ It would be great if we could use a short attribute name, like "log".  That can 
 
 While it is a bit dicey to be supporting these single word attributes for custom elements, attributes that could conflict with future global attributes, that ship has sailed, and I view it as similar to key words in JavaScript, just a risk we have agreed is acceptable.
 
-This proposal views the risks of following suit as being too high when we move on to enhancing higher-order components, especially as the platform is happily introducing more of them (🥳).  There is an informal understanding that built-in attributes won't have dashes in them (e.g. onclick, etc), except once in a blue moon (aria-*) so insisting on dashes in this context seems prudent.
+This proposal views the risks of following suit as being too high when we move on to enhancing higher-order components, especially as the platform is happily introducing more of them (🥳).  There is an informal understanding that built-in attributes won't have dashes in them (e.g. onclick, etc), except once in a blue moon (aria-*), so insisting on dashes in this context seems prudent.
 
 The extra enh- is there to avoid conflicting with attributes that a custom element author may be using, so one of the aspects of this proposal is to suggest that the platform reserve "enh-" prefix similar to how it reserved "data-".
 
@@ -107,7 +107,9 @@ As this proposal currently stands, the signatures are different, which again, le
 
 Attaching (connecting?) a cross-cutting concern on top of an existing element feels like attaching Shadow DOM.  If we weren't living in such troubled times, I would have seriously considered calling the class ElementHorcrux rather than ElementEnhancement, just to fully cement my amateur status.
 
-In addition, it feels like the equivalent of ["attachExternals"](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/attachInternals)
+In addition, it feels like the equivalent of ["attachExternals"](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/attachInternals).
+
+Because the "attachment/connection" is purely a memory pointer type linkage, versus a DOM Node attachment, using a different term for this type of event seems reasonable to me.
 
 Anyway, as I said, I think that decision should be of little consequence, so please replace it with whatever name you like.  That's my amateur take.
 
@@ -270,7 +272,7 @@ Having filtering support is there to benefit the developer first and foremost --
 2.  In some cases, especially with custom elements, it could group a bunch of custom elements together based on the base class.  CSS currently isn't so good at selecting elements based on a common prefix.
 3.  The names can be validated by TypeScript.
 
-Another key reason for adding this filtering capability is performance -- there is a cost to instantiating an enhancement class, adding it to the enhancements gateway, invoking the callback, and holding on to the class instance in memory so anything we can do to declaratively prevent that seems like a win for all involved.
+Another key reason for adding this filtering capability is performance -- there is a cost to instantiating an enhancement class, adding it to the enhancements gateway, invoking the callback, and holding on to the class instance in memory, so anything we can do to declaratively prevent that seems like a win for all involved.
 
 <details>
     <summary>But at what cost?</summary>
@@ -386,11 +388,11 @@ The most minimal solution, then, is for the web platform to simply announce that
 
 I think that would be a great start.  But the rest of this proposal outlines some ways the platform could assist third parties in implementing their enhancements in a more orderly fashion, so they can work together, and with the platform, in harmony.
 
-## CustomEnhancement:  {CustomProp: string,  CustomAttr?: [string, string..., string]}
+## Justification for enh-
 
 The next thing beyond that announcement would be what many (including myself) are clamoring for:
 
-The platform informs web component developers to not use any attributes with a prefix that pairs up with the property gateway name, "enhancements"; that that prefix is only to be used by third parties to match up with the sub-property of "enhancements" they claim ownership of.  My suggestion is enh-*.  
+The platform informs web component developers to not use any attributes with a prefix that pairs up with the property gateway name, "enhancements"; that that prefix is only to be used by third parties to match up with the sub-property of "enhancements" they claim ownership of.  My suggestion is enh-*.  Continuing to use data- seems fundamentally flawed from a semantic point of view, and would also result in more overlapping uses between these two very different attribute meanings. 
 
 So if server-rendered HTML looks as follows:
 
@@ -699,7 +701,7 @@ ${myList.map(item => html`
 What this would do:  
 
 1.  If my-item is a custom element, use that.  Otherwise, check if a custom enhancement with that name exists in the registry.
-2.  In the case that my-item is a custom element, use document.createElement('my-item') to generate the custom element.  The custom element's attach method could choose to place itself somewhere inside the element it is adorning.
+2.  In the case that my-item is a custom element, use document.createElement('my-item') to generate the custom element.  The custom element's attachedCallback (not connectedCallback) method could choose to place itself somewhere inside the element it is adorning.
 3.  Before attaching, merge whatever properties were passed to the "tbd" placeholder.
 4.  After the attachment, "setting" the property to an object would **not** replace the custom element/enhancement with the object, but rather the setter for "tbd" would interject, and do an Object.assign of the passed in object into the custom element/enhancement instance.
 
@@ -707,7 +709,9 @@ What the real name of "tbd" should be is completely open in my mind.  Nothing ju
 
 Another name to be determined is the name of an event to dispatch from the enhanced element, indicating this special handshake has completed.  Suggestion: If "ish" is chosen for tbd, use "ishAttached".
 
-Finally, another open question related to this proposal addendum is whether support for attributes "owned" by such enhancements would be supported, and what the pattern should be for the name.  I would propose that if the name for "tbd" is "ish", for example, that "ish-" serve as the only  allowed "base" in the discussion above, and we continue to support branch and leaf attribute extensions.
+Finally, another open question related to this proposal addendum is whether support for attributes "owned" by such enhancements would be supported, and what the pattern should be for the name.  I would propose that the value of the itemscope attribute serve as the base of the attribute hierarchy tree, and that branches and leafs also be supported, as far as parsing support.
+
+
 
 ## Namespacing events
 
