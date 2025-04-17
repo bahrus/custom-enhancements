@@ -711,7 +711,9 @@ Another name to be determined is the name of an event to dispatch from the enhan
 
 Finally, another open question related to this proposal addendum is whether support for attributes "owned" by such enhancements would be supported, and what the pattern should be for the name.  I would propose that the value of the itemscope attribute serve as the base of the attribute hierarchy tree, and that branches and leafs also be supported, as far as parsing support.
 
+## Support for lists and the itemscope extension
 
+In many cases, what we need to bind the view to is not a expando type object, but rather an array of objects (i.e. lists).  The discussion above doesn't make much sense, in terms of using merging in the object (vs object.assign or something more powerful than object.assign).  So it seems reasonable to amend the  discussion above so that if the data that needs be passed into the tbd property is an array, pass it to a sub-object key.  Propose name:  [tbd]List (so hostList, vmList, viewModelList, scopeList or ishList in the tentative proposed names above).
 
 ## Namespacing events
 
