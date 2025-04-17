@@ -707,13 +707,15 @@ What this would do:
 
 What the real name of "tbd" should be is completely open in my mind.  Nothing jumps out at me as the "correct" answer.  Names that would make sense to me are:  "host", "vm", "viewModel", "scope", or "ish" -- short for itemscope host.  I guess I'm leaning towards the latter -- it is short, and is kind of a play on "is".
 
-Another name to be determined is the name of an event to dispatch from the enhanced element, indicating this special handshake has completed.  Suggestion: If "ish" is chosen for tbd, use "ishAttached".
+Another name to be determined is the name of an event to dispatch from the enhanced element, indicating this special handshake has completed.  Suggestion: If "ish" is chosen for tbd, use "ishAttached" or "ishattached" to conform to all lower case event names if that is a hard requirement.
 
 Finally, another open question related to this proposal addendum is whether support for attributes "owned" by such enhancements would be supported, and what the pattern should be for the name.  I would propose that the value of the itemscope attribute serve as the base of the attribute hierarchy tree, and that branches and leafs also be supported, as far as parsing support.
 
 ## Support for lists and the itemscope extension
 
-In many cases, what we need to bind the view to is not a expando type object, but rather an array of objects (i.e. lists).  The discussion above doesn't make much sense, in terms of using merging in the object (vs object.assign or something more powerful than object.assign).  So it seems reasonable to amend the  discussion above so that if the data that needs be passed into the tbd property is an array, pass it to a sub-object key.  Propose name:  [tbd]List (so hostList, vmList, viewModelList, scopeList or ishList in the tentative proposed names above).
+In many cases, what we need to bind the view to is not an "expando" type object, but rather an array of objects (i.e. lists).  The discussion above doesn't make much sense, in terms of merging in the object (via object.assign or something more powerful than object.assign).  So it seems reasonable to amend the  discussion above so that if the data that needs be passed into the tbd property is an array, pass it to a sub-object key.  Propose name:  [tbd]List (so "hostList", or "vmList", "viewModelList", "scopeList" or "ishList" in the tentative proposed names above).
+
+I think it would be quite useful to also emit a standard event type from the adorned element, with some name tied o the choice of the list property name (e.g. ishListChanged).
 
 ## Namespacing events
 
