@@ -676,7 +676,7 @@ The attribute could also be used for purposes of disabling functionality within 
 
 ## Support for a view model web component / enhancement tied to the itemscope attribute.
 
-There are many scenarios where it makes sense to have one "central" enhancement, that frameworks / libraries can expect, that manages the data or view model for the built-in element -- scenarios where we can't wrap the element inside a custom element.
+There are many scenarios where it makes sense to have one "central" enhancement, that frameworks / libraries can expect, that manages the data or view model for the built-in element -- scenarios where we can't wrap the element inside a custom element.  It can also serve as a kind of "light children manager" that could integrate with frameworks that generate the light children content of a custom element.
 
 This proposal is advocating enhancing the itemscope attribute, so that it can optionally specify the name of a custom element or custom enhancement to automatically attach to the top level of the element to an officially recognized property name (name tbd), which frameworks could then easily pass values to.  For example, with lit-html:
 
@@ -715,7 +715,9 @@ Finally, another open question related to this proposal addendum is whether supp
 
 In many cases, what we need to bind the view to is not an "expando" type object, but rather an array of objects (i.e. lists).  The discussion above doesn't make much sense, in terms of merging in the object (via object.assign or something more powerful than object.assign) in this scenario.  So it seems reasonable to amend the  discussion above so that if the data that needs be passed into the tbd property is an array, pass it to a sub-object key.  Proposed name:  [tbd]List (so "hostList", or "vmList", "viewModelList", "scopeList" or "ishList" in the tentative proposed names above).
 
-I think it would be quite useful to also emit a standard event type from the adorned element, with some name tied to the choice of the list property name (e.g. ishListChanged), every time a new list is passed in.
+I think it would be quite useful to also emit a standard event type from ish custom element/enhancemnt, with some name tied to the choice of the list property name (e.g. ishListChanged), every time a new list is passed in.
+
+[Support for time-stamping each item of list?]
 
 ## Namespacing events
 
