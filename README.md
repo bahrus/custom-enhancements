@@ -715,7 +715,7 @@ Finally, another open question related to this proposal addendum is whether supp
 
 In many cases, what we need to bind the view to is not an "expando" type object, but rather an array of objects (i.e. lists).  The discussion above doesn't make much sense, in terms of merging in the object (via object.assign or something more powerful than object.assign) in this scenario.  So it seems reasonable to amend the  discussion above so that if the data that needs be passed into the tbd property is an array, pass it to a sub-object key.  Proposed name:  [tbd]List (so "hostList", or "vmList", "viewModelList", "scopeList" or "ishList" in the tentative proposed names above).
 
-I think it would be quite useful to also emit a standard event type from ish custom element/enhancemnt, with some name tied to the choice of the list property name (e.g. ishListChanged), every time a new list is passed in.
+I think it would be quite useful to also emit a standard event type from ish custom element/enhancement, with some name tied to the choice of the list property name (e.g. ishListChanged), every time a new list is passed in.
 
 [Support for time-stamping each item of list?]
 
