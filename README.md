@@ -676,7 +676,7 @@ The attribute could also be used for purposes of disabling functionality within 
 
 ## Support for a view model web component / enhancement tied to the itemscope attribute.
 
-There are many scenarios where it makes sense to have one "central" enhancement, that frameworks / libraries can expect, that manages the data or view model for the built-in element -- scenarios where we can't wrap the element inside a custom element.  It can also serve as a kind of "light children manager" that could integrate with frameworks that generate the light children content of a custom element.
+There are many scenarios where it makes sense to have one "central" element manager, that frameworks / libraries can expect, that manages the data and/or view model and/or binding for the built-in element -- scenarios where we can't wrap the element inside a custom element.  Unlike the other enhancements that this proposal supports, these element managers would not be enhancing the behavior of the element it provides, but rather focused squarely on binding and hydrating the light children of the element it adorns.  And such The can also serve as a kind of "light children manager" that could integrate with frameworks that generate the light children content of a custom element.
 
 This proposal is advocating enhancing the itemscope attribute, so that it can optionally specify the name of a custom element or custom enhancement to automatically attach to the top level of the element to an officially recognized property name (name tbd), which frameworks could then easily pass values to.  For example, with lit-html:
 
