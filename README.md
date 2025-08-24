@@ -13,7 +13,7 @@ This is [one](https://github.com/whatwg/html/issues/2271) [of](https://eisenberg
 Say all you need to do is to create an isolated behavior/enhancement/hook/whatever associated with an attribute -- say "log-to-console".  It enhances elements adorned with that attribute, logging the value of the attribute to the console when the element is clicked.  Here's how that would be done with this proposal.  It could be done more simply, with hard coded values, and without the commentary noise, so please allow for that when weighing the complexity. 
 
 ```JS
-export const enhancementInfo = {
+customEnhancements.define({
     //name of our "custom prop", accessible via oElement.enhancements[enhancement], 
     //which is where we will find an instance of the class defined below.
     enhKey: 'logger', 
@@ -34,8 +34,7 @@ export const enhancementInfo = {
             });
         }
     }
-}
-customEnhancements.define(enhancementInfo);
+});
 ```
 
 ```HTML
@@ -494,7 +493,8 @@ The whenResolved method would throw an error (catcheable via try/catch with awai
 
 The purpose of having this "whenResolved" feature is explained towards the end of this proposal.
 
-I think it would be quite reasonable for these methods to automatically call customEnhancements.define if the platform sees that the enhancementInfo hasn't yet been defined, and has no namespace conflicts with other enhancements.
+>[!NOTE]
+>I think it would be quite reasonable for these methods to automatically call customEnhancements.define if the platform sees that the enhancementInfo hasn't yet been defined, and has no namespace conflicts with other enhancements.
  
 ## A helper property to make setting properties easier.
 
