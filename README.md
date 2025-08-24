@@ -674,9 +674,25 @@ To support this important use case, we propose the pattern:  defer-[base].  Unti
 
 The attribute could also be used for purposes of disabling functionality within the element.
 
-## Support for a view model web component / enhancement tied to the itemscope attribute.
+## Namespacing events
 
-There are many scenarios where it makes sense to have one "central" element manager, that frameworks / libraries can expect, that manages the data and/or view model and/or binding for the built-in element:
+Because custom enhancements extend the EventTarget, it is quite possible (and probably optimal) to subscribe to events directly from the enhancement, as we've seen above with the "resolved" event.
+
+However, I've encountered quite a few use cases where we want the enhancement to dispatch an event from the element it adorns.
+
+To be able to distinguish that:
+
+1.  The event was initiated by an enhancement
+2.  Uniquely identify which enhancement issued the event within a ShadowDOM realm
+
+I propose:
+
+1.  The base Event object gets an additional property:  "enh", which is where we pass in the enhKey mentioned earlier.
+2.  The base Enhancement class has a method "channelEvent" that is a simple wrapper around "dispatchEvent" but inserts the name of the enhKey into the enh property of the event.
+
+## Support for a view model DOM fragment manager tied to the itemscope attribute.
+
+There are many scenarios where it makes sense to have one "central" element manager, that frameworks / libraries can expect, that manages the data and/or view model and/or binding and/or event handling for a DOM element plus extensions of that element that are linked via the itemref attribute:
 
 - Scenarios where we can't wrap the element inside a custom element.  
 - Scenarios where we need to manage the light children of a web component that uses ShadowDOM
@@ -685,13 +701,13 @@ There are many scenarios where it makes sense to have one "central" element mana
 
 Unlike the other enhancements that this proposal supports, these element managers would not be enhancing the behavior of the element it provides, but rather focused squarely on binding and hydrating the light children of the element it adorns.  
 
-This proposal is advocating enhancing the itemscope attribute, so that it can optionally specify the name registered class or function prototype, instances of which frameworks could then easily pass values to.  Theses classes would need very little in terms of integration with the DOM API's, as their focus is meant to be on "business domain logic" -- no support for owned attributes is needed, for example.
+This proposal is advocating enhancing the itemscope attribute, so that it can optionally specify the name of a registered class or function prototype, instances of which frameworks could then easily pass values to.  Theses classes would need very little in terms of integration with the DOM API's, as their focus is meant to be on "business domain logic" -- no support for owned attributes is needed, for example.  Nor specifying any restrictions of which types of elements that we are targeting.  These classes would be so generic in manner that the element type is immaterial.
 
 So I am advocating no fewer than three "registries", as far as categories of classes / function prototypes:
 
-1.  Custom Elements, that extends HTMLElement
-2.  Custom Enhancements, that extends EventTarget
-3.  Itemscope managers, that can be simply a function prototype or plain class.  
+1.  Custom Elements, that extends HTMLElement (already built into the browser)
+2.  Custom Enhancements, that extends EventTarget (the bulk of this proposal)
+3.  Itemscope managers, that can be simply a function prototype or plain class (the addendum to this proposal we are discussing now).  
 
 So, just to provide a sample API to make things less abstract, suppose the API for registering the Itemscope managers looks like this:
 
@@ -742,24 +758,25 @@ What the real name of "tbd" should be is completely open in my mind.  Nothing ju
 
 ## Support for lists and the itemscope extension
 
-In many cases, what we need to bind the view to is not an "expando" type object, but rather an array of objects (i.e. lists).  The discussion above doesn't make much sense, in terms of merging in the object (via object.assign or something more powerful than object.assign) in this scenario.  So it seems reasonable to amend the  discussion above so that if the data that needs be passed into the tbd property is an array, pass it to a sub-object key.  Proposed name:  [tbd]List (so "hostList", or "vmList", "viewModelList", "scopeList" or "ishList" in the tentative proposed names above).
+In many cases, what we need to bind the view to is not an "expando" type object, but rather an array of objects (i.e. lists).  In some cases we would want both to be supported ("expando" type properties but also lists of items). The discussion above doesn't make much sense, in terms of merging in the object (via object.assign or something more powerful than object.assign) in this scenario where we have a list of objects or primitives to "pass in" or "merge".  
 
-I think it would be quite useful to also emit a standard event type from ish custom element/enhancement, with some name tied to the choice of the list property name (e.g. ishListChanged), every time a new list is passed in.
+So it seems reasonable to amend the  discussion above so that if the data that needs be passed into the tbd property is an array, to automatically upgrade the class or function prototype in the registration method:
 
-[Support for time-stamping each item of list?]
+```JavaScript
+ctr.prototype[Symbol.iterator] = function () {
+    var index = -1;
+    var data = this[secretKey];
+    return {
+        next: function () {
+            return {
+                value: data === undefined ? undefined : data[++index],
+                done: data === undefined || !(index in data)
+            };
+        }
+    };
+};
+```
 
-## Namespacing events
 
-Because custom enhancements extend the EventTarget, it is quite possible (and probably optimal) to subscribe to events directly from the enhancement, as we've seen above with the "resolved" event.
 
-However, I've encountered quite a few use cases where we want the enhancement to dispatch an event from the element it adorns.
 
-To be able to distinguish that:
-
-1.  The event was initiated by an enhancement
-2.  Uniquely identify which enhancement issued the event within a ShadowDOM realm
-
-I propose:
-
-1.  The base Event object gets an additional property:  "enh", which is where we pass in the enhKey mentioned earlier.
-2.  The base Enhancement class has a method "channelEvent" that is a simple wrapper around "dispatchEvent" but inserts the name of the enhKey into the enh property of the event.
