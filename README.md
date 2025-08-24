@@ -701,7 +701,7 @@ There are many scenarios where it makes sense to have one "central" element mana
 
 Unlike the other enhancements that this proposal supports, these element managers would not be enhancing the behavior of the element it provides, but rather focused squarely on binding and hydrating the light children of the element it adorns.  
 
-This proposal is advocating enhancing the itemscope attribute, so that it can optionally specify the name of a registered class or function prototype, instances of which frameworks could then easily pass values to.  Theses classes would need very little in terms of integration with the DOM API's, as their focus is meant to be on "business domain logic" -- no support for owned attributes is needed, for example.  Nor specifying any restrictions of which types of elements that we are targeting.  These classes would be so generic in manner that the element type is immaterial.
+This proposal is advocating enhancing the itemscope attribute, so that it can optionally specify the name of a registered class or function prototype, instances of which frameworks could then easily pass values to.  These classes would need very little in terms of integration with the DOM API's, as their focus is meant to be on "business domain logic" -- no support for owned attributes is needed, for example.  Nor specifying any restrictions of which types of elements that we are targeting.  These classes would be so generic in manner that the element type is largely immaterial.
 
 So I am advocating no fewer than three "registries", as far as categories of classes / function prototypes:
 
@@ -752,13 +752,13 @@ ${myList.map(item => html`
 What this would do:  
 
 1.  Before attaching to the "tbd" property of the tr element, merge whatever properties were passed to the "tbd" placeholder.
-4.  After the attachment, "setting" the property to an object would **not** replace the custom element/enhancement with the object, but rather the setter for "tbd" would interject, and do an Object.assign of the passed in object into the custom element/enhancement instance.
+4.  After the attachment, "setting" the property to an object would **not** replace the class or function prototype instance with the object, but rather the setter for "tbd" would interject, and do an Object.assign of the passed in object into the custom element/enhancement instance.
 
 What the real name of "tbd" should be is completely open in my mind.  Nothing jumps out at me as the "correct" answer.  Names that would make sense to me are:  "host", "vm", "viewModel", "scope", or "ish" -- short for itemscope host.  I guess I'm leaning towards the latter -- it is short, and is kind of a play on "is".
 
 ## Support for lists and the itemscope extension
 
-In many cases, what we need to bind the view to is not an "expando" type object, but rather an array of objects (i.e. lists).  In some cases we would want both to be supported ("expando" type properties but also lists of items). The discussion above doesn't make much sense, in terms of merging in the object (via object.assign or something more powerful than object.assign) in this scenario where we have a list of objects or primitives to "pass in" or "merge".  
+In many cases, what we need to bind the view to is not an "expando" type object, but rather an array of objects (i.e. lists).  In some cases we would want both to be supported ("expando" type properties but also an iterator interface). The discussion above doesn't make much sense, in terms of merging in the object (via object.assign or something more powerful than object.assign) in this scenario where we have a list of objects or primitives to "pass in" or "merge".  
 
 So it seems reasonable to amend the  discussion above so that if the data that needs be passed into the tbd property is an array, to automatically upgrade the class or function prototype in the registration method:
 
