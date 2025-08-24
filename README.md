@@ -494,7 +494,7 @@ The whenResolved method would throw an error (catcheable via try/catch with awai
 The purpose of having this "whenResolved" feature is explained towards the end of this proposal.
 
 >[!NOTE]
->I think it would be quite reasonable for these methods to automatically call customEnhancements.define if the platform sees that the enhancementInfo hasn't yet been defined, and has no namespace conflicts with other enhancements.
+>I think it would be quite reasonable for these methods to automatically call customEnhancements.define if the platform sees that the enhancementInfo hasn't yet been  defined, and has no namespace conflicts with other enhancements.
  
 ## A helper property to make setting properties easier.
 
