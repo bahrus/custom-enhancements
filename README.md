@@ -676,9 +676,44 @@ The attribute could also be used for purposes of disabling functionality within 
 
 ## Support for a view model web component / enhancement tied to the itemscope attribute.
 
-There are many scenarios where it makes sense to have one "central" element manager, that frameworks / libraries can expect, that manages the data and/or view model and/or binding for the built-in element -- scenarios where we can't wrap the element inside a custom element.  Unlike the other enhancements that this proposal supports, these element managers would not be enhancing the behavior of the element it provides, but rather focused squarely on binding and hydrating the light children of the element it adorns.  And such The can also serve as a kind of "light children manager" that could integrate with frameworks that generate the light children content of a custom element.
+There are many scenarios where it makes sense to have one "central" element manager, that frameworks / libraries can expect, that manages the data and/or view model and/or binding for the built-in element:
 
-This proposal is advocating enhancing the itemscope attribute, so that it can optionally specify the name of a custom element or custom enhancement to automatically attach to the top level of the element to an officially recognized property name (name tbd), which frameworks could then easily pass values to.  For example, with lit-html:
+- Scenarios where we can't wrap the element inside a custom element.  
+- Scenarios where we need to manage the light children of a web component that uses ShadowDOM
+- Scenarios where we want to manage a DOM fragment that was generated from a looping library api. 
+
+
+Unlike the other enhancements that this proposal supports, these element managers would not be enhancing the behavior of the element it provides, but rather focused squarely on binding and hydrating the light children of the element it adorns.  
+
+This proposal is advocating enhancing the itemscope attribute, so that it can optionally specify the name registered class or function prototype, instances of which frameworks could then easily pass values to.  Theses classes would need very little in terms of integration with the DOM API's, as their focus is meant to be on "business domain logic" -- no support for owned attributes is needed, for example.
+
+So I am advocating no fewer than three "registries", as far as categories of classes / function prototypes:
+
+1.  Custom Elements, that extends HTMLElement
+2.  Custom Enhancements, that extends EventTarget
+3.  Itemscope managers, that can be simply a function prototype or plain class.  
+
+So, just to provide a sample API to make things less abstract, suppose the API for registering the Itemscope managers looks like this:
+
+```JavaScript
+document.body.registerItemScopeManager('my-item', class {
+    get ssn(){
+        ...
+    }
+    set ssn(val){
+        ...
+    }
+    get name(){
+        ...
+    }
+    set name(val){
+        ...
+    }
+});
+```
+
+
+For example, with lit-html:
 
 ```JavaScript
 html`
@@ -700,16 +735,10 @@ ${myList.map(item => html`
 
 What this would do:  
 
-1.  If my-item is a custom element, use that.  Otherwise, check if a custom enhancement with that name exists in the registry.
-2.  In the case that my-item is a custom element, use document.createElement('my-item') to generate the custom element.  The custom element's attachedCallback (not connectedCallback) method could choose to place itself somewhere inside the element it is adorning.
-3.  Before attaching, merge whatever properties were passed to the "tbd" placeholder.
+1.  Before attaching to the "tbd" property of the tr element, merge whatever properties were passed to the "tbd" placeholder.
 4.  After the attachment, "setting" the property to an object would **not** replace the custom element/enhancement with the object, but rather the setter for "tbd" would interject, and do an Object.assign of the passed in object into the custom element/enhancement instance.
 
 What the real name of "tbd" should be is completely open in my mind.  Nothing jumps out at me as the "correct" answer.  Names that would make sense to me are:  "host", "vm", "viewModel", "scope", or "ish" -- short for itemscope host.  I guess I'm leaning towards the latter -- it is short, and is kind of a play on "is".
-
-Another name to be determined is the name of an event to dispatch from the enhanced element, indicating this special handshake has completed.  Suggestion: If "ish" is chosen for tbd, use "ishAttached" or "ishattached" to conform to all lower case event names if that is a hard requirement.
-
-Finally, another open question related to this proposal addendum is whether support for attributes "owned" by such enhancements would be supported, and what the pattern should be for the name.  I would propose that the value of the itemscope attribute serve as the base of the attribute hierarchy tree, and that branches and leafs also be supported, as far as parsing support.
 
 ## Support for lists and the itemscope extension
 
