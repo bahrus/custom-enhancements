@@ -85,7 +85,7 @@ Or developers could use single words using the small latin characters.  Or an em
 Some risks to doing this:
 
 1.  It may break xml (like svg tags)
-2.  Programmatically setting such attributes seems to be currently impossible.  This is particularly problematic if the developer wishes to update the value of said attribute via client side scripting.
+2.  Programmatically setting such attributes seems to be currently difficult. It can be done by updating the value property of the .attributes[i]. This is a bit of a hurdle to overcome if the developer wishes to update the value of said attribute via client side scripting.
 3.  It is even farther away from being "HTML5 compliant"
 4.  Clashes between different libraries are extremely likely to occur (the shorter the name, the less the ability to "reserve" the name in npm or some other package manager), which is why we posit that a solution to scoped registry should ideally be shipping and proven before shipping this problem space.
 
