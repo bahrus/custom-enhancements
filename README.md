@@ -706,7 +706,7 @@ This proposal is advocating enhancing the itemscope attribute, so that it can op
 So I am advocating no fewer than three "registries", as far as categories of classes / function prototypes:
 
 1.  Custom Elements, that extends HTMLElement (already built into the browser)
-2.  Custom Enhancements, that extends EventTarget (the bulk of this proposal)
+2.  Custom Enhancements, that extends ElementEnhancement (the bulk of this proposal)
 3.  Itemscope managers, that can be simply a function prototype or plain class (the addendum to this proposal we are discussing now).  
 
 So, just to provide a sample API to make things less abstract, suppose the API for registering the Itemscope managers looks like this:
@@ -775,6 +775,14 @@ ctr.prototype[Symbol.iterator] = function () {
         }
     };
 };
+```
+
+## Support for getting context
+
+Between custom elements, custom enhancements and itemscope extensions, it would be useful to be able to get the context of whatever scoped class we are inside of:
+
+```JavaScript
+oElement.getContext(el: Element, criterion:  {new(): HTMLElement} | {new(): })
 ```
 
 
