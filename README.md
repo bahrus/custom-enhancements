@@ -486,9 +486,9 @@ class ElementEnhancement extends EventTarget {
     set resolved(newValue){
         this.#resolved = newValue;
         if(newValue === true){
-            this.dispatchEvent(new Event('resolved'));
+            this.channelEvent(new Event('resolved'));
         }else if(newValue === false){
-            this.dispatchEvent(new Event('rejected'));
+            this.channelEvent(new Event('rejected'));
         }
     }
 
@@ -698,7 +698,7 @@ I propose:
 
 ## Support for a view model DOM fragment manager tied to the itemscope attribute.
 
-There are many scenarios where it makes sense to have one "central" element manager, that frameworks / libraries can expect, that manages the data and/or view model and/or binding and/or event handling for a DOM element, plus extensions of that element that are linked to it via the itemref attribute:
+There are many scenarios where it makes sense to have one "central" element manager, that frameworks / libraries can expect, that manages the data and/or view model and/or binding and/or event handling for a DOM element and its children, plus extensions of that element that are linked to it via the itemref attribute:
 
 - Scenarios where we can't wrap the element inside a custom element.  
 - Scenarios where we need to manage the light children of a web component that uses ShadowDOM
@@ -707,18 +707,18 @@ There are many scenarios where it makes sense to have one "central" element mana
 
 Unlike the other enhancements that this proposal supports, these element managers would not be enhancing the behavior of the element it provides, but rather focused squarely on binding and hydrating the light children of the element it adorns.  
 
-This proposal is advocating enhancing the itemscope attribute, so that it can optionally specify the name of a registered class or function prototype, instances of which frameworks could then easily pass values to, or invoke methods, or dispatch events to.  These classes would need very little in terms of integration with the DOM API's, as their focus is meant to be on "business domain logic" -- no support for owned attributes is needed, for example.  Nor specifying any restrictions of which types of elements that we are targeting.  These classes would be so generic in manner that the element type is largely immaterial.
+This proposal is advocating enhancing the itemscope attribute, so that it can optionally specify the name of a registered class, instances of which frameworks could then easily pass values to, or invoke methods, or dispatch events to.  These classes would need very little in terms of integration with the DOM API's, as their focus is meant to be on "business domain logic" -- no support for owned attributes is needed, for example.  Nor specifying any restrictions of which types of elements that we are targeting.  These classes would be so generic in manner that the element type is largely immaterial.
 
 So I am advocating no fewer than three "registries", as far as categories of classes / function prototypes:
 
 1.  Custom Elements, that extends HTMLElement (already built into the browser)
 2.  Custom Enhancements, that extends ElementEnhancement (the bulk of this proposal)
-3.  Itemscope managers, that can be simply a function prototype or plain class (the addendum to this proposal we are discussing now).  
+3.  Itemscope managers, that extends ItemscopeManager (the addendum to this proposal we are discussing now).  
 
 So, just to provide a sample API to make things less abstract, suppose the API for registering the Itemscope managers looks like this:
 
 ```JavaScript
-document.body.registerItemScopeManager('my-item', class {
+document.body.registerItemScopeManager('my-item', class extends ItemscopeManager{
     get ssn(){
         ...
     }
@@ -760,11 +760,11 @@ What this would do:
 1.  Before instantiating the "tbd" property of the tr element, merge whatever properties were passed to the "tbd" placeholder.
 4.  After the instantiation, "setting" the property to an object would **not** replace the class or function prototype instance with the object, but rather the setter for "tbd" would interject, and do an Object.assign of the passed in object into the custom element/enhancement instance.
 
-What the real name of "tbd" should be is completely open in my mind.  Nothing jumps out at me as the "correct" answer.  Names that would make sense to me are:  "host", "vm", "viewModel", "scope", or "ish" -- short for itemscope host.  I guess I'm leaning towards the latter -- it is short, and is kind of a play on "is".
+What the real name of "tbd" should be is completely open in my mind.  Nothing jumps out at me as the "correct" answer.  Names that would make sense to me are:  "host", "vm", "viewModel", "scope", "ism" or "ish" -- short for itemscope host.  I guess I'm leaning towards the latter -- it is short, and is kind of a play on "is".
 
-## Support for lists and the itemscope extension
+## Support for lists and the itemscope manager
 
-In many cases, what we need to bind the view to is not an "expando" type object, but rather an array of objects (i.e. lists).  In some cases we would want both to be supported ("expando" type properties but also an iterator interface). The discussion above doesn't make much sense --  merging in an object (via object.assign or something more powerful than object.assign) -- in this scenario where we have a list of objects or primitives to "pass in" or "merge".  
+In many cases, what we need to bind the view to is not an "expando" type object, but rather an array of objects (i.e. lists).  In some cases we would want both to be supported ("expando" type properties but also an iterator interface). The discussion above doesn't make much sense --  merging in an object (via object.assign or something more powerful than object.assign) -- in this scenario where we have a list of objects or primitives to "pass in".  
 
 So it seems reasonable to amend the  discussion above so that if the data that needs be passed into the tbd property is an array, to automatically upgrade the class or function prototype in the registration method:
 
@@ -783,13 +783,9 @@ ctr.prototype[Symbol.iterator] = function () {
 };
 ```
 
-## Support for getting context
+## Channeling events
 
-Between custom elements, custom enhancements and itemscope extensions, it would be useful to be able to get the context of whatever scoped class we are inside of:
-
-```JavaScript
-oElement.getContext(el: Element, criterion:  {new(): HTMLElement} | {new(): })
-```
+I initially thought these itemscope managers could be function prototypes, not inheriting anything particular from the platform.  But I think the case for supporting the same "channelingEvent" method as above, that dispatches an event from the adorned element that can bubble up the tree, is strong enough to advocate for a base class.
 
 
 
