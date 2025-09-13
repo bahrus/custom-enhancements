@@ -785,7 +785,7 @@ ctr.prototype[Symbol.iterator] = function () {
 
 ## Channeling events
 
-I initially thought these itemscope managers could be function prototypes, not inheriting anything particular from the platform.  But I think the case for supporting the same "channelingEvent" method as above, that dispatches an event from the adorned element that can bubble up the tree, is strong enough to advocate for a base class.
+I initially thought these itemscope managers could be function prototypes, or classes, and leave that decision up to the developer, not inheriting anything particular from the platform.  But I think the case for supporting the same "channelingEvent" method as above, that dispatches an distinguishable event from the adorned element that can bubble up the tree, is strong enough to advocate for a base class.
 
 
 
