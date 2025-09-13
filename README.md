@@ -179,16 +179,20 @@ type leafitude = number;
 type AttrCoordinates = `{branchitude}.{leafitude}`;
 class MyEnhancement extends ElementEnhancement {
 
+    //optional
     static config = {};
     
+    //optional
 	attachedCallback(enhancedElement: Element, enhancementInfo:  EnhancementInfo) { 
         //or connectedCallback if that is clearer
     } 
     
+    //optional
 	detachedCallback(enhancedElement: Element, enhancementInfo:  EnhancementInfo) { 
         //or disconnectedCallback if that is clearer.
     } 
 	
+    //maybe we don't need this, given the better mapping support mentioned above?
 	attributeChangedCallback(
         coordinates: AttrCoordinates,
         oldValue: string, 
@@ -366,6 +370,8 @@ Another example:  Currently if I go to https://walmart.com and right click and i
 Other examples include closure, wiz, knockout.js, JQueryUI, HTMX, also using names that typically start with an underscore (HTMX uses dashes in the property name).
 
 Clearly, they don't want to "break the web" with these naming conventions, but combine two such libraries together, and chances arise of a conflict.  And such naming conventions don't lend themselves to a very attractive api when being passed values from externally (such as via a framework).
+
+It has been argued by the browser vendors that really, attaching such objects onto DOM elements makes optimizing the memory footprint of DOM elements problematic.  I'm hoping that providing this standard approach to allow what a huge percent of web sites are already doing would make that memory footprint problem surmountable.
 
 ## Custom Property Name-spacing
 
@@ -641,9 +647,9 @@ But for now, the way this feature can be used is with a bespoke custom enhanceme
 
 Along the lines of the discussion above about loading enhancements in a predictable sequence, I've encountered some compelling use cases where we want to "defer" loading of a server-rendered attribute-based enhancement.  For example, a peer web component may want to tap into events that an enhancement fires, and not miss any events it may fire prior to the peer web component becoming upgraded.
 
-A related requirement has been identified by the web community, called [defer-hydration](https://github.com/webcomponents-cg/community-protocols/blob/main/proposals/defer-hydration.md).  While the use case is a bit different, the end requirement is quite similar.
+A related requirement has been identified by the web component community, called [defer-hydration](https://github.com/webcomponents-cg/community-protocols/blob/main/proposals/defer-hydration.md).  While the use case is a bit different, the end requirement is quite similar.
 
-To support this important use case, we propose the pattern:  defer-[base].  Until the attribute is removed from the element, then whenAttached / whenResolved methods discussed above cannot proceed:
+To support this important use case, we propose the pattern:  defer-[base].  Until the attribute is removed from the element, the whenAttached / whenResolved methods discussed above cannot proceed:
 
 
 ```html
@@ -692,7 +698,7 @@ I propose:
 
 ## Support for a view model DOM fragment manager tied to the itemscope attribute.
 
-There are many scenarios where it makes sense to have one "central" element manager, that frameworks / libraries can expect, that manages the data and/or view model and/or binding and/or event handling for a DOM element plus extensions of that element that are linked via the itemref attribute:
+There are many scenarios where it makes sense to have one "central" element manager, that frameworks / libraries can expect, that manages the data and/or view model and/or binding and/or event handling for a DOM element, plus extensions of that element that are linked to it via the itemref attribute:
 
 - Scenarios where we can't wrap the element inside a custom element.  
 - Scenarios where we need to manage the light children of a web component that uses ShadowDOM
@@ -701,7 +707,7 @@ There are many scenarios where it makes sense to have one "central" element mana
 
 Unlike the other enhancements that this proposal supports, these element managers would not be enhancing the behavior of the element it provides, but rather focused squarely on binding and hydrating the light children of the element it adorns.  
 
-This proposal is advocating enhancing the itemscope attribute, so that it can optionally specify the name of a registered class or function prototype, instances of which frameworks could then easily pass values to.  These classes would need very little in terms of integration with the DOM API's, as their focus is meant to be on "business domain logic" -- no support for owned attributes is needed, for example.  Nor specifying any restrictions of which types of elements that we are targeting.  These classes would be so generic in manner that the element type is largely immaterial.
+This proposal is advocating enhancing the itemscope attribute, so that it can optionally specify the name of a registered class or function prototype, instances of which frameworks could then easily pass values to, or invoke methods, or dispatch events to.  These classes would need very little in terms of integration with the DOM API's, as their focus is meant to be on "business domain logic" -- no support for owned attributes is needed, for example.  Nor specifying any restrictions of which types of elements that we are targeting.  These classes would be so generic in manner that the element type is largely immaterial.
 
 So I am advocating no fewer than three "registries", as far as categories of classes / function prototypes:
 
@@ -729,7 +735,7 @@ document.body.registerItemScopeManager('my-item', class {
 ```
 
 
-For example, with lit-html:
+Then libraries could integrate with these managers.  For example, with lit-html:
 
 ```JavaScript
 html`
@@ -751,14 +757,14 @@ ${myList.map(item => html`
 
 What this would do:  
 
-1.  Before attaching to the "tbd" property of the tr element, merge whatever properties were passed to the "tbd" placeholder.
-4.  After the attachment, "setting" the property to an object would **not** replace the class or function prototype instance with the object, but rather the setter for "tbd" would interject, and do an Object.assign of the passed in object into the custom element/enhancement instance.
+1.  Before instantiating the "tbd" property of the tr element, merge whatever properties were passed to the "tbd" placeholder.
+4.  After the instantiation, "setting" the property to an object would **not** replace the class or function prototype instance with the object, but rather the setter for "tbd" would interject, and do an Object.assign of the passed in object into the custom element/enhancement instance.
 
 What the real name of "tbd" should be is completely open in my mind.  Nothing jumps out at me as the "correct" answer.  Names that would make sense to me are:  "host", "vm", "viewModel", "scope", or "ish" -- short for itemscope host.  I guess I'm leaning towards the latter -- it is short, and is kind of a play on "is".
 
 ## Support for lists and the itemscope extension
 
-In many cases, what we need to bind the view to is not an "expando" type object, but rather an array of objects (i.e. lists).  In some cases we would want both to be supported ("expando" type properties but also an iterator interface). The discussion above doesn't make much sense, in terms of merging in the object (via object.assign or something more powerful than object.assign) in this scenario where we have a list of objects or primitives to "pass in" or "merge".  
+In many cases, what we need to bind the view to is not an "expando" type object, but rather an array of objects (i.e. lists).  In some cases we would want both to be supported ("expando" type properties but also an iterator interface). The discussion above doesn't make much sense --  merging in an object (via object.assign or something more powerful than object.assign) -- in this scenario where we have a list of objects or primitives to "pass in" or "merge".  
 
 So it seems reasonable to amend the  discussion above so that if the data that needs be passed into the tbd property is an array, to automatically upgrade the class or function prototype in the registration method:
 
