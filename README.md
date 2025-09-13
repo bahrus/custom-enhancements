@@ -371,7 +371,7 @@ Other examples include closure, wiz, knockout.js, JQueryUI, HTMX, also using nam
 
 Clearly, they don't want to "break the web" with these naming conventions, but combine two such libraries together, and chances arise of a conflict.  And such naming conventions don't lend themselves to a very attractive api when being passed values from externally (such as via a framework).
 
-It has been argued by the browser vendors that really, attaching such objects onto DOM elements makes optimizing the memory footprint of DOM elements problematic.  I'm hoping that providing this standard approach to allow what a huge percent of web sites are already doing would make that memory footprint problem surmountable.
+It has [been argued](https://www.youtube.com/watch?v=uygxJ8Wxotc&t=319s) by the browser vendors that really, attaching such objects onto DOM elements makes optimizing the memory footprint of DOM elements problematic.  I'm hoping that providing this standard approach to allow what a huge percent of web sites are already doing would make that memory footprint problem surmountable.
 
 ## Custom Property Name-spacing
 
