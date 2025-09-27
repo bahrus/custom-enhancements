@@ -365,7 +365,7 @@ And yet the need to be able to enhance [existing](https://aurelia.io/docs/templa
 
 A close examination of these solutions usually indicates that the problem WebKit is concerned about is only percolating under the surface, pushed (or remaining) underground by a lack of an alternative solution.  One finds plenty of custom objects attached to the element being enhanced.  Just to take one example:  "_x_dataStack" is used by Alpine.js.  
 
-Another example:  Currently if I go to https://walmart.com and right click and inspect their tile elements, I see some "react fiber" objects attached (__reactFiber$...), full of properties like memoizedProps, refs (a function) etc.  And reactProps (__reactProps$...), also a function prototype containing properties and methods. 
+Another example:  Currently if I go to https://walmart.com and right click and inspect their tile elements, I see some "react fiber" objects attached (__reactFiber$...), full of properties like memoizedProps, refs (a function) etc.  And reactProps (__reactProps$...), also a function prototype containing properties and methods.   [Preact does as well](https://www.nevermoreacademy.com/).
 
 Other examples include closure, wiz, knockout.js, JQueryUI, HTMX, also using names that typically start with an underscore (HTMX uses dashes in the property name).
 
