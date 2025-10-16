@@ -351,6 +351,12 @@ I like the promising ideas presented [here](https://github.com/WICG/webcomponent
 
 Or maybe it would make more sense to "pilot" such ideas on custom enhancements, and then apply to custom elements.  I think those ideas are 100% compatible with this proposal, and shouldn't break it in any way. 
 
+## How custom elements can opt in
+
+Suppose a behavior/enhancement's functionality is core to a custom element's mission, and the custom element doesn't want to reinvent the wheel, and simply wants to take advantage of the enhancement, without waiting for external parties to apply the enhancement?  Suppose the custom element wants to provide key information that is not accessible from outside, like private members, or the internals?
+
+One way it could do this to simply attach the enhancement
+
 ## Backdrop
 
 The WebKit team has raised a number of valid concerns about extending built-in elements.  I think one of the most compelling is the concern that, since the class extension is linked to the top level of the component, it will be natural for the developer to add properties and methods directly to that component.  Private properties and methods probably are of no concern.  It's the public ones which are.  Why? 
