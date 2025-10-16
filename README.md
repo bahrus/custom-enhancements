@@ -351,11 +351,6 @@ I like the promising ideas presented [here](https://github.com/WICG/webcomponent
 
 Or maybe it would make more sense to "pilot" such ideas on custom enhancements, and then apply to custom elements.  I think those ideas are 100% compatible with this proposal, and shouldn't break it in any way. 
 
-## How custom elements can opt in
-
-Suppose a behavior/enhancement's functionality is core to a custom element's mission, and the custom element doesn't want to reinvent the wheel, and simply wants to take advantage of the enhancement, without waiting for external parties to apply the enhancement?  Suppose the custom element wants to provide key information that is not accessible from outside, like private members, or the internals?
-
-One way it could do this to simply attach the enhancement
 
 ## Backdrop
 
@@ -701,6 +696,16 @@ I propose:
 
 1.  The base Event object gets an additional property:  "enh", which is where we pass in the enhKey mentioned earlier.
 2.  The base Enhancement class has a method "channelEvent" that is a simple wrapper around "dispatchEvent" of the element that the enhancement adorns, but inserts the name of the enhKey into the enh property of the event.
+
+## How custom elements can opt in
+
+Suppose a behavior/enhancement's functionality is core to a custom element's mission, or close enough for government work? And the custom element doesn't want to reinvent the wheel, and simply wants to take advantage of the enhancement, without waiting for external parties to apply the enhancement?  Suppose the custom element wants to provide key information that is not accessible from outside, like private data and/or the internals?
+
+One way it could do this to simply attach the enhancement as discussed, and pass in the internals, assuming the enhancement provides support for working such things:
+
+```JavaScript
+class MyCustomElement
+```
 
 ## Support for a view model DOM fragment manager tied to the itemscope attribute.
 
