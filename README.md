@@ -706,6 +706,7 @@ But I think some of the infrastructure behind this proposal could be useful to [
 1. The ability to break down one behavior into various aspects via quite semantic attributes, and roll them up into one behavior/enhancement.
 2. Dynamically name-spacing support for property names within ShadowDom realms (or even more fine-grained scoping according to the latest specs) 
 3. Support for lazy-loading of such functionality as needed.
+4. A declarative mapping similar to dependency injection.
 
 ### Use cases?
 
