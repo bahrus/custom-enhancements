@@ -697,11 +697,23 @@ I propose:
 1.  The base Event object gets an additional property:  "enh", which is where we pass in the enhKey mentioned earlier.
 2.  The base Enhancement class has a method "channelEvent" that is a simple wrapper around "dispatchEvent" of the element that the enhancement adorns, but inserts the name of the enhKey into the enh property of the event.
 
-## How custom elements can opt in
+## How custom elements can opt in -- initial thoughts
+
+So far we've been discussing using enhancements to enhance third party elements, built-in or custom.  Some of those are quite perpendicular in functionality -- logging, persistence, binding, some more aligned with the the functionality the element provides.
+
+But I think some of the infrastructure behind this proposal could be useful to [first party developers](https://github.com/WICG/webcomponents/issues/814#issuecomment-3392840225) as well.  In particular:
+
+1. The ability to break down one behavior into various aspects via quite semantic attributes, and roll them up into one behavior/enhancement.
+2. Name-spacing support for property names within ShadowDom realms (or even more fine-grained scoping according to the latest specs) 
+3. Support for lazy-loading of such functionality as needed.
+
+### Use cases?
+
+Most of the "slam dunk" use cases that come to mind are applying behaviors/enhancements that are really useful as applied to built-in elements, but apply to custom elements that adopt emulate the built-in ability, with increasing ability (hopefully) as the platform provides behaviors [via internals](https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/main/ElementInternalsType/explainer.md).
 
 Suppose a behavior/enhancement's functionality is core to a custom element's mission, or close enough for government work? And the custom element doesn't want to reinvent the wheel, and simply wants to take advantage of the enhancement, without waiting for external parties to apply the enhancement?  Suppose the custom element wants to provide key information that is not accessible from outside, like private data and/or the internals?
 
-One way it could do this to simply attach the enhancement as discussed, and pass in the internals, assuming the enhancement provides support for working such things:
+One way it could do this to simply attach the enhancement as discussed, and pass in the internals, assuming the enhancement provides support for working with such things:
 
 ```JavaScript
 class MyCustomElement
