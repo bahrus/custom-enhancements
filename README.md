@@ -713,11 +713,11 @@ Most of the "slam dunk" use cases that come to mind are applying behaviors/enhan
 
 Suppose a behavior/enhancement's functionality is core to a custom element's mission, or close enough for government work? And the custom element doesn't want to reinvent the wheel, and simply wants to take advantage of the enhancement, without waiting for external parties to apply the enhancement?  Suppose the custom element wants to provide key information that is not accessible from outside, like private data and/or the internals?
 
-One way it could do this to simply attach the enhancement as discussed, and pass in the internals, assuming the enhancement provides support for working with such things:
+One way a first-party component could adopt a first-party or third-party behavior/enhancement would be to do this by simply attaching the enhancement as discussed, and pass in the internals, assuming the enhancement provides support for working with such things:
 
-```JavaScript
-class MyCustomElement
-```
+This would still result in requiring the enh- attribute prefix and the enhancements gateway.
+
+But 
 
 ## Support for a view model DOM fragment manager tied to the itemscope attribute.
 
