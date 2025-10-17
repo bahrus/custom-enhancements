@@ -699,13 +699,14 @@ I propose:
 
 ## How custom elements can opt in -- initial thoughts
 
-So far we've been discussing using enhancements to enhance third party elements, built-in or custom.  Some of those are quite perpendicular in functionality -- logging, persistence, binding, some more aligned with the the functionality the element provides.
+So far we've been discussing using enhancements to enhance third party elements, built-in or custom.  Some of those are quite perpendicular in functionality -- logging, persistence, binding, some more aligned with the functionality the element provides.
 
 But I think some of the infrastructure behind this proposal could be useful to [first party developers](https://github.com/WICG/webcomponents/issues/814#issuecomment-3392840225) as well.  In particular:
 
 1. The ability to break down one behavior into various aspects via quite semantic attributes, and roll them up into one behavior/enhancement.
 2. Name-spacing support for property names within ShadowDom realms (or even more fine-grained scoping according to the latest specs) 
 3. Support for lazy-loading of such functionality as needed.
+4. A declarative mapping similar to dependency injection.
 
 ### Use cases?
 
