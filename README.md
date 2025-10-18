@@ -738,10 +738,23 @@ I propose:
 Dynamically, conditionally attaching a feature
 
 ```TypeScript
-class ClubMember extends HTMLElement{
-    constructor(){
+class MyPhotoTakerEnhancement extends ElementEnhancement{
+    attachedCallback(enhancedElement, )
+}
+
+type ClubMemberProps {
+    photoTaker:  MyPhotoTakerEnhancement | undefined;
+}
+class ClubMember extends HTMLElement implements ClubMemberProps{
+    async constructor(){ 
+        //yeah, yeah, async probably not allowed for constructors
+        //I think async should be supported, but maybe if no real async operations 
+        // take place, like fetch calls, etc, it is almost as good as synchronous?
         super();
-        customElements.attach(instance: HTMLElement, featureInfo: FeatureInfo);
+        await customElements
+            .attachFeature<TEnhancement, ClubMember>(MyPhotoTakerEnhancementInfo)
+            .toInstance(this)  //toInstance should expect an instance of ClubMember
+            .atProp('photoTaker'); // atProp should expect a keyof ClubMember
     }
 
     photoTaker: MyPhotoTakerEnhancement | undefined;
