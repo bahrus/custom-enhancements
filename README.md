@@ -821,7 +821,7 @@ class ClubMember extends HTMLElement {
 
 similar to [observedAttributes](https://github.com/WICG/webcomponents/issues/1045)
 
-Here the platform would attach the feature during in the base HTML class (preferably in the constructor, I think) using the afore mentioned methods.
+Here the platform would attach the feature in the base HTML class (preferably in the constructor, I think) using the afore mentioned methods.
 
 Both ways of attaching the enhancement would result in calling a new reserved method, featureAddedCallback, allowing the userland code to pass in such things as private data and element internals to the enhancement.
 
