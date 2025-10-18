@@ -441,6 +441,14 @@ So "enhancements" seems to cover all bases.
 
 Others prefer "behaviors" (but the others who do seem to think it is of zero consequence, whereas I think there is some substantial consequence to the decision, if that counts for anything). I'm open to both, maybe my reasoning above is wrong (but no one has yet to address my concerns head on).
 
+Another reason to consider:  I think it would be wonderful if built-in elements start provided structured namespaced paths to various features of the element.  As it is, having all the key properties at the top level, sometimes splitting up related properties like command and commandFor, has made the api rather unwieldy.  I think "behaviors" would be a great property name for built-in elements to use to indicate these are platform behaviors.  So developers could access these via:
+
+```JavaScript
+Object.assign(oButton.behaviors, {command:'doSomething', commandFor: oDialog});
+```
+
+Granted, some frameworks might not support the ability to tap into this at first, but I suspect would accommodate if the platform went in this direction.
+
 Choosing the right name seems important, as it ought to align somewhat with the reserved sub-property of the element, as well as the reserved prefix for attributes (think data- / dataset).
 
 ## Should use of enh-* prefix for server-rendered (progressive) enhancement of custom elements be required (or even strongly suggested?)
@@ -722,13 +730,21 @@ I propose:
 
 ## Custom Element Features
 
-Dynamic features
+Dynamically, conditionally attaching a feature
 
 ```TypeScript
-customElements.attach(instance: HTMLElement, featureInfo: FeatureInfo);
+class ClubMember extends HTMLElement{
+    constructor(){
+        super();
+        customElements.attach(instance: HTMLElement, featureInfo: FeatureInfo);
+    }
+
+    photoTaker: MyPhotoTakerEnhancement | undefined;
+}
+
 ```
 
-be callable from the constructor, or at least connectedCallback.
+This method of customElements would be callable from anywhere, including the constructor, and certainly least connectedCallback.
 
 I think this would allow for testable Mock Objects, by intercepting calls to customElements.attach.
 
@@ -754,11 +770,15 @@ In addition, to allow for reflection / declarative attachment:
 class ClubMember extends HTMLElement {
     static features = {
         ...
-        feature1: featureInfo1,
+        photoTaker: featureInfo1,
         feature2: featureInfo2,
         ... 
 
     }
+
+    photoTaker: MyPhotoTakerEnhancement,
+
+
 }
 
 ```
