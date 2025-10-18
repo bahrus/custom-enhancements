@@ -752,6 +752,7 @@ class ClubMember extends HTMLElement implements ClubMemberProps{
         // take place, like fetch calls, etc, it is almost as good as synchronous?
         super();
         await customElements
+            .features()
             .attachFeature<TEnhancement, ClubMember>(MyPhotoTakerEnhancementInfo)
             .toInstance(this)  //toInstance should expect an instance of ClubMember
             .atProp('photoTaker'); // atProp should expect a keyof ClubMember
@@ -764,7 +765,7 @@ class ClubMember extends HTMLElement implements ClubMemberProps{
 
 This method of customElements would be callable from anywhere, including the constructor, and certainly least connectedCallback.
 
-I think this would allow for testable Mock Objects, by intercepting calls to customElements.attach.
+I think this would allow for testable Mock Objects, especially if these methods (especially .attachFeature) is/are made overridable by a super class.
 
 The type definition for FeatureInfo would closely resemble that of EnhancementInfo, but some pieces of EnhancementInfo don't quite make sense, and other aspects make more sense for the context of features:
 
