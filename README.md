@@ -724,6 +724,24 @@ customElements.attach(instance, enhancementInfo);
 
 be callable from the constructor, or at least connectedCallback.
 
+I think this would allow for testable Mock Objects, by intercepting calls to customElements.attach.
+
+I also propose that [this proposal](https://github.com/WICG/webcomponents/issues/1045) be amended to allow for reflection / declarative attachment:
+
+```TypeScript
+class ClubMember extends HTMLElement {
+    static observedAttributes = [
+        ...
+        {
+            enhancement: EnhancementInfo 
+        }
+    ]
+}
+
+```
+
+In which case the platform would attach the enhancement during instantiation, and call a new reserved method, attachedCallback, allowing the userland code to pass in such things as private data and element internals to the enhancement.
+
 
 ## Support for a view model DOM fragment manager tied to the itemscope attribute.
 
