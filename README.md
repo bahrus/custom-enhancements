@@ -724,6 +724,8 @@ But I think some of the infrastructure behind this proposal could be useful to [
 3. ...supporting lazy-loading of such functionality as needed.
 4. ...declarative mapping of functionality similar to dependency injection.
 
+... while leverage the exact same class definition used for custom enhancements.
+
 ### Use cases?
 
 Most of the "slam dunk" use cases that come to mind are applying behaviors/enhancements that have proven really useful when applied to built-in elements, but now apply these same libraries to custom elements that aim to emulate the same built-in abilities.  The ability to acquire the traits of built-in elements may be becoming more achievable as the platform provides said behaviors [via internals](https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/main/ElementInternalsType/explainer.md).
@@ -740,7 +742,7 @@ Dynamically, conditionally attaching a feature
 
 ```TypeScript
 class MyPhotoTakerEnhancement extends ElementEnhancement{
-    attachedCallback(enhancedElement, )
+    attachedCallback(enhancedElement: Element, info: MyPhotoTakerFeatureInfo )
 }
 
 type ClubMemberProps {
@@ -760,6 +762,8 @@ class ClubMember extends HTMLElement implements ClubMemberProps{
     }
 
     photoTaker: MyPhotoTakerEnhancement | undefined;
+
+
 }
 
 ```
@@ -784,6 +788,8 @@ interface FeatureInfo {
 }
 ```
 
+No support for supportInstanceTypes, supportedCssMatches is needed, for example. 
+
 In addition, we should provide for TypeScript-less reflection / declarative attachment when we don't need to be so dynamic:
 
 ```TypeScript
@@ -805,7 +811,7 @@ class ClubMember extends HTMLElement {
 
 similar to [observedAttributes](https://github.com/WICG/webcomponents/issues/1045)
 
-Here the platform would attach the enhancement during instantiation using the afore mentioned method.
+Here the platform would attach the enhancement during instantiation using the afore mentioned methods.
 
 Both ways of attaching the enhancement would result in calling a new reserved method, attachedCallback, allowing the userland code to pass in such things as private data and element internals to the enhancement.
 
