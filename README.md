@@ -14,7 +14,7 @@ Say all you need to do is to create an isolated behavior/enhancement/hook/whatev
 
 ```JS
 customEnhancements.define({
-    //name of our "custom prop", accessible via oElement.enhancements[enhancement], 
+    //name of our "custom prop", accessible via oElement.enhancements[enhKey], 
     //which is where we will find an instance of the class defined below.
     enhKey: 'logger', 
     base: 'log-to-console', //canonical name of our (base) custom attribute.
@@ -166,6 +166,7 @@ const enhancementInfo: EnhancementInfo = {
     //entirely optional
     allowedCSSMatches: 'input, textarea',
     //optional
+    //can only enhance element if base attribute is present
     baseRequired: false
     //required.
     //Can point directly to an already loaded Class constructor, or
@@ -714,7 +715,7 @@ I propose:
 
 ## How custom elements can opt in
 
-So far we've been discussing using enhancements to enhance *third party* elements, built-in or custom.  Some of these enhancements/behaviors would provide functionality that is quite perpendicular to what the custom element provides -- e.g. logging, persistence, binding.  Others will be more aligned with the the functionality the element provides.
+So far we've been discussing using enhancements to enhance *third party* elements, built-in or custom.  Some of these enhancements/behaviors would provide functionality that is quite perpendicular to what the custom element provides -- e.g. logging, persistence, binding.  Others will be more aligned with the functionality the element provides.
 
 But I think some of the infrastructure behind this proposal could be useful to [first party developers](https://github.com/WICG/webcomponents/issues/814#issuecomment-3392840225) as well.  In particular, it would be great if we empower custom element authors with:
 
@@ -728,11 +729,13 @@ But I think some of the infrastructure behind this proposal could be useful to [
 
 ### Use cases?
 
-Most of the "slam dunk" use cases that come to mind are applying behaviors/enhancements that have proven really useful when applied to built-in elements, but now apply these same libraries to custom elements that aim to emulate the same built-in abilities.  The ability to acquire the traits of built-in elements may be becoming more achievable as the platform provides said behaviors [via internals](https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/main/ElementInternalsType/explainer.md).
+One of the "slam dunk" use cases that come to mind is applying behaviors/enhancements that have proven really useful when applied to built-in elements, but now apply these same libraries to custom elements that aim to emulate the same built-in abilities.  The ability to acquire the traits of built-in elements may be becoming more achievable as the platform provides said behaviors [via internals](https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/main/ElementInternalsType/explainer.md).
+
+Another use case is for robust web components that do far more than just being a cool button or tab control -- components that provide business functionality, including managing domain objects.  These components would benefit from specializing, and breaking down the large component into smaller sub units.  Some sub units could utilize store libraries, like MobX stores, for example.
 
 One way a first-party component could adopt a first-party or third-party behavior/enhancement would be to do this by simply attaching the enhancement as discussed above, "at arms length".
 
-But suppose a behavior/enhancement's functionality is core to a custom element's mission, or close enough for government work? Suppose the custom element wants to provide key information that is not accessible from outside, like private data and/or the internals?  And/or suppose the custom element wants to nail down the name of the "custom prop" directly onto its namespaced object, so dependencies can leverage TypeScript and not have to be so vigilant about collisions between different (versioned) libraries that use the same name (beyond vigilance towards the shadow scoped name of the element itself).  As well as pinning down the (base) attribute tied to the enhancement?
+But suppose a behavior/enhancement's functionality is core to a custom element's mission, or close enough for government work? Suppose the custom element wants to provide key information that is not accessible from outside, like private data and/or the internals?  And/or suppose the custom element wants to nail down the name of the "custom prop" directly onto its namespaced object / prototype chain, so dependencies can leverage TypeScript and not have to be so vigilant about collisions between different (versioned) libraries that use the same name (beyond vigilance towards the shadow scoped name of the element itself).  As well as pinning down the (base) attribute tied to the enhancement?
 
 I propose a significant amendment to this proposal, support for...:
 
@@ -742,7 +745,9 @@ I propose a significant amendment to this proposal, support for...:
 
 ```TypeScript
 class MyPhotoTakerEnhancement extends ElementEnhancement{
-    attachedCallback(enhancedElement: Element, info: MyPhotoTakerFeatureInfo )
+    attachedCallback(enhancedElement: Element, info: MyPhotoTakerFeatureInfo){
+        ...
+    }
 }
 
 type ClubMemberProps {
@@ -754,8 +759,7 @@ class ClubMember extends HTMLElement implements ClubMemberProps{
         //I think async should be supported,though but maybe if no real async operations 
         // take place, like fetch calls, etc, it is almost as good as synchronous?
         super();
-        await customElements
-            .features()
+        await customElements.features()
             .attachFeature<TEnhancement, ClubMember>(MyPhotoTakerEnhancementInfo)
             .toInstance(this)  //toInstance should expect an instance of ClubMember, TypeScript definers
             .atProp('photoTaker'); // atProp should expect a keyof ClubMember for its parameter, TypeScript definers
@@ -772,12 +776,14 @@ class ClubMember extends HTMLElement implements ClubMemberProps{
 
 This method of customElements would be callable from anywhere, including the constructor, and certainly connectedCallback.
 
+Due to the limitaions of JavaScript, I can't think of a way to prevent calling it from outside the custom element. If there is one, this is something to strongly consider.  It's not like a custom element instance can't be already be sabotaged from outside currently.
+
 I think this would allow for testable Mock Objects, especially if these methods (especially .attachFeature) is/are made overridable by a super class.
 
-The type definition for FeatureInfo would closely resemble that of EnhancementInfo, but some pieces of EnhancementInfo don't quite make sense, and other aspects make more sense for the context of features:
+The type definition for FeatureInfo would closely resemble that of EnhancementInfo, but some fields of EnhancementInfo don't quite make sense in this context, and other fields may make more sense in the context of features (none of have been identified yet):
 
 ```TypeScript
-type Enhancer = {new(): ElementEnhancement} | () => Promise<Enhancer>
+type Enhancer = {new(): ElementEnhancement} | () => Promise<{new(): ElementEnhancement}>
 interface FeatureInfo {
     base?: Base
     branches?: Branches
@@ -792,7 +798,7 @@ interface FeatureInfo {
 
 No support for supportInstanceTypes, supportedCssMatches is needed, for example. 
 
-### Support for static features added to the prototype
+### Support for static features added to the prototype declaratively
 
 In addition, we should provide for TypeScript-less reflection / declarative attachment when we don't need to be so dynamic:
 
@@ -806,7 +812,7 @@ class ClubMember extends HTMLElement {
 
     }
 
-    photoTaker: MyPhotoTakerEnhancement,
+    photoTaker: MyPhotoTakerEnhancement;
 
 
 }
@@ -815,7 +821,7 @@ class ClubMember extends HTMLElement {
 
 similar to [observedAttributes](https://github.com/WICG/webcomponents/issues/1045)
 
-Here the platform would attach the enhancement during instantiation using the afore mentioned methods.
+Here the platform would attach the feature during in the base HTML class (preferably in the constructor, I think) using the afore mentioned methods.
 
 Both ways of attaching the enhancement would result in calling a new reserved method, featureAddedCallback, allowing the userland code to pass in such things as private data and element internals to the enhancement.
 
