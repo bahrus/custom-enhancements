@@ -738,7 +738,7 @@ I propose a significant amendment to this proposal, support for...:
 
 ## Custom Element Features
 
-Dynamically, conditionally attaching a feature
+### Dynamically, conditionally attaching a feature
 
 ```TypeScript
 class MyPhotoTakerEnhancement extends ElementEnhancement{
@@ -792,6 +792,8 @@ interface FeatureInfo {
 
 No support for supportInstanceTypes, supportedCssMatches is needed, for example. 
 
+### Support for static features added to the prototype
+
 In addition, we should provide for TypeScript-less reflection / declarative attachment when we don't need to be so dynamic:
 
 ```TypeScript
@@ -815,7 +817,7 @@ similar to [observedAttributes](https://github.com/WICG/webcomponents/issues/104
 
 Here the platform would attach the enhancement during instantiation using the afore mentioned methods.
 
-Both ways of attaching the enhancement would result in calling a new reserved method, attachedCallback, allowing the userland code to pass in such things as private data and element internals to the enhancement.
+Both ways of attaching the enhancement would result in calling a new reserved method, featureAddedCallback, allowing the userland code to pass in such things as private data and element internals to the enhancement.
 
 
 ## Support for a view model DOM fragment manager tied to the itemscope attribute.
