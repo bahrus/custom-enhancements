@@ -718,13 +718,30 @@ But suppose a behavior/enhancement's functionality is core to a custom element's
 
 I propose:
 
-```JavaScript
-customElements.attach(instance, enhancementInfo);
+## Custom Element Features
+
+Dynamic features
+
+```TypeScript
+customElements.attach(instance: HTMLElement, featureInfo: FeatureInfo);
 ```
 
 be callable from the constructor, or at least connectedCallback.
 
 I think this would allow for testable Mock Objects, by intercepting calls to customElements.attach.
+
+The type definition for FeatureInfo would closely resemble that of EnhancementInfo, but some pieces of EnhancementInfo don't quite make sense, and other aspects make more sense for the context of features:
+
+```TypeScript
+interface FeatureInfo {
+    base: Base
+    branches: Branches
+    leaves: Leaves
+    do: Doer
+    attachOnMatch
+
+}
+```
 
 In addition, to allow for reflection / declarative attachment:
 
@@ -732,8 +749,8 @@ In addition, to allow for reflection / declarative attachment:
 class ClubMember extends HTMLElement {
     static features = {
         ...
-        feature1: enhancementInfo1,
-        feature2: enhancementInfo2,
+        feature1: featueInfo1,
+        feature2: featureInfo2,
         ... 
 
     }
