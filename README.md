@@ -444,7 +444,7 @@ Others prefer "behaviors" (but the others who do seem to think it is of zero con
 Another reason to consider:  I think it would be wonderful if built-in elements start provided structured namespaced paths to various features of the element.  As it is, having all the key properties at the top level, sometimes splitting up related properties like command and commandFor, has made the api rather unwieldy.  Like what was done with styles from the get-go.  I think "behaviors" would be a great property name for built-in elements to use to indicate these are platform behaviors.  So developers could access these via:
 
 ```JavaScript
-Object.assign(oButton.behaviors, { 
+Object.assignGingerly(oButton.behaviors, { 
     command: {
         name:'doSomething', 
         for: oDialog
