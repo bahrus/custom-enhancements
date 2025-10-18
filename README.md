@@ -727,9 +727,9 @@ But I think some of the infrastructure behind this proposal could be useful to [
 
 Most of the "slam dunk" use cases that come to mind are applying behaviors/enhancements that have proven really useful when applied to built-in elements, but now apply these same libraries to custom elements that aim to emulate the same built-in abilities.  The ability to acquire the traits of built-in elements may be becoming more achievable as the platform provides said behaviors [via internals](https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/main/ElementInternalsType/explainer.md).
 
-One way a first-party component could adopt a first-party or third-party behavior/enhancement would be to do this by simply attaching the enhancement as discussed.
+One way a first-party component could adopt a first-party or third-party behavior/enhancement would be to do this by simply attaching the enhancement as discussed above, "at arms length".
 
-But suppose a behavior/enhancement's functionality is core to a custom element's mission, or close enough for government work? Suppose the custom element wants to provide key information that is not accessible from outside, like private data and/or the internals?  And/or suppose the custom element wants to nail down the name of the "custom prop" directly onto its namespaced object, so dependencies can leverage TypeScript and not have to be so vigilant about collisions between different (versioned) libraries that use the same name (beyond vigilance towards the shadow scoped name of the element itself).  As well as pining down the (base) attribute tied to the enhancement.
+But suppose a behavior/enhancement's functionality is core to a custom element's mission, or close enough for government work? Suppose the custom element wants to provide key information that is not accessible from outside, like private data and/or the internals?  And/or suppose the custom element wants to nail down the name of the "custom prop" directly onto its namespaced object, so dependencies can leverage TypeScript and not have to be so vigilant about collisions between different (versioned) libraries that use the same name (beyond vigilance towards the shadow scoped name of the element itself).  As well as pinning down the (base) attribute tied to the enhancement.
 
 I propose:
 
@@ -801,6 +801,8 @@ class ClubMember extends HTMLElement {
 }
 
 ```
+
+similar to [observedAttributes](https://github.com/WICG/webcomponents/issues/1045)
 
 Here the platform would attach the enhancement during instantiation using the afore mentioned method.
 
