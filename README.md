@@ -754,7 +754,7 @@ In addition, to allow for reflection / declarative attachment:
 class ClubMember extends HTMLElement {
     static features = {
         ...
-        feature1: featueInfo1,
+        feature1: featureInfo1,
         feature2: featureInfo2,
         ... 
 
