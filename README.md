@@ -719,7 +719,7 @@ But suppose a behavior/enhancement's functionality is core to a custom element's
 I propose:
 
 ```JavaScript
-customElements.attach(internals, instance, enhancementInfo);
+customElements.attach(instance, internals, enhancementInfo);
 ```
 
 be callable from the constructor, or at least connectedCallback.  Internals would be required, to prevent unauthorized calling of this method from third parties (though of course third parties can wreak all sorts of havoc, given the nature of JavaScript and the DOM).
