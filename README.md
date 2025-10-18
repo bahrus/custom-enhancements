@@ -730,13 +730,13 @@ In addition, to allow for reflection / declarative attachment:
 
 ```TypeScript
 class ClubMember extends HTMLElement {
-    static enhancements = [
+    static features = {
         ...
-        enhancementInfo1,
-        enhancementInfo2,
+        feature1: enhancementInfo1,
+        feature2: enhancementInfo2,
         ... 
 
-    ]
+    }
 }
 
 ```
