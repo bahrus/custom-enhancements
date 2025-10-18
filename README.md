@@ -712,16 +712,17 @@ I propose:
 1.  The base Event object gets an additional property:  "enh", which is where we pass in the enhKey mentioned earlier.
 2.  The base Enhancement class has a method "channelEvent" that is a simple wrapper around "dispatchEvent" of the element that the enhancement adorns, but inserts the name of the enhKey into the enh property of the event.
 
-## How custom elements can opt in -- initial thoughts
+## How custom elements can opt in
 
 So far we've been discussing using enhancements to enhance *third party* elements, built-in or custom.  Some of these enhancements/behaviors would provide functionality that is quite perpendicular to what the custom element provides -- e.g. logging, persistence, binding.  Others will be more aligned with the the functionality the element provides.
 
-But I think some of the infrastructure behind this proposal could be useful to [first party developers](https://github.com/WICG/webcomponents/issues/814#issuecomment-3392840225) as well.  In particular:
+But I think some of the infrastructure behind this proposal could be useful to [first party developers](https://github.com/WICG/webcomponents/issues/814#issuecomment-3392840225) as well.  In particular, it would be great if we empower custom element authors with:
 
-1. The ability to break down one behavior into various aspects via quite semantic attributes, and roll them up into one behavior/enhancement.
-2. Dynamically name-spacing support for property names within ShadowDom realms (or even more fine-grained scoping according to the latest specs) 
-3. Support for lazy-loading of such functionality as needed.
-4. A declarative mapping similar to dependency injection.
+1. ...the ability to break down one behavior into various aspects via quite semantic attributes, and roll them up into one behavior/enhancement.
+2. ...dynamically name-spacing support for property names within ShadowDom realms (or even more fine-grained scoping according to the latest specs), or, in contrast... 
+3. ...leveraging the support of enhancements, but with more locked down prototype based properties
+3. ...supporting lazy-loading of such functionality as needed.
+4. ...declarative mapping of functionality similar to dependency injection.
 
 ### Use cases?
 
@@ -729,9 +730,9 @@ Most of the "slam dunk" use cases that come to mind are applying behaviors/enhan
 
 One way a first-party component could adopt a first-party or third-party behavior/enhancement would be to do this by simply attaching the enhancement as discussed above, "at arms length".
 
-But suppose a behavior/enhancement's functionality is core to a custom element's mission, or close enough for government work? Suppose the custom element wants to provide key information that is not accessible from outside, like private data and/or the internals?  And/or suppose the custom element wants to nail down the name of the "custom prop" directly onto its namespaced object, so dependencies can leverage TypeScript and not have to be so vigilant about collisions between different (versioned) libraries that use the same name (beyond vigilance towards the shadow scoped name of the element itself).  As well as pinning down the (base) attribute tied to the enhancement.
+But suppose a behavior/enhancement's functionality is core to a custom element's mission, or close enough for government work? Suppose the custom element wants to provide key information that is not accessible from outside, like private data and/or the internals?  And/or suppose the custom element wants to nail down the name of the "custom prop" directly onto its namespaced object, so dependencies can leverage TypeScript and not have to be so vigilant about collisions between different (versioned) libraries that use the same name (beyond vigilance towards the shadow scoped name of the element itself).  As well as pinning down the (base) attribute tied to the enhancement?
 
-I propose:
+I propose and amendment to this proposal:
 
 ## Custom Element Features
 
