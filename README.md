@@ -18,7 +18,7 @@ customEnhancements.define({
     //which is where we will find an instance of the class defined below.
     enhKey: 'logger', 
     base: 'log-to-console', //canonical name of our (base) custom attribute.
-    enhancer: class extends ElementEnhancement {
+    attach: class extends ElementEnhancement {
         attachedCallback(enhancedElement: Element, enhancementInfo: EnhancementInfo){
             const {base} = enhancementInfo;
             // in this example, base will simply equal 'log-to-console', 
@@ -169,7 +169,7 @@ const enhancementInfo: EnhancementInfo = {
     //Can point directly to an already loaded Class constructor, or
     //as shown below, it can point to an async loader that allows
     //for lazy loading on demand.
-    enhancer: async () => {
+    attach: async () => {
         return MyEnhancementClassConstructor
     },
     initPropVals: any //set during the runtime handshake
@@ -468,7 +468,7 @@ const enhancementInstance = await oElement.enhancements.whenAttached(enhancement
 const enhancementInstance = await oElement.enhancements.whenResolved(enhancementInfo);
 ```
 
-Both of these methods would see if the enhancement has already been attached, and if so, pass that back.  If not, the method will cause an instance of the class constructor returned by the enhancer option, then call attachedCallback and attributeChangedCallback (if applicable) in the same order as is done with custom elements, before returning the instance.
+Both of these methods would see if the enhancement has already been attached, and if so, pass that back.  If not, the method will cause an instance of the class constructor returned by the *attach* option, then call attachedCallback and attributeChangedCallback (if applicable) in the same order as is done with custom elements, before returning the instance.
 
 The whenResolved promise is returned after the developer sets:
 
@@ -737,7 +737,7 @@ interface FeatureInfo {
     base: Base
     branches: Branches
     leaves: Leaves
-    do: Doer
+    attach: Doer
     attachOnMatch
 
 }
