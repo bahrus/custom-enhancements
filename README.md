@@ -710,15 +710,13 @@ But I think some of the infrastructure behind this proposal could be useful to [
 
 ### Use cases?
 
-Most of the "slam dunk" use cases that come to mind are applying behaviors/enhancements that are really useful as applied to built-in elements, but apply these same libraries to custom elements that aim to emulate the same built-in abilities.  The ability to acquire the traits of built-in elements may be becoming more achievabl as the platform provides said behaviors [via internals](https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/main/ElementInternalsType/explainer.md).
+Most of the "slam dunk" use cases that come to mind are applying behaviors/enhancements that have proven really useful when applied to built-in elements, but now apply these same libraries to custom elements that aim to emulate the same built-in abilities.  The ability to acquire the traits of built-in elements may be becoming more achievable as the platform provides said behaviors [via internals](https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/main/ElementInternalsType/explainer.md).
 
-Suppose a behavior/enhancement's functionality is core to a custom element's mission, or close enough for government work? And the custom element doesn't want to reinvent the wheel, and simply wants to take advantage of the enhancement, without waiting for external parties to apply the enhancement?  Suppose the custom element wants to provide key information that is not accessible from outside, like private data and/or the internals?
+One way a first-party component could adopt a first-party or third-party behavior/enhancement would be to do this by simply attaching the enhancement as discussed.
 
-One way a first-party component could adopt a first-party or third-party behavior/enhancement would be to do this by simply attaching the enhancement as discussed, and pass in the internals, assuming the enhancement provides support for working with such things:
+But suppose a behavior/enhancement's functionality is core to a custom element's mission, or close enough for government work? And the custom element doesn't want to reinvent the wheel, and simply wants to take advantage of the enhancement, without waiting for external parties to apply the enhancement?  Suppose the custom element wants to provide key information that is not accessible from outside, like private data and/or the internals?  And/or suppose the custom element wants to nail down the name of the "custom prop" directly onto its namespaced object, so dependencies can leverage TypeScript and not have to be so vigilant about collisions between different (versioned) libraries that use the same name (beyond vigilance towards the shadow scoped name of the element itself).
 
-This would still result in requiring the enh- attribute prefix and the enhancements gateway.
 
-But 
 
 ## Support for a view model DOM fragment manager tied to the itemscope attribute.
 
