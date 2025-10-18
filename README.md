@@ -726,15 +726,16 @@ be callable from the constructor, or at least connectedCallback.
 
 I think this would allow for testable Mock Objects, by intercepting calls to customElements.attach.
 
-I also propose that [this proposal](https://github.com/WICG/webcomponents/issues/1045) be amended to allow for reflection / declarative attachment:
+I've also amended [this proposal](https://github.com/WICG/webcomponents/issues/1045) to allow for reflection / declarative attachment:
 
 ```TypeScript
 class ClubMember extends HTMLElement {
     static observedAttributes = [
         ...
-        {
-            enhancement: EnhancementInfo 
-        }
+        enhancementInfo1,
+        enhancementInfo2,
+        ... 
+
     ]
 }
 
