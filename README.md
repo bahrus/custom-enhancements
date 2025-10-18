@@ -763,7 +763,9 @@ class ClubMember extends HTMLElement implements ClubMemberProps{
 
     photoTaker: MyPhotoTakerEnhancement | undefined;
 
-
+    featureAddedCallback(prop: keyof ClubMember, info: FeatureInfo){
+        ...
+    }
 }
 
 ```
