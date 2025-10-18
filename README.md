@@ -165,6 +165,8 @@ const enhancementInfo: EnhancementInfo = {
     ],
     //entirely optional
     allowedCSSMatches: 'input, textarea',
+    //optional
+    baseRequired: false
     //required.
     //Can point directly to an already loaded Class constructor, or
     //as shown below, it can point to an async loader that allows
@@ -172,7 +174,7 @@ const enhancementInfo: EnhancementInfo = {
     attach: async () => {
         return MyEnhancementClassConstructor
     },
-    initPropVals: any //set during the runtime handshake
+    initPropVals: any //set during the runtime attachment handshake
 };
 type branchitude = number;
 type leafitude = number;
@@ -733,12 +735,15 @@ I think this would allow for testable Mock Objects, by intercepting calls to cus
 The type definition for FeatureInfo would closely resemble that of EnhancementInfo, but some pieces of EnhancementInfo don't quite make sense, and other aspects make more sense for the context of features:
 
 ```TypeScript
+type Enhancer = {new(): ElementEnhancement} | () => Promise<Enhancer>
 interface FeatureInfo {
-    base: Base
-    branches: Branches
-    leaves: Leaves
-    attach: Doer
-    attachOnMatch
+    base?: Base
+    branches?: Branches
+    leaves?: Leaves,
+    map: {key: AttrCoordinates: AttrHandlerInfo}
+    attach: Enhancer
+    //only attach the feature if the base attribute is present on the element
+    attachOnBase?: boolean
 
 }
 ```
