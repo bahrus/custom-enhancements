@@ -441,7 +441,7 @@ So "enhancements" seems to cover all bases.
 
 Others prefer "behaviors" (but the others who do seem to think it is of zero consequence, whereas I think there is some substantial consequence to the decision, if that counts for anything). I'm open to both, maybe my reasoning above is wrong (but no one has yet to address my concerns head on).
 
-Another reason to consider:  I think it would be wonderful if built-in elements start provided structured namespaced paths to various features of the element.  As it is, having all the key properties at the top level, sometimes splitting up related properties like command and commandFor, has made the api rather unwieldy.  I think "behaviors" would be a great property name for built-in elements to use to indicate these are platform behaviors.  So developers could access these via:
+Another reason to consider:  I think it would be wonderful if built-in elements start provided structured namespaced paths to various features of the element.  As it is, having all the key properties at the top level, sometimes splitting up related properties like command and commandFor, has made the api rather unwieldy.  Like what was done with styles from the get-go.  I think "behaviors" would be a great property name for built-in elements to use to indicate these are platform behaviors.  So developers could access these via:
 
 ```JavaScript
 Object.assign(oButton.behaviors, { 
