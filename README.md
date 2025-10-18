@@ -748,14 +748,14 @@ type ClubMemberProps {
 class ClubMember extends HTMLElement implements ClubMemberProps{
     async constructor(){ 
         //yeah, yeah, async probably not allowed for constructors
-        //I think async should be supported, but maybe if no real async operations 
+        //I think async should be supported,though but maybe if no real async operations 
         // take place, like fetch calls, etc, it is almost as good as synchronous?
         super();
         await customElements
             .features()
             .attachFeature<TEnhancement, ClubMember>(MyPhotoTakerEnhancementInfo)
-            .toInstance(this)  //toInstance should expect an instance of ClubMember
-            .atProp('photoTaker'); // atProp should expect a keyof ClubMember
+            .toInstance(this)  //toInstance should expect an instance of ClubMember, TypeScript definers
+            .atProp('photoTaker'); // atProp should expect a keyof ClubMember for its parameter, TypeScript definers
     }
 
     photoTaker: MyPhotoTakerEnhancement | undefined;
@@ -763,7 +763,7 @@ class ClubMember extends HTMLElement implements ClubMemberProps{
 
 ```
 
-This method of customElements would be callable from anywhere, including the constructor, and certainly least connectedCallback.
+This method of customElements would be callable from anywhere, including the constructor, and certainly connectedCallback.
 
 I think this would allow for testable Mock Objects, especially if these methods (especially .attachFeature) is/are made overridable by a super class.
 
@@ -783,13 +783,13 @@ interface FeatureInfo {
 }
 ```
 
-In addition, to allow for reflection / declarative attachment:
+In addition, we should provide for TypeScript-less reflection / declarative attachment when we don't need to be so dynamic:
 
 ```TypeScript
 class ClubMember extends HTMLElement {
     static features = {
         ...
-        photoTaker: featureInfo1,
+        photoTaker: photoTakerFeatureInfo,
         feature2: featureInfo2,
         ... 
 
