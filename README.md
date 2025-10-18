@@ -719,10 +719,10 @@ But suppose a behavior/enhancement's functionality is core to a custom element's
 I propose:
 
 ```JavaScript
-customElements.attach(instance, internals, enhancementInfo);
+customElements.attach(instance, enhancementInfo);
 ```
 
-be callable from the constructor, or at least connectedCallback.  Internals would be required, to prevent unauthorized calling of this method from third parties (though of course third parties can wreak all sorts of havoc, given the nature of JavaScript and the DOM).
+be callable from the constructor, or at least connectedCallback.
 
 I think this would allow for testable Mock Objects, by intercepting calls to customElements.attach.
 
@@ -741,7 +741,9 @@ class ClubMember extends HTMLElement {
 
 ```
 
-Here the platform would attach the enhancement during instantiation using the afor mentioned method, and call a new reserved method, attachedCallback, allowing the userland code to pass in such things as private data and element internals to the enhancement.
+Here the platform would attach the enhancement during instantiation using the afore mentioned method.
+
+Both ways of attaching the enhancement would result in calling a new reserved method, attachedCallback, allowing the userland code to pass in such things as private data and element internals to the enhancement.
 
 
 ## Support for a view model DOM fragment manager tied to the itemscope attribute.
