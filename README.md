@@ -760,7 +760,7 @@ class ClubMember extends HTMLElement implements ClubMemberProps{
         // take place, like fetch calls, etc, it is almost as good as synchronous?
         super();
         await customElements.features()
-            .attachFeature<TEnhancement, ClubMember>(MyPhotoTakerEnhancementInfo)
+            .attachFeature<MyPhotoTakerEnhancement, ClubMember>(MyPhotoTakerEnhancementInfo)
             .toInstance(this)  //toInstance should expect an instance of ClubMember, TypeScript definers
             .atProp('photoTaker'); // atProp should expect a keyof ClubMember for its parameter, TypeScript definers
     }
@@ -776,7 +776,7 @@ class ClubMember extends HTMLElement implements ClubMemberProps{
 
 This method of customElements would be callable from anywhere, including the constructor, and certainly connectedCallback.
 
-Due to the limitaions of JavaScript, I can't think of a way to prevent calling it from outside the custom element. If there is one, this is something to strongly consider.  It's not like a custom element instance can't be already be sabotaged from outside currently.
+Due to the limitations of JavaScript, I can't think of a way to prevent calling it from outside the custom element. If there is one, this is something to strongly consider.  It's not like a custom element instance can't be already be sabotaged from outside currently.
 
 I think this would allow for testable Mock Objects, especially if these methods (especially .attachFeature) is/are made overridable by a super class.
 
