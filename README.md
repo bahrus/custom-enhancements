@@ -755,8 +755,8 @@ type ClubMemberProps {
 }
 class ClubMember extends HTMLElement implements ClubMemberProps{
     async constructor(){ 
-        //yeah, yeah, async probably not allowed for constructors
-        //I think async should be supported,though but maybe if no real async operations 
+        //so async probably not allowed for constructors
+        //I think async should be supported, though, but maybe if no real async operations 
         // take place, like fetch calls, etc, it is almost as good as synchronous?
         super();
         await customElements.features()
