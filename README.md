@@ -755,7 +755,7 @@ Another way would be to add support for "connectedCallback/disconnectedCallback"
 I'm encountering a small number of use cases where we want enhancements to "do its thing", and then opt for early retirement.  The use cases I've encountered this with is primarily focused around an enhancement that does something with server-rendered HTML, which then goes idle afterwards, possibly to be replaced by a different kind of enhancement during template instantiation.  So I think it should be possible to do this via:
 
 ```JavaScript
-const detachedEnhancement = await oElement.enhancements.whenDetached(enhancementInfo);
+const detachedEnhancement = await oElement.enhancements.forget(enhancementInfo);
 ```
 
 I think we would want this to remove the associated attribute(s) also, if applicable.
