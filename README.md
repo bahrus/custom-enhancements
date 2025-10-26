@@ -615,7 +615,9 @@ The attaching in the background convenience would only be possible if the develo
 
 Due to this property, setPropsFor, being a proxy, the convenience of this approach likely comes at a cost.  Proxies do impose a bit of a performance penalty, so a framework or library that uses this feature would be well-advised to add a little bit of nuance to the code, to set properties directly to the enhancement once it is known that the enhancement has attached.  For example, use this property the first time setting a property value, and then more directly for subsequent times.  Or, alternatively, implement the identical logic described above within the library code, thus avoiding the use of this special property altogether.
 
-## Symbolic Props ShortCuts, or bringing back "with" and support for dependency injection
+## Symbolic Prop ShortCuts, or bringing back "with" and support for dependency injection
+
+We can skip the step of either passing in enhancementInfo, and of referencing the optional enhKey which may not be totally stable when mixing together multiple third party libraries.  If instead, we want to "jump to the chase" and set (presumably) stable properties of the instance, we can do so as follows:
 
 ```JavaScript
 export const isHappy = Symbol.for('TFWsx0YH5E6eSfhE7zfLxA');
@@ -624,19 +626,34 @@ class MyEnhancement extends ElementEnhancement {
     set isHappy(nv){}
 }
 
-//here's where the dependency injection occurs
+export const isMellow = Symbol.for('BqnnTPWRHkWdVGWcGQoAiw');
+class YourEnhancement extends ElementEnhancement {
+    get isMellow(){}
+    set isMellow(nv){}
+}
+
+//Here's where the dependency injection occurs
 const customEnhancementRegistry = new CustomEnhancementRegistry;
-registry.define({
-    map: {
-        [isHappy]: 'isHappy'
+registry.define([
+    {
+        map: {
+            [isHappy]: 'isHappy'
+        },
+        createInstanceOf: MyEnhancement
+    },{
+       map: {
+           [isMellow]: 'isMellow'
+       },
+       createInstanceOf: YourEnhancement
     }
-    createInstanceOf: MyEnhancement
-});
+]);
 //end of dependency injection
+
 const divContainer = document.createElement('div', {customEnhancementRegistry});
 const inputEl = document.createElement('input');
 inputEl.assignGingerly({
     [isHappy]: true,
+    [isMellow]: true,
     '?.style.height?': '40px',
 });
 divContainer.appendChild(inputEl);
@@ -644,7 +661,7 @@ document.body.appendChild('div', {customEnhancementRegistry: registry});
 
 ```
 
-The platform would search for the registry for any enhancements that has a mapping with a matching symbol of isHappy, and if found, instantiate the instance, set the property value, and call attachedCallback.
+The platform would search the registry for any enhancements that has a mapping with a matching symbol of isHappy, and if found, instantiate the instance if needed, then set the property value.
 
 
 ## Attaching based on presence of attributes
