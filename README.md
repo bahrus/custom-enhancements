@@ -14,12 +14,10 @@ Say all you need to do is to create an isolated behavior/enhancement/hook/whatev
 
 ```JS
 customEnhancements.define({
-    //name of our "custom prop", accessible via oElement.enhancements[enhKey], 
-    //which is where we will find an instance of the class defined below.
-    enhKey: 'logger', 
     base: 'log-to-console', //canonical name of our (base) custom attribute.
-    attach: class extends ElementEnhancement {
-        attachedCallback(enhancedElement: Element, enhancementInfo: EnhancementInfo){
+    createInstanceOf: class extends ElementEnhancement {
+        constructor(enhancedElement: Element, enhancementInfo: EnhancementInfo){
+            super();
             const {base} = enhancementInfo;
             // in this example, base will simply equal 'log-to-console', 
             // but this code is demonstrating how to code defensively, so that
@@ -67,7 +65,6 @@ So developers wanting to capitalize on that and benefit from shorter names could
 
 ```JS
 export const enhancementInfo = {
-    enhKey: '🪵', 
     base: '🪵'
 }
 ```
@@ -177,7 +174,7 @@ const enhancementInfo: EnhancementInfo = {
     //Can point directly to an already loaded Class constructor, or
     //as shown below, it can point to an async loader that allows
     //for lazy loading on demand.
-    attach: async () => {
+    createInstanceOf: async () => {
         return MyEnhancementClassConstructor
     },
     initPropVals: any //set during the runtime attachment handshake
@@ -585,7 +582,7 @@ registry.define({
     map: {
         [isHappy]: 'isHappy'
     }
-    attach: MyEnhancement
+    createInstanceOf: MyEnhancement
 });
 //end of dependency injection
 const divContainer = document.createElement('div', {customEnhancementRegistry});
@@ -844,7 +841,7 @@ interface FeatureInfo {
     branches?: Branches
     leaves?: Leaves,
     map: {key: AttrCoordinates: AttrHandlerInfo}
-    attach: Enhancer
+    createInstanceOf: Enhancer
     //only attach the feature if the base attribute is present on the element
     attachOnBase?: boolean
 
