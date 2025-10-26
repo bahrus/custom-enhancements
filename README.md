@@ -840,7 +840,7 @@ So far we've been discussing using enhancements to enhance *third party* element
 But I think some of the infrastructure behind this proposal could be useful to [first party developers](https://github.com/WICG/webcomponents/issues/814#issuecomment-3392840225) as well.  In particular, it would be great if we empower custom element authors with:
 
 1. ...the ability to break down one behavior into various aspects via quite semantic attributes, and roll them up into one behavior/enhancement.
-2. ...dynamically name-spacing support for property names within ShadowDom realms (or even more fine-grained scoping according to the latest specs), or, in contrast... 
+2. ...dynamically name-spacing support for property names within registries, or, in contrast... 
 3. ...leveraging the support of enhancements, but with more locked down prototype based properties
 3. ...supporting lazy-loading of such functionality as needed.
 4. ...declarative mapping of functionality similar to dependency injection.
