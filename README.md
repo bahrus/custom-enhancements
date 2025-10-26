@@ -185,7 +185,8 @@ class MyEnhancement extends ElementEnhancement {
     
 	
     //maybe we don't need this, 
-    // given the better mapping support mentioned above?
+    // given the better mapping support
+    // mentioned above?
 	attributeChangedCallback(
         coordinates: AttrCoordinates,
         oldValue: string, 
