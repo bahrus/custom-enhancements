@@ -90,12 +90,11 @@ It doesn't seem to me that any of these concerns would "block" the platform from
 
 ## How do I, or my users, access my class instance?
 
-In lots of ways, which we will describe below.  We want to make this as convenient for all parties as possible, which we will get into late.  But since we stipulated "isolated", we did not specify where or how.
+In lots of ways, which we will describe below.  We want to make this as convenient for all parties as possible, which we will get into later.  But since we stipulated "isolated", we did not specify where or how.
 
-## Why not extend Attribute?
+## A note about naming, part II
  
-
-Why ElementEnhancement and not Attribute? This proposal "breaks" if we change it to that name, and the good news is there are some viable, interesting proposals, linked above, which take that approach.  I think this naming convention, which may take a little bit of getting used to, based on current parlance, aligns much better with the ultimate goal of this proposal.  This proposal sees custom attributes as a means to an end, just as "custom tag name" is a means to a more abstract end:  A custom (HTML) Element. 
+Why ElementEnhancement and not (Custom)Attribute? This proposal "breaks" if we change it to that name, and the good news is there are some viable, interesting proposals, linked above, which take that approach.  I think this naming convention, which may take a little bit of getting used to, based on current parlance, aligns much better with the ultimate goal of this proposal.  This proposal sees custom attributes as a means to an end, just as "custom tag name" is a means to a more abstract end:  A custom (HTML) Element. 
 
 Also, a single element enhancement can "own" multiple attributes (for enhancements that are particularly semantic in nature).
 
@@ -116,7 +115,17 @@ The bottom line is I don't think the slight differences with custom elements mak
 
 export const isHello = Symbol.for('o8u9z9so50iLU_WwKk6O7Q');
 const enhancementInfo: EnhancementInfo = {
-    //optional
+    //required.
+    //Can point directly to an already loaded Class constructor, or
+    //as shown below, it can point to an async loader that allows
+    //for lazy loading on demand.
+    createInstanceOf: async () => {
+        return MyEnhancementClassConstructor
+    },
+    //optional -- this is one place we can optionally find the instance of the class that gets created:
+    // oElement.enhancements[enhKey], i.e. oElement.enhancements.greetings
+    // Don't be afraid to use, but you can avoid possible name clashes by not using is there's no need
+    // to publicly expose the api to other components / libraries
     enhKey: 'greetings',
     //optional
     base: 'my-greetings',
@@ -156,13 +165,7 @@ const enhancementInfo: EnhancementInfo = {
     //optional
     //can only enhance element if base attribute is present
     baseRequired: false
-    //required.
-    //Can point directly to an already loaded Class constructor, or
-    //as shown below, it can point to an async loader that allows
-    //for lazy loading on demand.
-    createInstanceOf: async () => {
-        return MyEnhancementClassConstructor
-    },
+
     initPropVals: any //set during the runtime attachment handshake
 };
 type branchitude = number;
