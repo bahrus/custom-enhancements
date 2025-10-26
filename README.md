@@ -630,6 +630,8 @@ export const isMellow = Symbol.for('BqnnTPWRHkWdVGWcGQoAiw');
 class YourEnhancement extends ElementEnhancement {
     get isMellow(){}
     set isMellow(nv){}
+    get madAboutFourteen(){}
+    set madAboutFourteen(nv)
 }
 
 //Here's where the dependency injection occurs
@@ -641,6 +643,7 @@ registry.define([
         },
         createInstanceOf: MyEnhancement
     },{
+       enhKey: 'mellowYellow',
        map: {
            [isMellow]: 'isMellow'
        },
@@ -655,6 +658,7 @@ inputEl.assignGingerly({
     [isHappy]: true,
     [isMellow]: true,
     '?.style.height': '40px',
+    '?.enhancements?.setPropsFor?.mellowYellow?.madAboutFourteen': true
 });
 divContainer.appendChild(inputEl);
 document.body.appendChild('div', {customEnhancementRegistry: registry});
