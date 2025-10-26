@@ -613,7 +613,7 @@ oElement.enhancements.steelEnhancer.carbonPercent = 0.2;
 
 In the case of an async attach definition, the property value object would sit there, ready to be absorbed into the enhancement during the asynchronous attachedCallback handshake, which could happen right away if already loaded, or whenever the customEnhancements.whenDefined is resolved for this enhancement.
 
-Perhaps the proxy could also spport void returning method calls as well (maintaining a history of calls made prior to the upgrade in the case of asynchronous loading).
+Perhaps the proxy could also support void returning method calls as well (maintaining a history of calls made prior to the upgrade in the case of asynchronous loading).
 
 The attaching in the background convenience would only be possible if the developer has already registered the customEnhancement via customEnhancements.define or one of the two methods mentioned above - oElement.enhancements.get and oElement.enhancements.whenResolved.  So the platform could skip that step if no matching enhancement is found in the registry.
 
