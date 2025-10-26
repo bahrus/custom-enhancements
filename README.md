@@ -758,7 +758,7 @@ I'm encountering a small number of use cases where we want enhancements to "do i
 const detachedEnhancement = await oElement.enhancements.forget(enhancementInfo);
 ```
 
-I think we would want this to remove the associated attribute(s) also, if applicable.
+I think we would want this to remove the associated attribute(s) also, if applicable (which is a little messy, because other enhancements may share the base or even base/branch/leaf combos as stated above).
 
 ## How an enhancement class indicates it has hydrated 
 
