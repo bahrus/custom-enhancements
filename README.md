@@ -660,8 +660,7 @@ inputEl.assignGingerly({
     '?.enhancements?.setPropsFor?.mellowYellow?.madAboutFourteen': true
 });
 divContainer.appendChild(inputEl);
-document.body.appendChild('div', {customEnhancementRegistry: registry});
-
+document.body.appendChild(divContainer);
 ```
 
 The platform would search the registry for any enhancements that has a mapping with a matching symbol of isHappy, and if found, instantiate the instance if needed, then set the property value.
