@@ -464,7 +464,7 @@ All of the customElements methods would have a corresponding method in customEnh
 2.  customEnhancements.whenDefined
 3.  customEnhancements.upgrade
 4.  oElement.attachShadow
-5.  document.createInstance
+5.  document.createElement
 
 The same solution for scoped registries would be applied to these methods.
 
