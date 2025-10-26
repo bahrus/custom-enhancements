@@ -130,6 +130,8 @@ The bottom line is I don't think the slight differences with custom elements mak
 ## ElementEnhancement API Shape
 
 ```TypeScript
+
+export const isHello = Symbol.for('o8u9z9so50iLU_WwKk6O7Q');
 const enhancementInfo: EnhancementInfo = {
     //required
     enhKey: 'greetings',
@@ -155,7 +157,10 @@ const enhancementInfo: EnhancementInfo = {
         '1.1': {
             instanceOf: 'String',
             mapsTo: 'firstHelloGreeting'
-        }
+        },
+        //optional
+        //this is for property binding using "with", see 
+        [isHello]: 'isHello'
     },
     //entirely optional
     allowedInstanceTypes: [            
@@ -472,8 +477,11 @@ All of the customElements methods would have a corresponding method in customEnh
 1.  customEnhancements.define
 2.  customEnhancements.whenDefined
 3.  customEnhancements.upgrade
+4.  eElement.attachShadow
 
 The same solution for scoped registries would be applied to these methods.
+
+#  When else should the class instance be created by the platform?
 
 ## Attachment methods of the enhancements property
 
@@ -484,7 +492,7 @@ const enhancementInstance = await oElement.enhancements.whenAttached(enhancement
 const enhancementInstance = await oElement.enhancements.whenResolved(enhancementInfo);
 ```
 
-Both of these methods would see if the enhancement has already been attached, and if so, pass that back.  If not, the method will cause an instance of the class constructor returned by the *attach* option, then call attachedCallback and attributeChangedCallback (if applicable) in the same order as is done with custom elements, before returning the instance.
+Both of these methods would see if the enhancement has already been attached, and if so, pass that back.  If not, the method will cause an instance of the class constructor returned by the *attach* option, then call attachedCallback and attributeChangedCallback (if applicable) in the same order as is done with custom elements, before returning the instance. This assumes the element passes all the "supports/matches" criteria.
 
 The whenResolved promise is returned after the developer sets:
 
@@ -533,21 +541,57 @@ These value settings would either get applied directly to oElement.enhancements.
 
 ```JavaScript
 if(oElement.enhancements.steelEnhancer=== undefined) {
-    oElement.enhancements.steelEnhancer = {};
-    // invoke some method asynchronously in the background to attach the enhancement.
+    //get enhancement info for property "steelEnhancer"
+    //if found:
+    {
+        //is steelEnhancer.attach a class constructor?
+        {
+
+        }
+        //else
+        {
+            oElement.enhancements.steelEnhancer = {};
+            //attach asynchronously in the background
+        }
+    }
+    //else
+    {
+        oElement.enhancements.steelEnhancer = {};
+    }
+    
 } 
 oElement.enhancements.steelEnhancer.carbonPercent = 0.2;
 
 ```
 
-The object would sit there, ready to be absorbed into the enhancement during the attachedCallback handshake, which could happen right away if already loaded, or whenever the customEnhancements.whenDefined is resolved for this enhancement.
+In the case of an async attach definition, the property value object would sit there, ready to be absorbed into the enhancement during the asynchronous attachedCallback handshake, which could happen right away if already loaded, or whenever the customEnhancements.whenDefined is resolved for this enhancement.
 
 The attaching in the background convenience would only be possible if the developer has already registered the customEnhancement via customEnhancements.define or one of the two methods mentioned above - oElement.enhancements.whenAttached and oElement.enhancements.whenResolved.  So the platform could skip that step if no matching enhancement is found in the registry.
 
 Due to this property, setPropsFor, being a proxy, the convenience of this approach likely comes at a cost.  Proxies do impose a bit of a performance penalty, so a framework or library that uses this feature would be well-advised to add a little bit of nuance to the code, to set properties directly to the enhancement once it is known that the enhancement has attached.  For example, use this property the first time setting a property value, and then more directly for subsequent times.  Or, alternatively, implement the identical logic described above within the library code, thus avoiding the use of this special property altogether.
 
+## Symbolic Props ShortCuts, or bringing back "with" and support for dependency injection
 
-##  When should the class instance be created by the platform?
+```JavaScript
+export const isHappy = Symbol.for('TFWsx0YH5E6eSfhE7zfLxA');
+class MyEnhancement extends ElementEnhancement {
+    get isHappy(){}
+    set isHappy(nv){}
+}
+const registry = new CustomEnhancementRegistry;
+//here's where the dependency injection occurs
+registry.define({
+    enhKey: 'myEnhancement',
+    map: {
+        [isHappy]: 'isHappy'
+    }
+    attach: MyEnhancement
+})
+document.body.appendChild
+```
+
+
+## Attaching based on presence of attributes
 
 If any one of the  (enh-*) attributes matching the pattern of base/branch/leaf is found on an element in the live DOM tree, this would cause the platform to instantiate an instance of the corresponding class, attach it to the enhancements sub property, and invoke the attachedCallback method, similar to how custom elements are upgraded.
 
