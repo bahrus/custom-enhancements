@@ -127,6 +127,7 @@ const enhancementInfo: EnhancementInfo = {
     // oElement.enhancements[enhKey], i.e. oElement.enhancements.greetings
     // Don't be afraid to use, but you can avoid possible name clashes by not using is there's no need
     // to publicly expose the api to other components / libraries
+    /** @type {string | symbol | undefined} **/
     enhKey: 'greetings',
     //optional
     base: 'my-greetings',
@@ -523,6 +524,12 @@ The purpose of having this "whenResolved" feature is explained towards the end o
 
 >[!NOTE]
 >I think it would be quite reasonable for these methods to accept an additional parameter where the registry can be passed in, and call the define method on that registry.
+
+## Lightning developer guilt by formally endorsing attaching the instance to the element's "enhancement" property
+
+A key config setting, "enhKey" would cause the instantiation of the class to always be accompanied by attaching (or connecting) the in memory instance to the new, proposed "enhancements" property gateway that would be added to the Element prototype.
+
+Use of the enhKey means that the developer will be responsible for avoiding namespacing conflicts with an additional string (or symbol). 
  
 ## A helper property to make setting properties easier.
 
