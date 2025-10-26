@@ -654,7 +654,7 @@ const inputEl = document.createElement('input');
 inputEl.assignGingerly({
     [isHappy]: true,
     [isMellow]: true,
-    '?.style.height?': '40px',
+    '?.style.height': '40px',
 });
 divContainer.appendChild(inputEl);
 document.body.appendChild('div', {customEnhancementRegistry: registry});
