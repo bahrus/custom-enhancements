@@ -103,10 +103,11 @@ So why not use the customElements' registry, why come up with a new registry, cu
 The bottom line is I don't think the slight differences with custom elements make this proposal any more complex than defining a custom element.
 
 > [!NOTE]
-> I agree 100% with others that scoped registry being fully settled before some combination of these proposals get rolled out into production would appear to be the wise course of action.  In the above example, we have two strings that we need to protect from colliding with other enhancements (and with attributes of the (custom) elements themselves):  The name of the enhancement - "logger" - and the attribute(s) tied to it, if any:  'log-to-console'.  Both will need to be considered as far as best ways of managing these within each Shadow scope.  It may be that the easiest solution will require some sort of pattern between the name of the enhancement and the attributes associated with that name (for example, insisting that the name of the enhancement matches the beginning of the camelCased strings of all the "owned" attributes).  This proposal opts to allow the developer to name the enhKey independent of how the attributes are named.  The attributes for a single enhancement must share the same base.  Other enhancements can share that same base, but sharing the entire  base-branch-leaf-prefix combo should be discouraged (but not forbidden) to overlap between different enhancements (it would result in multiple enhancements getting attached (connected?)).  Each enhancement must have a unique enhKey value within a Shadow DOM Realm.
+> I agree 100% with others that scoped registry being fully settled before some combination of these proposals get rolled out into production would appear to be the wise course of action.  Now that Safari has rolled out scoped registries, this proposal is incorporating the concepts.
 
-> [!NOTE]
-> Now that Safari has rolled out scoped registries, this proposal is incorporating the concepts.
+
+<!--In the above example, we have two strings that we need to protect from colliding with other enhancements (and with attributes of the (custom) elements themselves):  The name of the enhancement - "logger" - and the attribute(s) tied to it, if any:  'log-to-console'.  Both will need to be considered as far as best ways of managing these within each Shadow scope.  It may be that the easiest solution will require some sort of pattern between the name of the enhancement and the attributes associated with that name (for example, insisting that the name of the enhancement matches the beginning of the camelCased strings of all the "owned" attributes).  This proposal opts to allow the developer to name the enhKey independent of how the attributes are named.  The attributes for a single enhancement must share the same base.  Other enhancements can share that same base, but sharing the entire  base-branch-leaf-prefix combo should be discouraged (but not forbidden) to overlap between different enhancements (it would result in multiple enhancements getting attached (connected?)).  Each enhancement must have a unique enhKey value within a Shadow DOM Realm.-->
+
 
 
 ## ElementEnhancement API Shape
@@ -151,7 +152,7 @@ const enhancementInfo: EnhancementInfo = {
             mapsTo: 'firstHelloGreeting'
         },
         //optional
-        //this is for property binding using "with", see 
+        //this is for property binding using "assignGingerly", see 
         [isHello]: 'isHello'
     },
     //entirely optional
@@ -173,20 +174,29 @@ type leafitude = number;
 type AttrCoordinates = `{branchitude}.{leafitude}`;
 class MyEnhancement extends ElementEnhancement {
 
-    //optional
+    //optional -- reserved static property just in case
     static config = {};
     
     //optional
 	attachedCallback(enhancedElement: Element, enhancementInfo:  EnhancementInfo) { 
         //or connectedCallback if that is clearer
+        //only invoked if enhKey is specified
     } 
     
     //optional
 	detachedCallback(enhancedElement: Element, enhancementInfo:  EnhancementInfo) { 
         //or disconnectedCallback if that is clearer.
-    } 
+        //only invoked if enhKey is specified
+    }
+
+    dispose(enhancedElement, enhanceInfo: EnhacementInfo){
+        //prior to garbage collection
+    }
+    
+    
 	
-    //maybe we don't need this, given the better mapping support mentioned above?
+    //maybe we don't need this, 
+    // given the better mapping support mentioned above?
 	attributeChangedCallback(
         coordinates: AttrCoordinates,
         oldValue: string, 
@@ -436,7 +446,7 @@ Others prefer "behaviors" (but the others who do seem to think it is of zero con
 Another reason to consider:  I think it would be wonderful if built-in elements started providing structured, namespaced paths to various features of the element.  As it is, having all the key properties at the top level, sometimes splitting up related properties like command and commandFor, has made the api rather unwieldy.  Like what was done with styles from the get-go.  I think "behaviors" would be a great property name for built-in elements to use to indicate these are platform behaviors.  If so, use of "enhancements" for third party, well, enhancements, makes a lot of sense, I think.  So developers could access these built in behaviors via:
 
 ```JavaScript
-Object.assignGingerly(oButton, { 
+oButton.assignGingerly({ 
     '?.behaviors?.command': {
         name:'doSomething', 
         for: oDialog
@@ -463,7 +473,8 @@ All of the customElements methods would have a corresponding method in customEnh
 1.  customEnhancements.define
 2.  customEnhancements.whenDefined
 3.  customEnhancements.upgrade
-4.  eElement.attachShadow
+4.  oElement.attachShadow
+5.  document.createInstance
 
 The same solution for scoped registries would be applied to these methods.
 
