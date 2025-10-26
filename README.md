@@ -95,6 +95,10 @@ In lots of ways, which we will describe below.  We want to make this as convenie
 > [!NOTE]
 > Adding public properties and methods to the class instance will *not* be accessible directly from the top level of the element being enhanced.
 
+## Why one argument in define?
+
+I believe doing so will make dependency injection, as discussed far below, more seamless.  I don't think this is applicable to custom elements.
+
 ## A note about naming, part I
  
 Why ElementEnhancement and not (Custom)Attribute? This proposal "breaks" if we change it to that name, and the good news is there are some viable, interesting proposals, linked to above, which take that approach.  I think this naming convention, which may take a little bit of getting used to based on current parlance, aligns much better with the ultimate goal of this proposal.  This proposal sees custom attributes as a means to an end, just as "custom tag name" is a means to a more abstract end:  A custom (HTML) Element. 
