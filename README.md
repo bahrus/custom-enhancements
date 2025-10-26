@@ -665,10 +665,11 @@ document.body.appendChild(divContainer);
 
 The platform would search the registry for any enhancements that has a mapping with a matching symbol of isHappy, and if found, instantiate the instance if needed, then set the property value.
 
+The suggestion to use Symbol.for with a guid is based on some negative experiences I've had with multiple version of the same librry being referenced, but is not required.  Regular symbols could also be used when that risk can be avoided.
 
 ## Attaching based on presence of attributes
 
-If any one of the  (enh-*) attributes matching the pattern of base/branch/leaf is found on an element in the live DOM tree, this would cause the platform to instantiate an instance of the corresponding class, attach it to the enhancements sub property, and invoke the attachedCallback method, similar to how custom elements are upgraded.
+If any one of the  (enh-*) attributes matching the pattern of base/branch/leaf is found on an element in the live DOM tree, this would cause the platform to instantiate an instance of the corresponding class.
 
 I also suggest that it would be great if, during template instantiation supported natively by the platform, the platform can do whatever helps in achieving the most efficient outcome as far as recognizing these custom attributes.  One key feature this would provide is a way to extend the template instantiation process -- plug-ins essentially.  Especially if this means things could be done in "one-pass".  I don't claim any expertise in this area.  If the experts find little to no performance gain from this kind of integration, perhaps it is asking too much.  Doing this in userland would be quite straightforward (on a second pass, after the built-in instantiation has completed). 
 
@@ -735,19 +736,19 @@ The problem with using this inline binding in our template, which we might want 
 
 Because this proposal is advocating that the EnhancementInfo interface that is passed into the define method has enough information to map from the attribute to the parsed properties, it's my view that this would allow template instantiation supported by the platform (or userland implementations) to avoid unnecessary string parsing, by making judicious use of caching.
 
-## DetachedCallback lifecycle event
+## Support for connected/disconnected callback of the element being enhanced?
 
-When would the detachedCallback method be called?
+When should the enhancement be purged from memory?
 
 This is an area likely to require some critical feedback from browser vendors, but I will nevertheless express some thoughts on the matter.
 
-One time it definitely would **not** be called is if the (enh-*) attributes, if present, are removed from the enhanced element, since as we've discussed, the custom attribute aspect is only one way to attach an enhancement.  A developer may want to remove the attributes to reduce clutter, or before transferring to another Shadow DOM realm to avoid unexpected side effects of being transported in.
+One time it definitely would **not** be purged is if the (enh-*) attributes, if present, are removed from the enhanced element, since as we've discussed, the custom attribute aspect is only one way to attach an enhancement.  A developer may want to remove the attributes to reduce clutter, or before transferring to another Shadow DOM realm to avoid unexpected side effects of being transported in.
 
-I do think the detachedCallback should be associated in some way with the disconnectedCallback method of the enhanced custom element (or the equivalent for built-in elements).  However, there's a scenario where a custom element's disconnectedCallback is called, where we don't necessarily want to fully "dump" the enhancement -- when the element is moved from one parent container to another (within a Shadow DOM realm or even crossing Shadow DOM boundaries.)  To me, it would be ideal if the enhancement could remain attached in this circumstance, as if nothing happened.  
+I could see scenarios where the enhancement would want to know that its host has been disconnected and (re) connected.  So the custom enhancement should have a way of being notified that this transfer took place.
 
-On the other hand, I could see scenarios where the enhancement would want to know that its host has been disconnected.  So the custom enhancement should have a way of being notified that this transfer took place.
+One way to do this is if the platform adds an event that can be subscribed to for elements:  Elements currently have a built-in property, "isConnected".  It would be great if the elements also emitted a standard event when the element becomes [connected and (possibly another)](https://github.com/whatwg/dom/issues/533) [event](https://twitter.com/jaffathecake/status/1521023821003767808) or [signal](https://github.com/whatwg/dom/issues/1296) when it becomes disconnected.
 
-My (naive?) recommendation is that the platform add an event that can be subscribed to for elements:  Elements currently have a built-in property, "isConnected".  It would be great if the elements also emitted a standard event when the element becomes [connected and (possibly another)](https://github.com/whatwg/dom/issues/533) [event](https://twitter.com/jaffathecake/status/1521023821003767808) or [signal](https://github.com/whatwg/dom/issues/1296) when it becomes disconnected.
+Another way would be to add support for "connectedCallback/disconnectedCallback" to the enhancement -- that would explicitly be called when the *enhancedElement* connects / disconnects, not when the enhancement attaches to the enhancements property gateway (if applicable);
 
 ## How to programmatically detach an enhancement
 
