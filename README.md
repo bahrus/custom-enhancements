@@ -90,7 +90,7 @@ It doesn't seem to me that any of these concerns would "block" the platform from
 
 ## How do I, or my users, access my class instance, and/or public properties / methods therein?
 
-In lots of ways, which we will describe below.  We want to make this as convenient for all parties as possible, which we will get into later.  But since we stipulated "isolated", we did not specify where or how.  Chillax!
+In lots of ways, which we will describe below.  We want to make this as convenient for all parties as possible, which we will get into later.  But since we stipulated "isolated", we did not specify where or how in this simplest of examples.  Chillax!
 
 > [!NOTE]
 > Adding public properties and methods to the class instance will *not* be accessible directly from the top level of the element being enhanced.
