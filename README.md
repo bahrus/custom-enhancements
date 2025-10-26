@@ -106,9 +106,6 @@ The bottom line is I don't think the slight differences with custom elements mak
 > I agree 100% with others that scoped registry being fully settled before some combination of these proposals get rolled out into production would appear to be the wise course of action.  Now that Safari has rolled out scoped registries, this proposal is incorporating the concepts.
 
 
-<!--In the above example, we have two strings that we need to protect from colliding with other enhancements (and with attributes of the (custom) elements themselves):  The name of the enhancement - "logger" - and the attribute(s) tied to it, if any:  'log-to-console'.  Both will need to be considered as far as best ways of managing these within each Shadow scope.  It may be that the easiest solution will require some sort of pattern between the name of the enhancement and the attributes associated with that name (for example, insisting that the name of the enhancement matches the beginning of the camelCased strings of all the "owned" attributes).  This proposal opts to allow the developer to name the enhKey independent of how the attributes are named.  The attributes for a single enhancement must share the same base.  Other enhancements can share that same base, but sharing the entire  base-branch-leaf-prefix combo should be discouraged (but not forbidden) to overlap between different enhancements (it would result in multiple enhancements getting attached (connected?)).  Each enhancement must have a unique enhKey value within a Shadow DOM Realm.-->
-
-
 
 ## ElementEnhancement API Shape
 
@@ -486,8 +483,10 @@ The same solution for scoped registries would be applied to these methods.
 Unlike dataset, the enhancements property, added to the Element prototype, would have several methods available, making it easy for developers / frameworks to reference and even attach enhancements (without the need for attributes), for example during template instantiation (or later).
 
 ```JavaScript
+//await only necessary if createInstanceOf specifies an async loader
 const enhancementInstance = await oElement.enhancements.get(enhancementInfo);
-const enhancementInstance = await oElement.enhancements.whenResolved(enhancementInfo);
+//await is definitely necessary here
+const resolvedInstance = await oElement.enhancements.whenResolved(enhancementInfo);
 ```
 
 Both of these methods would see if the enhancement has already been instantiated for the element, and if so, pass that back.  If not, the method will cause an instance of the class constructor returned by the *createInstanceOf* option, then call attachedCallback and attributeChangedCallback (if applicable) in the same order as is done with custom elements, before returning the instance. This assumes the element passes all the "supports/matches" criteria.
@@ -525,11 +524,53 @@ The purpose of having this "whenResolved" feature is explained towards the end o
 >[!NOTE]
 >I think it would be quite reasonable for these methods to accept an additional parameter where the registry can be passed in, and call the define method on that registry.
 
-## Lightning developer guilt by formally endorsing attaching the instance to the element's "enhancement" property
+## Lightening developer guilt by formally endorsing attaching the instance to the element's "enhancement" property
 
-A key config setting, "enhKey" would cause the instantiation of the class to always be accompanied by attaching (or connecting) the in memory instance to the new, proposed "enhancements" property gateway that would be added to the Element prototype.
+A key config setting, "enhKey," would cause the instantiation of the class to always be accompanied by attaching (or connecting) the in memory instance to the new, proposed "enhancements" property gateway that would be added to the Element prototype.
 
 Use of the enhKey means that the developer will be responsible for avoiding namespacing conflicts with an additional string (or symbol). 
+
+For example:
+
+```JS
+customEnhancements.define({
+    //name of our "custom prop", accessible via oElement.enhancements[enhKey], 
+    //which is where we will find an instance of the class defined below.
+    enhKey: 'logger',
+    base: 'log-to-console', //canonical name of our (base) custom attribute.
+    createInstanceOf: class extends ElementEnhancement {
+        constructor(enhancedElement: Element, enhancementInfo: EnhancementInfo){
+            super();
+            const {base} = enhancementInfo;
+            // in this example, base will simply equal 'log-to-console', 
+            // but this code is demonstrating how to code defensively, so that
+            // the party (or parties) responsible for registering the enhancement 
+            // could choose to modify the name(s), either globally, 
+            // or inside a scoped registry in a different file.
+            enhancedElement.addEventListener('click', e => {
+                console.log(
+                       enhancedElement.getAttribute(`enh-${base}`)
+                    || enhancedElement.getAttribute(base)
+                ); 
+            });
+        }
+    }
+});
+```
+
+In the above example, we have two strings that we need to protect from colliding with other enhancements (and with attributes of the (custom) elements themselves):  The name of the enhancement - "logger" - and the attribute(s) tied to it, if any:  'log-to-console'.  Both will need to be considered as far as best ways of managing these within each Shadow scope.  It may be that the easiest solution will require some sort of pattern between the name of the enhancement and the attributes associated with that name (for example, insisting that the name of the enhancement matches the beginning of the camelCased strings of all the "owned" attributes).  This proposal opts to allow the developer to name the enhKey independent of how the attributes are named.  The attributes for a single enhancement must share the same base.  Other enhancements can share that same base, but sharing the entire  base-branch-leaf-prefix combo should be discouraged (but not forbidden) to overlap between different enhancements (it would result in multiple enhancements getting attached (connected?)).  
+
+> ![NOTE]
+> Each specified enhKey must be unique within a registry.
+
+If no enhKey is specified, I think the platform should still provide a less elegant mechanism to access the (weak reference?) to it, and in fact was already provided:
+
+
+
+```JavaScript
+//await only necessary if createInstanceOf specifies an async loader
+const enhancementInstance = await oElement.enhancements.get(enhancementInfo);
+```
  
 ## A helper property to make setting properties easier.
 
