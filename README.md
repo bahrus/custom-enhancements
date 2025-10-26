@@ -870,27 +870,42 @@ I propose a significant amendment to this proposal, support for...:
 
 ```TypeScript
 class MyPhotoTakerEnhancement extends ElementEnhancement{
-    attachedCallback(enhancedElement: Element, info: MyPhotoTakerFeatureInfo){
+    constructor(enhancedElement: Element, info: MyPhotoTakerFeatureInfo){
+        super();
+        ...
+    }
+}
+
+class YourBadgeMakerEnhancement extends ElementEnhancement{
+    constructor(enhancedElement: Element, info: YourPhotoTakerFeatureInfo){
+        super();
         ...
     }
 }
 
 type ClubMemberProps {
     photoTaker:  MyPhotoTakerEnhancement | undefined;
+    badgeMaker: YourBadgeMakerEnhancement | undefined;
 }
+
 class ClubMember extends HTMLElement implements ClubMemberProps{
     async constructor(){ 
         //so async probably not allowed for constructors
         //I think async should be supported, though, but maybe if no real async operations 
         // take place, like fetch calls, etc, it is almost as good as synchronous?
         super();
-        await customElements.features()
+        this.attachInternals()
             .attachFeature<MyPhotoTakerEnhancement, ClubMember>(MyPhotoTakerEnhancementInfo)
             .toInstance(this)  //toInstance should expect an instance of ClubMember, TypeScript definers
-            .atProp('photoTaker'); // atProp should expect a keyof ClubMember for its parameter, TypeScript definers
+            .atProp('photoTaker') // atProp should expect a keyof ClubMember for its parameter, TypeScript definers
+            .attachFeature<YourBadgeMakerEnhancement, ClubMember>(YourBadgeMakerEnhancementInfo)
+            .toInstance(this)
+            .atProp('badgeMaker');
     }
 
-    photoTaker: MyPhotoTakerEnhancement | undefined;
+    photoTaker: MyPhotoTakerEnhancement;
+
+    badgeMaker: MyBadgeMakerEnhancement;
 
     featureAddedCallback(prop: keyof ClubMember, info: FeatureInfo){
         ...
@@ -899,9 +914,6 @@ class ClubMember extends HTMLElement implements ClubMemberProps{
 
 ```
 
-This method of customElements would be callable from anywhere, including the constructor, and certainly connectedCallback.
-
-Due to the limitations of JavaScript, I can't think of a way to prevent calling it from outside the custom element. If there is one, this is something to strongly consider.  It's not like a custom element instance can't be already be sabotaged from outside currently.
 
 I think this would allow for testable Mock Objects, especially if these methods (especially .attachFeature) is/are made overridable by a super class.
 
@@ -923,28 +935,25 @@ interface FeatureInfo {
 
 No support for supportInstanceTypes, supportedCssMatches is needed, for example. 
 
-### Support for static features added to the prototype declaratively
+### Support for features added to the custom element prototype declaratively with dependency injection
 
 In addition, we should provide for TypeScript-less reflection / declarative attachment when we don't need to be so dynamic:
 
 ```TypeScript
 class ClubMember extends HTMLElement {
-    static features = {
-        ...
-        photoTaker: photoTakerFeatureInfo,
-        feature2: featureInfo2,
-        ... 
-
-    }
-
+    
     photoTaker: MyPhotoTakerEnhancement;
-
-
+    badgeMaker: MyBadgeMakerEnhancement;
 }
 
-```
+customElements.define('club-member', {
+    features: {
+        photoTaker: MyPhotoTakerEnhancementInfo,
+        badgeMaker: MyBadgeMakerEnhancementInfo
+    }
+})
 
-similar to [observedAttributes](https://github.com/WICG/webcomponents/issues/1045)
+```
 
 Here the platform would attach the feature in the base HTML class (preferably in the constructor, I think) using the afore mentioned methods.
 
