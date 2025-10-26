@@ -91,9 +91,11 @@ It doesn't seem to me that any of these concerns would "block" the platform from
 ## How do I, or my users, access my class instance?
 
 In lots of ways, which we will describe below.  We want to make this as convenient for all parties as possible, which we will get into late.  But since we stipulated "isolated", we did not specify where or how.
+
+## Why not extend Attribute?
  
 
-Why ElementEnhancement and not CustomAttribute? This proposal **does** "break" if we change it to that name, and the good news is there are some viable, interesting proposals, linked above, which take that approach.  I think this naming convention, which may take a little bit of getting used to, based on current parlance, aligns much better with the ultimate goal of this proposal.  This proposal sees custom attributes as a means to an end, just as "custom tag name" is a means to a more abstract end:  A custom (HTML) Element. 
+Why ElementEnhancement and not Attribute? This proposal "breaks" if we change it to that name, and the good news is there are some viable, interesting proposals, linked above, which take that approach.  I think this naming convention, which may take a little bit of getting used to, based on current parlance, aligns much better with the ultimate goal of this proposal.  This proposal sees custom attributes as a means to an end, just as "custom tag name" is a means to a more abstract end:  A custom (HTML) Element. 
 
 Also, a single element enhancement can "own" multiple attributes (for enhancements that are particularly semantic in nature).
 
@@ -104,6 +106,9 @@ The bottom line is I don't think the slight differences with custom elements mak
 > [!NOTE]
 > I agree 100% with others that scoped registry being fully settled before some combination of these proposals get rolled out into production would appear to be the wise course of action.  In the above example, we have two strings that we need to protect from colliding with other enhancements (and with attributes of the (custom) elements themselves):  The name of the enhancement - "logger" - and the attribute(s) tied to it, if any:  'log-to-console'.  Both will need to be considered as far as best ways of managing these within each Shadow scope.  It may be that the easiest solution will require some sort of pattern between the name of the enhancement and the attributes associated with that name (for example, insisting that the name of the enhancement matches the beginning of the camelCased strings of all the "owned" attributes).  This proposal opts to allow the developer to name the enhKey independent of how the attributes are named.  The attributes for a single enhancement must share the same base.  Other enhancements can share that same base, but sharing the entire  base-branch-leaf-prefix combo should be discouraged (but not forbidden) to overlap between different enhancements (it would result in multiple enhancements getting attached (connected?)).  Each enhancement must have a unique enhKey value within a Shadow DOM Realm.
 
+> [!NOTE]
+> Now that Safari has rolled out scoped registries, this proposal is incorporating the concepts.
+
 
 ## ElementEnhancement API Shape
 
@@ -111,7 +116,7 @@ The bottom line is I don't think the slight differences with custom elements mak
 
 export const isHello = Symbol.for('o8u9z9so50iLU_WwKk6O7Q');
 const enhancementInfo: EnhancementInfo = {
-    //required
+    //optional
     enhKey: 'greetings',
     //optional
     base: 'my-greetings',
