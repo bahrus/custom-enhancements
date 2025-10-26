@@ -630,7 +630,7 @@ class YourEnhancement extends ElementEnhancement {
     get isMellow(){}
     set isMellow(nv){}
     get madAboutFourteen(){}
-    set madAboutFourteen(nv)
+    set madAboutFourteen(nv){}
 }
 
 //Here's where the dependency injection occurs
