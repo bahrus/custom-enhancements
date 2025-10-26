@@ -665,7 +665,7 @@ document.body.appendChild(divContainer);
 
 The platform would search the registry for any enhancements that has a mapping with a matching symbol of isHappy, and if found, instantiate the instance if needed, then set the property value.
 
-The suggestion to use Symbol.for with a guid is based on some negative experiences I've had with multiple version of the same librry being referenced, but is not required.  Regular symbols could also be used when that risk can be avoided.
+The suggestion to use Symbol.for with a guid is based on some negative experiences I've had with multiple versions of the same library being referenced, but is not required.  Regular symbols could also be used when that risk can be avoided.
 
 ## Attaching based on presence of attributes
 
