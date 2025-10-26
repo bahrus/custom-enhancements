@@ -861,7 +861,7 @@ I propose a significant amendment to this proposal, support for...:
 
 ## Custom Element Features
 
-### Dynamically, conditionally attaching a feature
+### Dynamically, imperitively attaching a feature
 
 ```TypeScript
 class MyPhotoTakerEnhancement extends ElementEnhancement{
