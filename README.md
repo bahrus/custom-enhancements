@@ -175,7 +175,7 @@ class MyEnhancement extends ElementEnhancement {
     //optional -- reserved static property just in case
     static config = {};
     
-    //optional
+    //Maybe we don't need this, as everything is passed in constructor
 	attachedCallback(enhancedElement: Element, enhancementInfo:  EnhancementInfo) { 
         //or connectedCallback if that is clearer
         //only invoked if enhKey is specified
@@ -562,6 +562,12 @@ In the above example, we have two strings that we need to protect from colliding
 
 > ![NOTE]
 > Each specified enhKey must be unique within a registry.
+
+There are some very strong use cases for adding the "risk" associated with defining the name of the enhancement key:
+
+1.   The name will be used anytime we are outside the domain of JavaScript -- in particular referencing enhancements properties from the HTML (server-rendered) Markup.
+2.  Accessing the properties value / methods of the instance is more natural to the developer using traditional dot (".") nested access, feel less clunky.  
+3.  Some protocols for establishing "safe", declarative, side-effect-free code from imperative code may use the existence of parenthesis as the defining characteristic for separating the two.
 
 If no enhKey is specified, I think the platform should still provide a less elegant mechanism to access the (weak reference?) to it, and in fact was already provided:
 
