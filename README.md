@@ -465,9 +465,9 @@ The same solution for scoped registries would be applied to these methods.
 
 #  When should the class instance be created by the platform?
 
-## Attachment methods of the enhancements property
+## Spawning/referencing methods of the enhancements property
 
-Unlike dataset, the enhancements property, added to the Element prototype, would have several methods available, making it easy for developers / frameworks to reference and even attach enhancements (without the need for attributes), for example during template instantiation (or later).
+Unlike dataset, the enhancements property, added to the Element prototype, would have several methods available, making it easy for developers / frameworks to reference and even spawning enhancements (without the need for attributes), for example during template instantiation (or later).
 
 ```JavaScript
 //await only necessary if spawn specifies an async loader
@@ -476,7 +476,7 @@ const enhancementInstance = await oElement.enhancements.get(enhancementInfo);
 const resolvedInstance = await oElement.enhancements.whenResolved(enhancementInfo);
 ```
 
-Both of these methods would see if the enhancement has already been instantiated for the element, and if so, pass that back.  If not, the method will cause an instance of the class constructor returned by the *spawn* option, This assumes the element passes all the "supports/matches" criteria.
+Both of these methods would see if the enhancement has already been instantiated for the element, and if so, pass that back.  If not, the method will cause an instance of the class constructor returned by the *spawn* option. This assumes the element passes all the "supports/matches" criteria.
 
 The whenResolved promise is returned after the developer sets:
 
@@ -508,14 +508,14 @@ The whenResolved method would throw an error (catchable via try/catch with await
 
 The purpose of having this "whenResolved" feature is explained towards the end of this proposal.
 
->[!NOTE]
->I think it would be quite reasonable for these methods to accept an additional parameter where the registry can be passed in, and call the define method on that registry.
+> [!NOTE]
+> I think it would be quite reasonable for these methods to accept an additional parameter where the registry can be passed in, and call the define method on that registry.
 
-## Lightening developer guilt by formally endorsing attaching the instance to the element's "enhancement" property
+## Reducing developer guilt by formally endorsing attaching the instance to the element's "enhancement" property gateway
 
-A key config setting, "enhKey," would cause the instantiation of the class to always be accompanied by attaching (or connecting) the in-memory class instance to the new, proposed "enhancements" property gateway that would be added to the Element prototype.
+A key config setting, "enhKey," would cause the instantiation of the class to always be accompanied by attaching (or connecting?) the in-memory class instance to the new, proposed "enhancements" property gateway that would be added to the Element prototype.
 
-Use of the enhKey means that the developer will be responsible for avoiding namespacing conflicts. 
+Use of the enhKey means that the developer will be responsible for avoiding namespacing conflicts with other enhancements registered in the same registry. 
 
 For example:
 
@@ -550,13 +550,13 @@ In the above example, we have two strings that we need to protect from colliding
 > [!NOTE]
 > Each specified enhKey must be unique within a registry.
 
-There are some very strong use cases for adding the uniqueness "burden" associated with defining the name of the enhancement key:
+There are some very strong use cases the developer to go ahead and opt to name the enhancement, essentially making it more "public", even if it incurs a bit of a "burden" due to the registry uniqueness requirement:
 
 1.   The name will be useful anytime we are outside the domain of JavaScript -- in particular referencing enhancement properties from the declarative HTML (server-rendered) Markup.
 2.  Accessing the properties value / methods of the instance is more natural to the developer using traditional dot (".") nested access, and feels less clunky.  
 3.  Some protocols for distinguishing between "safe", declarative, side-effect-free code versus imperative code may use the existence of parenthesis as the defining characteristic for separating the two.
 
-If no enhKey is specified by the parties registering the enhancement in the registry, I think the platform should still provide a less elegant mechanism to access the to it, and in fact was already provided:
+If no enhKey is specified by the parties registering the enhancement in the registry, I think the platform should still provide a less elegant mechanism to access the spawned instance, and in fact was already provided above:
 
 
 
