@@ -554,7 +554,7 @@ In the above example, we have two strings that we need to protect from colliding
 > [!NOTE]
 > Each specified enhKey must be unique within a registry.
 
-There are some very strong use cases the developer to go ahead and opt to name the enhancement, essentially making it more "public", even if it incurs a bit of a "burden" due to the registry uniqueness requirement:
+There are some very strong use cases for the developer to go ahead and opt to name the enhancement, essentially making it more "public", even if it incurs a bit of a "burden" due to the registry uniqueness requirement:
 
 1.   The name will be useful anytime we are outside the domain of JavaScript -- in particular referencing enhancement properties from the declarative HTML (server-rendered) Markup.
 2.  Accessing the properties value / methods of the instance is more natural to the developer using traditional dot (".") nested access, and feels less clunky.  
