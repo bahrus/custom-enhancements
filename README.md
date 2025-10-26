@@ -578,17 +578,28 @@ class MyEnhancement extends ElementEnhancement {
     get isHappy(){}
     set isHappy(nv){}
 }
-const registry = new CustomEnhancementRegistry;
+
 //here's where the dependency injection occurs
+const customEnhancementRegistry = new CustomEnhancementRegistry;
 registry.define({
-    enhKey: 'myEnhancement',
     map: {
         [isHappy]: 'isHappy'
     }
     attach: MyEnhancement
-})
-document.body.appendChild
+});
+//end of dependency injection
+const divContainer = document.createElement('div', {customEnhancementRegistry});
+const inputEl = document.createElement('input');
+inputEl.assignGingerly({
+    [isHappy]: true,
+    '?.style.height?': '40px',
+});
+divContainer.appendChild(inputEl);
+document.body.appendChild('div', {customEnhancementRegistry: registry});
+
 ```
+
+The platform would search for the registry for any enhancements that has a mapping with a matching symbol of isHappy, and if found, instantiate the instance, set the property value, and call attachedCallback.
 
 
 ## Attaching based on presence of attributes
