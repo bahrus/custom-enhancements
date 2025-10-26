@@ -88,28 +88,9 @@ Some risks to doing this:
 
 It doesn't seem to me that any of these concerns would "block" the platform from doing its thing, so this proposal opts to empower the developer to take these risks.
 
-## A note about naming, part I
+## How do I, or my users, access my class instance?
 
-Why attachedCallback and not connectedCallback?  Advantages of connectedCallback is it perfectly aligns with the terminology used for custom elements, and clearly the custom enhancement class above closely resembles a custom element. I could go with that.  It doesn't break the essence of this proposal in any way.  This was raised (I don't know by whom, but I *think* it was a member of the WebKit team, but not the person leading the meeting) during a face-to-face, seemingly as a "showstopper" for this proposal (I think), that it made the proposal seem amateurish (paraphrasing).  **Yes, I am definitely an "amateur" in this space, and I was quite reluctant to even make this proposal for that very reason. I did so because I was (and am) frustrated by not seeing such a proposal forthcoming from the WebKit team, and I am very eagerly awaiting said proposal**.  When it does (hopefully) and the name "connectedCallback" appears, which seems likely, I hope they will consider my reasoning, even if I am an amateur.  But one thing I will not say is that it is a showstopper or amateurish for whatever choice is made.
-
-<details>
-<summary>Reasons I think attachedCallback would be clearer</summary>
-
-First, let me emphasize that if the reason for the rather pointed comment was that my using "attachedCallback" was interpreted as a slight towards the name used for custom elements, nothing could be further from the truth.  If custom elements had chosen "attachedCallback" I might very well have gone for "connectedCallback" in this case.
-
-It just feels different to me.  When a plane lands, it "connects" to the ground.  When we add a wing to the plane, we are "attaching" a wing.  Or maybe it makes just as much sense to say when a plane lands, it attaches to the ground.  And when we add a wing to the plane, we are "connecting" the wing.  Again, different.  Using the same term for both would be confusing, I think, for that reason.  (In this analogy, the "ground" is the DOM fragment, the wing is the "enhancement").
-
-As this proposal currently stands, the signatures are different, which again, lends itself to thinking the names should also be different.
-
-Attaching (connecting?) a cross-cutting concern on top of an existing element feels like attaching Shadow DOM.  If we weren't living in such troubled times, I would have seriously considered calling the class ElementHorcrux rather than ElementEnhancement, just to fully cement my amateur status.
-
-In addition, it feels like the equivalent of ["attachExternals"](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/attachInternals).
-
-Because the "attachment/connection" is purely a memory pointer type linkage, versus a DOM Node attachment, using a different term for this type of event seems reasonable to me.
-
-Anyway, as I said, I think that decision should be of little consequence, so please replace it with whatever name you like.  That's my amateur take.
-
-</details>
+In lots of ways, which we will describe below.  We want to make this as convenient for all parties as possible, which we will get into late.  But since we stipulated "isolated", we did not specify where or how.
  
 
 Why ElementEnhancement and not CustomAttribute? This proposal **does** "break" if we change it to that name, and the good news is there are some viable, interesting proposals, linked above, which take that approach.  I think this naming convention, which may take a little bit of getting used to, based on current parlance, aligns much better with the ultimate goal of this proposal.  This proposal sees custom attributes as a means to an end, just as "custom tag name" is a means to a more abstract end:  A custom (HTML) Element. 
