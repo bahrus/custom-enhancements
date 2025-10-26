@@ -591,11 +591,11 @@ if(oElement.enhancements.steelEnhancer=== undefined) {
     //get enhancement info for property "steelEnhancer"
     //if found:
     {
-        //is steelEnhancer.attach a class constructor?
+        //is steelEnhancerEnhancementInfo.spawn a class constructor?
         {
 
         }
-        //else
+        //else it must be an async lazy dynamic loader to a class constructor
         {
             oElement.enhancements.steelEnhancer = {};
             //attach asynchronously in the background
