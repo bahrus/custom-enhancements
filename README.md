@@ -478,18 +478,18 @@ All of the customElements methods would have a corresponding method in customEnh
 
 The same solution for scoped registries would be applied to these methods.
 
-#  When else should the class instance be created by the platform?
+#  When should the class instance be created by the platform?
 
 ## Attachment methods of the enhancements property
 
 Unlike dataset, the enhancements property, added to the Element prototype, would have several methods available, making it easy for developers / frameworks to reference and even attach enhancements (without the need for attributes), for example during template instantiation (or later).
 
 ```JavaScript
-const enhancementInstance = await oElement.enhancements.whenAttached(enhancementInfo);
+const enhancementInstance = await oElement.enhancements.get(enhancementInfo);
 const enhancementInstance = await oElement.enhancements.whenResolved(enhancementInfo);
 ```
 
-Both of these methods would see if the enhancement has already been attached, and if so, pass that back.  If not, the method will cause an instance of the class constructor returned by the *attach* option, then call attachedCallback and attributeChangedCallback (if applicable) in the same order as is done with custom elements, before returning the instance. This assumes the element passes all the "supports/matches" criteria.
+Both of these methods would see if the enhancement has already been instantiated for the element, and if so, pass that back.  If not, the method will cause an instance of the class constructor returned by the *createInstanceOf* option, then call attachedCallback and attributeChangedCallback (if applicable) in the same order as is done with custom elements, before returning the instance. This assumes the element passes all the "supports/matches" criteria.
 
 The whenResolved promise is returned after the developer sets:
 
@@ -517,12 +517,12 @@ class ElementEnhancement extends EventTarget {
 }
 ```
 
-The whenResolved method would throw an error (catcheable via try/catch with await or .catch() if using the more traditional promise approach) when the developer sets this.resolved = false;
+The whenResolved method would throw an error (catchable via try/catch with await or .catch() if using the more traditional promise approach) when the developer sets this.resolved = false;
 
 The purpose of having this "whenResolved" feature is explained towards the end of this proposal.
 
 >[!NOTE]
->I think it would be quite reasonable for these methods to automatically call customEnhancements.define if the platform sees that the enhancementInfo hasn't yet been  defined, and has no namespace conflicts with other enhancements.
+>I think it would be quite reasonable for these methods to accept an additional parameter where the registry can be passed in, and call the define method on that registry.
  
 ## A helper property to make setting properties easier.
 
