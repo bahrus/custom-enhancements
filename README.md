@@ -942,8 +942,8 @@ In addition, we should provide for TypeScript-less reflection / declarative atta
 ```TypeScript
 class ClubMember extends HTMLElement {
     
-    photoTaker: MyPhotoTakerEnhancement;
-    badgeMaker: MyBadgeMakerEnhancement;
+    photoTaker: MyPhotoTakerEnhancement | undefined;
+    badgeMaker: MyBadgeMakerEnhancement | undefined;
 }
 
 customElements.define('club-member', {
