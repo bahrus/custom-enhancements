@@ -4,7 +4,7 @@ Bruce B. Anderson
 
 PR's, Issues [welcome](https://github.com/bahrus/custom-enhancements)
 
-Last update: Oct 26, 2025
+Last update: Oct 27, 2025
 
 This is [one](https://github.com/whatwg/html/issues/2271) [of](https://eisenbergeffect.medium.com/2023-state-of-web-components-c8feb21d4f16) [a](https://github.com/WICG/webcomponents/issues/1029) [number](https://github.com/WICG/webcomponents/issues/727) of interesting proposals, one of which (or some combination?) can hopefully get buy-in from all three browser vendors.  This proposal borrows heavily from the others.
 
@@ -475,8 +475,10 @@ The same solution for scoped registries would be applied to these methods.
 Unlike dataset, the enhancements property, added to the Element prototype, would have several methods available, making it easy for developers / frameworks to reference, and even spawning enhancements imperatively (without the need for attributes), for example during template instantiation (or later).
 
 ```JavaScript
+const enhancementInstance = oElement.enhancements.get(enhancementInfo);
 //await only necessary if spawn specifies an async loader in enhancementInfo
-const enhancementInstance = await oElement.enhancements.get(enhancementInfo);
+//In that case, get would throw an error
+const lazyLoadedInstance = await oElement.enhancements.await(enhancementInfo);
 //await is definitely necessary here
 const resolvedInstance = await oElement.enhancements.whenResolved(enhancementInfo);
 ```
@@ -564,7 +566,6 @@ There are some very strong use cases for the developer to go ahead and opt to na
 If no enhKey is specified by the parties registering the enhancement in the registry, I think the platform should still provide a less elegant mechanism to access the spawned instance, and in fact was already provided above:
 
 ```JavaScript
-//await only necessary if spawn specifies an async loader
 const enhancementInstance = await oElement.enhancements.get(enhancementInfo);
 ```
  
@@ -611,9 +612,9 @@ oElement.enhancements.steelEnhancer.carbonPercent = 0.2;
 
 In the case of an async attach definition, the property value object would sit there, ready to be absorbed into the enhancement during the asynchronous attachedCallback handshake, which could happen right away if already loaded, or whenever the customEnhancements.whenDefined is resolved for this enhancement.
 
-Perhaps the proxy could also support void returning method calls as well (maintaining a history of calls made prior to the upgrade in the case of asynchronous loading).
+Perhaps the proxy could also support void returning method calls as well (maintaining a history of calls made prior to the upgrade in the case of asynchronous loading).  If so, the name "setPropsFor" should be changed.
 
-The attaching in the background convenience would only be possible if the developer has already registered the customEnhancement via customEnhancements.define or one of the two methods mentioned above - oElement.enhancements.get and oElement.enhancements.whenResolved.  So the platform could skip that step if no matching enhancement is found in the registry.
+The attaching in the background convenience would only be possible if the developer has already registered in an applicable registry.
 
 Due to this property, setPropsFor, being a proxy, the convenience of this approach likely comes at a cost.  Proxies do impose a bit of a performance penalty, so a framework or library that uses this feature would be well-advised to add a little bit of nuance to the code, to set properties directly to the enhancement once it is known that the enhancement has attached.  For example, use this property the first time setting a property value, and then more directly for subsequent times.  Or, alternatively, implement the identical logic described above within the library code, thus avoiding the use of this special property altogether.
 
@@ -660,7 +661,7 @@ inputEl.assignGingerly({
     [isHappy]: true,
     [isMellow]: true,
     '?.style.height': '40px',
-    '?.enhancements?.setPropsFor?.mellowYellow?.madAboutFourteen': true
+    '?.enhancements?.mellowYellow?.madAboutFourteen': true
 });
 divContainer.appendChild(inputEl);
 document.body.appendChild(divContainer);
@@ -668,7 +669,7 @@ document.body.appendChild(divContainer);
 
 The platform would search the registry for any enhancements that has a mapping with a matching symbol of isHappy, and if found, instantiate the instance if needed, then set the property value.
 
-The suggestion to use Symbol.for with a guid is based on some negative experiences I've had with multiple versions of the same library being referenced, but is not required.  Regular symbols could also be used when that risk can be avoided.
+The suggestion to use Symbol.for with a guid, as opposed to just Symbol(), is based on some negative experiences I've had with multiple versions of the same library being referenced, but is not required.  Regular symbols could also be used when that risk can be avoided.
 
 ## Attaching based on presence of attributes
 
@@ -753,7 +754,7 @@ One way to do this is if the platform adds an event that can be subscribed to fo
 
 Another way would be to add support for "connectedCallback/disconnectedCallback" to the enhancement -- that would explicitly be called when the *enhancedElement* connects / disconnects, not when the enhancement attaches to the enhancements property gateway (if applicable);
 
-## How to programmatically detach an enhancement
+## How to programmatically unload an enhancement
 
 I'm encountering a small number of use cases where we want enhancements to "do its thing", and then opt for early retirement.  The use cases I've encountered this with is primarily focused around an enhancement that does something with server-rendered HTML, which then goes idle afterwards, possibly to be replaced by a different kind of enhancement during template instantiation.  So I think it should be possible to do this via:
 
@@ -864,7 +865,9 @@ I propose a significant amendment to this proposal, support for...:
 
 ## Custom Element Features
 
-### Dynamically, imperitively attaching a feature
+### Dynamically, imperatively attaching a feature
+
+Here, no "enh-" prefix is required for attributes.  In fact, enh- prefixed attributes will be ignored.
 
 ```TypeScript
 class MyPhotoTakerEnhancement extends ElementEnhancement{
@@ -903,7 +906,7 @@ class ClubMember extends HTMLElement implements ClubMemberProps{
 
     photoTaker: MyPhotoTakerEnhancement;
 
-    badgeMaker: MyBadgeMakerEnhancement;
+    badgeMaker: YourBadgeMakerEnhancement;
 
     featureAddedCallback(prop: keyof ClubMember, info: FeatureInfo){
         ...
@@ -911,7 +914,6 @@ class ClubMember extends HTMLElement implements ClubMemberProps{
 }
 
 ```
-
 
 I think this would allow for testable Mock Objects, especially if these methods (especially .attachFeature) is/are made overridable by a super class.
 
@@ -922,7 +924,7 @@ type Enhancer = {new(): ElementEnhancement} | () => Promise<{new(): ElementEnhan
 interface FeatureInfo {
     base?: Base
     branches?: Branches
-    leaves?: Leaves,
+    leaves?: Leaves
     map: {key: AttrCoordinates: AttrHandlerInfo}
     spawn: Enhancer
     //only attach the feature if the base attribute is present on the element
