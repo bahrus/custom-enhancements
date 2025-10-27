@@ -156,7 +156,7 @@ const enhancementInfo: EnhancementInfo = {
             mapsTo: 'firstHelloGreeting'
         },
         //optional
-        //this is for property binding using "assignGingerly", see 
+        //this is for property binding using ["assignGingerly"](https://github.com/bahrus/custom-enhancements?tab=readme-ov-file#symbolic-prop-shortcuts-and-support-for-dependency-injection), 
         [isHello]: 'isHello'
     },
     //entirely optional
