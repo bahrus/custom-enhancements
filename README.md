@@ -521,7 +521,7 @@ The purpose of having this "whenResolved" feature is explained towards the end o
 > [!NOTE]
 > I think it would be quite reasonable for these methods to accept an additional parameter where the registry can be passed in, and call the define method on that registry.
 
-## Reducing developer guilt and allowing for a nice API by formally endorsing attaching the spawned instance to the element's "enhancement" property gateway
+## Reducing developer guilt and allowing for a nice API by formally endorsing attaching the spawned instance to the element's "enhancements" property gateway
 
 A key config setting, "enhKey," would cause the spawned instance to be attached to the new, proposed "enhancements" property gateway that would be added to the Element prototype.
 
@@ -555,32 +555,31 @@ customEnhancements.define({
 });
 ```
 
-In the above example, we have two strings that we need to protect from colliding with other enhancements (and with attributes of the (custom) elements themselves):  The name of the enhancement - "logger" - and the attribute(s) tied to it, if any:  'log-to-console'.  Both will need to be considered as far as best ways of managing these within each custom registry.  It may be that the easiest solution will require some sort of pattern between the name of the enhancement and the attributes associated with that name (for example, insisting that the name of the enhancement matches the beginning of the camelCased strings of all the "owned" attributes), but really, I don't see how enforcing this would benefit anything.  This proposal opts to allow the developer to name the enhKey independent of how the attributes are named.  The attributes for a single enhancement must share the same base, if help from the platform is desired.  Other enhancements can share that same base, but sharing the entire  base-branch-leaf-prefix combo between different enhancements should be discouraged (but not forbidden). It would result in multiple enhancements getting spawned.  
+In the above example, we have two strings that we need to consider from the point of view of colliding with other enhancements (and with attributes of the (custom) elements themselves):  The name of the enhancement - "logger" - and the attribute(s) tied to it, if any:  'log-to-console'.  Both will need to be considered as far as best ways of managing these within each custom registry.  It may be that the easiest solution will require some sort of pattern between the name of the enhancement and the attributes associated with that name (for example, insisting that the name of the enhancement matches the beginning of the camelCased strings of all the "owned" attributes), but really, I don't see how enforcing this would benefit anything.  This proposal opts to allow the developer to name the enhKey independent of how the attributes are named.  The attributes for a single enhancement must share the same base, if help from the platform is desired.  Other enhancements can share that same base, but sharing the entire  base-branch-leaf-prefix combo between different enhancements should be discouraged (but not forbidden). It would result in multiple enhancements getting spawned.  
 
 > [!NOTE]
 > Each specified enhKey must be unique within a registry.
 
 There are some very strong use cases for the developer to go ahead and opt to name the enhancement, essentially making it more "public", even if it incurs a bit of a "burden" due to the registry uniqueness requirement:
 
-1.   The name will be useful anytime we are outside the domain of JavaScript -- in particular referencing enhancement properties from the declarative HTML (server-rendered) Markup.
+1.   The name will be useful anytime we are outside the domain of JavaScript -- in particular referencing enhancement properties from declarative HTML (server-rendered) Markup.
 2.  Accessing the properties value / methods of the instance is more natural to the developer using traditional dot (".") nested access, and feels less clunky.  
 3.  Some protocols for distinguishing between "safe", declarative, side-effect-free code versus imperative code may use the existence of parenthesis as the defining characteristic for separating the two.
 
 If no enhKey is specified by the parties registering the enhancement in the registry, I think the platform should still provide a less elegant mechanism to access the spawned instance, and in fact was already provided above:
 
 ```JavaScript
-const enhancementInstance = await oElement.enhancements.get(enhancementInfo);
+const enhancementInstance = oElement.enhancements.get(enhancementInfo);
 ```
  
 ## A helper property to make setting properties easier.
-
 
 In addition to the two methods above, the enhancements property would contain a lazy property which would return/instantiate a proxy if invoked/retrieved, which can then dynamically return an instance of the enhancement, if the enhancement has already attached.  If it hasn't attached yet, it will return either an empty object, or whatever value has been placed there previously.
 
 > [!Note]
 > This will only work for enhancements where the enhKey property is specified.
 
-This would allow consumers of the enhancement to pass property values (and only property values) ahead of the upgrade (or after the upgrade), so that no "await" is necessary:
+This would allow consumers of the enhancement to pass property values (and only property values) ahead of the upgrade (or after the upgrade), so that no "await" is necessary, nor any imperative looking code:
 
 ```JavaScript
 oElement.enhancements.setPropsFor.steelEnhancer.carbonPercent = 0.2;
@@ -615,15 +614,13 @@ oElement.enhancements.steelEnhancer.carbonPercent = 0.2;
 
 In the case of an async attach definition, the property value object would sit there, ready to be absorbed into the enhancement during the asynchronous attachedCallback handshake, which could happen right away if already loaded, or whenever the customEnhancements.whenDefined is resolved for this enhancement.
 
-Perhaps the proxy could also support void returning method calls as well (maintaining a history of calls made prior to the upgrade in the case of asynchronous loading).  If so, the name "setPropsFor" should be changed.
-
-The attaching in the background convenience would only be possible if the developer has already registered in an applicable registry.
+The attaching in the background convenience would only be possible if the developer has already registered enhKey = "steelInhancer" in an applicable registry.
 
 Due to this property, setPropsFor, being a proxy, the convenience of this approach likely comes at a cost.  Proxies do impose a bit of a performance penalty, so a framework or library that uses this feature would be well-advised to add a little bit of nuance to the code, to set properties directly to the enhancement once it is known that the enhancement has attached.  For example, use this property the first time setting a property value, and then more directly for subsequent times.  Or, alternatively, implement the identical logic described above within the library code, thus avoiding the use of this special property altogether.
 
 ## Symbolic Prop Shortcuts and support for dependency injection
 
-We can skip the step of either passing in enhancementInfo, and of referencing the optional enhKey which may not be totally stable when mixing together multiple third party libraries.  If instead, we want to "jump to the chase" and set (presumably) stable properties of the instance, we can do so as follows:
+We can skip the step of either passing in enhancementInfo, as well as referencing the optional enhKey which may not be totally stable when mixing together multiple third party libraries.  If instead, we want to "jump to the chase" and set (presumably) stable properties of the instance, we can do so as follows:
 
 ```JavaScript
 export const isHappy = Symbol.for('TFWsx0YH5E6eSfhE7zfLxA');
@@ -755,9 +752,9 @@ I could see scenarios where the enhancement would want to know that its host has
 
 One way to do this is if the platform adds an event that can be subscribed to for elements:  Elements currently have a built-in property, "isConnected".  It would be great if the elements also emitted a standard event when the element becomes [connected and (possibly another)](https://github.com/whatwg/dom/issues/533) [event](https://twitter.com/jaffathecake/status/1521023821003767808) or [signal](https://github.com/whatwg/dom/issues/1296) when it becomes disconnected.
 
-Another way would be to add support for "connectedCallback/disconnectedCallback" to the enhancement -- that would explicitly be called when the *enhancedElement* connects / disconnects, not when the enhancement attaches to the enhancements property gateway (if applicable);
+Another way would be to add support for "connectedCallback/disconnectedCallback" to the enhancement -- that would explicitly be called when the *enhancedElement* connects / disconnects, not when the enhancement attaches to the enhancements property gateway (if applicable).
 
-## How to programmatically unload an enhancement
+## How to programmatically dispose of an enhancement
 
 I'm encountering a small number of use cases where we want enhancements to "do its thing", and then opt for early retirement.  The use cases I've encountered this with is primarily focused around an enhancement that does something with server-rendered HTML, which then goes idle afterwards, possibly to be replaced by a different kind of enhancement during template instantiation.  So I think it should be possible to do this via:
 
@@ -765,7 +762,7 @@ I'm encountering a small number of use cases where we want enhancements to "do i
 const detachedEnhancement = await oElement.enhancements.forget(enhancementInfo);
 ```
 
-I think we would want this to remove the associated attribute(s) also, if applicable (which is a little messy, because other enhancements may share the base or even base/branch/leaf combos as stated above).
+I think we would want this to remove the associated attribute(s) also, if applicable (which is a little messy, because other enhancements may share the base or even base/branch/leaf combos as stated above, so maybe not).
 
 ## How an enhancement class indicates it has hydrated 
 
@@ -838,7 +835,7 @@ To be able to distinguish that:
 I propose:
 
 1.  The base Event object gets an additional property:  "enhInfo", which is where we pass in the enhancementInfo registry definition.
-2.  The base Enhancement class has a method "channelEvent" that is a simple wrapper around "dispatchEvent" of the element that the enhancement adorns, but inserts the name of the enhKey into the enh property of the event.
+2.  The base Enhancement class has a method "channelEvent" that is a simple wrapper around "dispatchEvent" of the element that the enhancement adorns, but inserts enhInfo object into the event.
 
 ## How custom elements can opt in
 
@@ -866,9 +863,9 @@ But suppose a behavior/enhancement's functionality is core to a custom element's
 
 I propose a significant amendment to this proposal, support for...:
 
-## Custom Element Features
+# Custom Element Features
 
-### Dynamically, imperatively attaching a feature
+## Dynamically, imperatively attaching a feature
 
 Here, no "enh-" prefix is required for attributes.  In fact, enh- prefixed attributes will be ignored.
 
@@ -887,7 +884,7 @@ class YourBadgeMakerEnhancement extends ElementEnhancement{
     }
 }
 
-type ClubMemberProps {
+interface ClubMemberProps {
     photoTaker:  MyPhotoTakerEnhancement | undefined;
     badgeMaker: YourBadgeMakerEnhancement | undefined;
 }
@@ -925,11 +922,11 @@ The type definition for FeatureInfo would closely resemble that of EnhancementIn
 ```TypeScript
 type Enhancer = {new(): ElementEnhancement} | () => Promise<{new(): ElementEnhancement}>
 interface FeatureInfo {
+    spawn: Enhancer
     base?: Base
     branches?: Branches
     leaves?: Leaves
     map: {key: AttrCoordinates: AttrHandlerInfo}
-    spawn: Enhancer
     //only attach the feature if the base attribute is present on the element
     attachOnBase?: boolean
 
@@ -938,9 +935,9 @@ interface FeatureInfo {
 
 No support for supportInstanceTypes, supportedCssMatches is needed, for example. 
 
-### Support for features added to the custom element prototype declaratively with dependency injection
+## Support for adding features to the custom element prototype declaratively with dependency injection
 
-In addition, we should provide for TypeScript-less reflection / declarative attachment when we don't need to be so dynamic:
+In addition, we should provide for a way to declaratively attach when we don't need to be so dynamic:
 
 ```TypeScript
 class ClubMember extends HTMLElement {
@@ -958,7 +955,7 @@ customElements.define('club-member', {
 
 ```
 
-Here the platform would attach the feature in the base HTML class (preferably in the constructor, I think) using the afore mentioned methods.
+Here the platform would attach the feature in the base HTML class (preferably in the constructor, I think) using the afore mentioned methods.  I think support for both lazy loading on demand (based on a matching attribute or another property access that is detectable by the platform as described above), as well as eagerly during element construction should be provided.
 
 Both ways of attaching the enhancement would result in calling a new reserved method, featureAddedCallback, allowing the userland code to pass in such things as private data and element internals to the enhancement.
 
