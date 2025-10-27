@@ -178,7 +178,9 @@ type leafitude = number;
 type AttrCoordinates = `{branchitude}.{leafitude}`;
 class MyEnhancement extends ElementEnhancement {
 
-    dispose(enhancedElement, enhanceInfo: EnhacementInfo){
+    constructor(enhancedElement, enhanceInfo: EnhancementInfo){}
+
+    dispose(enhancedElement, enhanceInfo: EnhancementInfo){
         //prior to garbage collection
     }
     
@@ -197,7 +199,7 @@ class MyEnhancement extends ElementEnhancement {
     }
 
     //  Entirely optional filtering conditions for when the enhancement should be
-    // allowed to be attached.
+    // allowed to be spawned.
     static supportedInstanceTypes = //entirely optional
         [
             HTMLInputElement, 
@@ -281,7 +283,7 @@ I *think* the solution for this conundrum would be if the build process also rem
 </details>
 
 >[!NOTE]
->Bear in mind that if no "allowedCSSMatches/allowedInstanceTypes" is specified (the default), and if the "base/branches/leaves" option is also not specified or is empty, the platform will *not* automatically enhance every element.  The platform will only act when it finds a matching attribute pattern.  But it will **allow** enhancements to be programmatically attached by the developer on all element types in that scenario.  In fact, the platform will **ignore** the base/branches/leaves criteria altogether when the developer programmatically attaches (connects?) an enhancement, only using the "allowed*" value(s) (combined with the static supported* values specified by the enhancement author) to prevent unauthorized enhancements. 
+>Bear in mind that if no "allowedCSSMatches/allowedInstanceTypes" is specified (the default), and if the "base/branches/leaves" option is also not specified or is empty, the platform will *not* automatically enhance every element.  The platform will only act when it finds a matching attribute pattern.  But it will **allow** enhancements to be programmatically spawned by the developer on all element types in that scenario.  In fact, the platform will **ignore** the base/branches/leaves criteria altogether when the developer programmatically spawns an enhancement, only using the "allowed*" value(s) (combined with the static supported* values specified by the enhancement author) to prevent unauthorized enhancements. 
 
 ###  What, if any, are the benefits of having a "has" (or some other equivalent) attribute?
 
@@ -329,15 +331,13 @@ Even better, this proposal supports emoji's, which allows for quite short attrib
 </time>
 ```
 
-So what would make much more sense to me is rather than having a "has" requirement, to instead insist that all the attributes that a single enhancement "observes" begin with the same base (be-intl or 🌐 in this case), presumably tied to the package of the enhancement.  This proposal is now advocating enforcing such a rule, at least if the developer wishes to receive help from the platform with parsing and automated attachment.
+So what would make much more sense to me is rather than having a "has" requirement, to instead insist that all the attributes that a single enhancement "observes" begin with the same base (be-intl or 🌐 in this case), presumably tied to the package of the enhancement.  This proposal is now advocating enforcing such a rule, at least if the developer wishes to receive help from the platform with parsing and automated spawning/attachment.
 
 The reason that the flat observedAttributes approach used for custom elements doesn't quite fit the bill, is that I think it will be quite natural for developers to start by doing something with the base attribute, like supporting a JSON structure for all the properties, then decide "you know, it would be helpful to provide a more semantic vocabulary where the aspects of the enhancement can be specified individually" and kind of slap it on.  Such is not the case with custom elements. 
 
 ### Better ergonomics for managing attribute changes
 
-This proposal is focusing somewhat on managing attributes, similar to custom elements.  
-
-And for clarity, the "house words" for this proposal are "Custom Prop + 0 or more Custom Attributes => Custom Enhancement".  The custom prop refers to the name of the enhancement, which, as we've seen, provides the key off of the "enhancements" sub-object of the element.  But within that "custom prop" resides a rich universe of properties defined within the user defined class, and the api shape for that class is quite similar to custom elements.  
+This proposal is focusing somewhat on managing attributes, similar to custom elements.   
 
 I agree with others that the support that the platform currently provides for managing attributes with custom elements is insufficient.  So further compounding that shortcoming by creating a whole new api without additional support doesn't seem right. 
 
@@ -433,7 +433,7 @@ So "enhancements" seems to cover all bases.
 
 Others prefer "behaviors" (but the others who do seem to think it is of zero consequence, whereas I think there is some substantial consequence to the decision, if that counts for anything). I'm open to both, maybe my reasoning above is wrong (but no one has yet to address my concerns head on).
 
-Another reason to consider:  I think it would be wonderful if built-in elements started providing structured, namespaced paths to various features of the element.  As it is, having all the key properties at the top level, sometimes splitting up related properties like command and commandFor, has made the api rather unwieldy.  Like what was done with styles from the get-go.  I think "behaviors" would be a great property name for built-in elements to use to indicate these are platform behaviors.  If so, use of "enhancements" for third party, well, enhancements, makes a lot of sense, I think.  So developers could access these built in behaviors via:
+Another reason to consider:  I think it would be wonderful if built-in elements started providing structured, namespaced paths to various features of the element.  Like what was done with styles from the get-go. As it is, having all the key properties at the top level, sometimes splitting up related properties like command and commandFor, has made the api rather unwieldy.    I think "behaviors" would be a great property name for built-in elements to use to indicate these are platform behaviors.  If so, use of "enhancements" for third party, well, enhancements, makes a lot of sense, I think.  So developers could access these built in behaviors via:
 
 ```JavaScript
 oButton.assignGingerly({ 
@@ -472,10 +472,10 @@ The same solution for scoped registries would be applied to these methods.
 
 ## Spawning/referencing methods of the enhancements property
 
-Unlike dataset, the enhancements property, added to the Element prototype, would have several methods available, making it easy for developers / frameworks to reference and even spawning enhancements (without the need for attributes), for example during template instantiation (or later).
+Unlike dataset, the enhancements property, added to the Element prototype, would have several methods available, making it easy for developers / frameworks to reference, and even spawning enhancements imperatively (without the need for attributes), for example during template instantiation (or later).
 
 ```JavaScript
-//await only necessary if spawn specifies an async loader
+//await only necessary if spawn specifies an async loader in enhancementInfo
 const enhancementInstance = await oElement.enhancements.get(enhancementInfo);
 //await is definitely necessary here
 const resolvedInstance = await oElement.enhancements.whenResolved(enhancementInfo);
@@ -516,11 +516,11 @@ The purpose of having this "whenResolved" feature is explained towards the end o
 > [!NOTE]
 > I think it would be quite reasonable for these methods to accept an additional parameter where the registry can be passed in, and call the define method on that registry.
 
-## Reducing developer guilt by formally endorsing attaching the instance to the element's "enhancement" property gateway
+## Reducing developer guilt and allowing for a nice API by formally endorsing attaching the spawned instance to the element's "enhancement" property gateway
 
-A key config setting, "enhKey," would cause the instantiation of the class to always be accompanied by attaching (or connecting?) the in-memory class instance to the new, proposed "enhancements" property gateway that would be added to the Element prototype.
+A key config setting, "enhKey," would cause the spawned instance to be attached to the new, proposed "enhancements" property gateway that would be added to the Element prototype.
 
-Use of the enhKey means that the developer will be responsible for avoiding namespacing conflicts with other enhancements registered in the same registry. 
+Use of the enhKey means that the developer will be responsible for avoiding name-spacing conflicts with other enhancements registered in the same registry. 
 
 For example:
 
@@ -550,7 +550,7 @@ customEnhancements.define({
 });
 ```
 
-In the above example, we have two strings that we need to protect from colliding with other enhancements (and with attributes of the (custom) elements themselves):  The name of the enhancement - "logger" - and the attribute(s) tied to it, if any:  'log-to-console'.  Both will need to be considered as far as best ways of managing these within each custom registry.  It may be that the easiest solution will require some sort of pattern between the name of the enhancement and the attributes associated with that name (for example, insisting that the name of the enhancement matches the beginning of the camelCased strings of all the "owned" attributes), but really, I don't see how that would help resolve anything.  This proposal opts to allow the developer to name the enhKey independent of how the attributes are named.  The attributes for a single enhancement must share the same base, if help from the platform is desired.  Other enhancements can share that same base, but sharing the entire  base-branch-leaf-prefix combo should be discouraged (but not forbidden) to overlap between different enhancements (it would result in multiple enhancements getting attached (connected?)).  
+In the above example, we have two strings that we need to protect from colliding with other enhancements (and with attributes of the (custom) elements themselves):  The name of the enhancement - "logger" - and the attribute(s) tied to it, if any:  'log-to-console'.  Both will need to be considered as far as best ways of managing these within each custom registry.  It may be that the easiest solution will require some sort of pattern between the name of the enhancement and the attributes associated with that name (for example, insisting that the name of the enhancement matches the beginning of the camelCased strings of all the "owned" attributes), but really, I don't see how enforcing this would benefit anything.  This proposal opts to allow the developer to name the enhKey independent of how the attributes are named.  The attributes for a single enhancement must share the same base, if help from the platform is desired.  Other enhancements can share that same base, but sharing the entire  base-branch-leaf-prefix combo between different enhancements should be discouraged (but not forbidden). It would result in multiple enhancements getting spawned.  
 
 > [!NOTE]
 > Each specified enhKey must be unique within a registry.
@@ -562,8 +562,6 @@ There are some very strong use cases for the developer to go ahead and opt to na
 3.  Some protocols for distinguishing between "safe", declarative, side-effect-free code versus imperative code may use the existence of parenthesis as the defining characteristic for separating the two.
 
 If no enhKey is specified by the parties registering the enhancement in the registry, I think the platform should still provide a less elegant mechanism to access the spawned instance, and in fact was already provided above:
-
-
 
 ```JavaScript
 //await only necessary if spawn specifies an async loader
