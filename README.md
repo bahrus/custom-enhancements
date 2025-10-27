@@ -943,15 +943,15 @@ In addition, we should provide for a way to declaratively attach when we don't n
 class ClubMember extends HTMLElement {
     
     photoTaker: MyPhotoTakerEnhancement | undefined;
-    badgeMaker: MyBadgeMakerEnhancement | undefined;
+    badgeMaker: YourBadgeMakerEnhancement | undefined;
 }
 
-customElements.define('club-member', {
+customElementRegistry.define('club-member', ClubMember, {
     features: {
-        photoTaker: MyPhotoTakerEnhancementInfo,
-        badgeMaker: MyBadgeMakerEnhancementInfo
+        photoTaker: MyPhotoTakerFeatureInfo,
+        badgeMaker: YourBadgeMakerFeatureInfo
     }
-})
+});
 
 ```
 
