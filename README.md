@@ -475,15 +475,18 @@ The same solution for scoped registries would be applied to these methods.
 Unlike dataset, the enhancements property, added to the Element prototype, would have several methods available, making it easy for developers / frameworks to reference, and even spawning enhancements imperatively (without the need for attributes), for example during template instantiation (or later).
 
 ```JavaScript
+// use this if "spawn" points to an already imported class
 const enhancementInstance = oElement.enhancements.get(enhancementInfo);
-//await only necessary if spawn specifies an async loader in enhancementInfo
+//use this if "spawn" points to an an async loader or you aren't sure
 //In that case, get would throw an error
 const lazyLoadedInstance = await oElement.enhancements.await(enhancementInfo);
 //await is definitely necessary here
 const resolvedInstance = await oElement.enhancements.whenResolved(enhancementInfo);
 ```
 
-Both of these methods would see if the enhancement has already been instantiated for the element, and if so, pass that back.  If not, the method will cause an instance of the class constructor returned by the *spawn* option. This assumes the element passes all the "supports/matches" criteria.
+All three of these methods would see if the enhancement has already been instantiated for the element, and if so, pass that back.  If not, the method will cause an instance of the class constructor returned by the *spawn* option. This assumes the element passes all the "supports/matches" criteria.
+
+I'm a little uncertain how important it is to provide for both ".get" and ".await".  I *think* using await automatically yields a microtask, even if there is no actual async call.  If that is not the case, I think we only need one of the two ("get") and just use await to be safe.
 
 The whenResolved promise is returned after the developer sets:
 
