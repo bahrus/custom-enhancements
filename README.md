@@ -541,7 +541,7 @@ customEnhancements.define({
     //which is where we will find an instance of the class defined below.
     enhKey: 'logger',
     base: 'log-to-console', //canonical name of our (base) custom attribute.
-    spawn: class extends ElementEnhancement {
+    spawn: class extends ElementEnhancement(EventTarget) {
         constructor(enhancedElement: Element, enhancementInfo: EnhancementInfo){
             super();
             const {base} = enhancementInfo;
@@ -626,17 +626,17 @@ Due to this property, setPropsFor, being a proxy, the convenience of this approa
 
 ## Symbolic Prop Shortcuts and support for dependency injection
 
-We can skip the step of either passing in enhancementInfo, as well as referencing the optional enhKey which may not be totally stable when mixing together multiple third party libraries.  If instead, we want to "jump to the chase" and set (presumably) stable properties of the instance, we can do so as follows:
+We can skip the step of either passing in enhancementInfo, as well as referencing the optional enhKey, which may not be totally stable when mixing together multiple third party libraries.  If instead, we want to "jump to the chase" and set (presumably) stable properties of the instance, we can do so as follows:
 
 ```JavaScript
 export const isHappy = Symbol.for('TFWsx0YH5E6eSfhE7zfLxA');
-class MyEnhancement extends ElementEnhancement {
+class MyEnhancement extends ElementEnhancement(EventTarget)
     get isHappy(){}
     set isHappy(nv){}
 }
 
 export const isMellow = Symbol.for('BqnnTPWRHkWdVGWcGQoAiw');
-class YourEnhancement extends ElementEnhancement {
+class YourEnhancement extends ElementEnhancement(EventTarget)
     get isMellow(){}
     set isMellow(nv){}
     get madAboutFourteen(){}
