@@ -52,7 +52,7 @@ Done!
 
 ## Why the use of mixins?
 
-[It allows for more flexibility](https://bsky.app/profile/justinfagnani.com/post/3m47lpjywm22a)
+[It allows for more flexibility](https://bsky.app/profile/justinfagnani.com/post/3m47lpjywm22a).  Feel free to create your own base class, though!
 
 ## Why the long attribute names?
 
@@ -181,7 +181,7 @@ const enhancementInfo: EnhancementInfo = {
 type branchitude = number;
 type leafitude = number;
 type AttrCoordinates = `{branchitude}.{leafitude}`;
-class MyEnhancement extends ElementEnhancement {
+class MyEnhancement extends ElementEnhancer(EventTarget) {
 
     constructor(enhancedElement, enhanceInfo: EnhancementInfo){}
 
@@ -197,7 +197,7 @@ class MyEnhancement extends ElementEnhancement {
 	attributeChangedCallback(
         coordinates: AttrCoordinates,
         oldValue: string, 
-        newValue: string.
+        newValue: string,
         attrNode: Node,
         ) { 
         ...
@@ -483,7 +483,7 @@ Unlike dataset, the enhancements property, added to the Element prototype, would
 // use this if "spawn" points to an already imported class
 const enhancementInstance = oElement.enhancements.get(enhancementInfo);
 //use this if "spawn" points to an an async loader or you aren't sure
-//In that case, get would throw an error
+//If it is asynchronous that case, get should throw an error
 const lazyLoadedInstance = await oElement.enhancements.await(enhancementInfo);
 //await is definitely necessary here
 const resolvedInstance = await oElement.enhancements.whenResolved(enhancementInfo);
@@ -502,20 +502,21 @@ this.resolved = true;
 The base class of these enhancements, ElementEnhancement, then, contains a reserved property, resolved:
 
 ```JavaScript
-class ElementEnhancement extends EventTarget {
-    #resolved = undefined;
-    get resolved(){
-        return this.#resolved;
-    }
-    set resolved(newValue){
-        this.#resolved = newValue;
-        if(newValue === true){
-            this.channelEvent(new Event('resolved'));
-        }else if(newValue === false){
-            this.channelEvent(new Event('rejected'));
+function ElementEnhancement(Base){
+    return class extends Base{
+        #resolved = undefined;
+        get resolved(){
+            return this.#resolved;
+        }
+        set resolved(newValue){
+            this.#resolved = newValue;
+            if(newValue === true){
+                this.channelEvent(new Event('resolved'));
+            }else if(newValue === false){
+                this.channelEvent(new Event('rejected'));
+            }
         }
     }
-
 }
 ```
 
