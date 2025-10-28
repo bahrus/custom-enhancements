@@ -17,7 +17,7 @@ https://bsky.app/profile/justinfagnani.com/post/3m47lpjywm22a
 ```JS
 customEnhancements.define({
     base: 'log-to-console', //canonical name of our (base) custom attribute.
-    spawn: class extends ElementEnhancement {
+    spawn: class extends EventTarget {
         constructor(enhancedElement: Element, enhancementInfo: EnhancementInfo){
             super();
             const {base} = enhancementInfo;
