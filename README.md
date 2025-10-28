@@ -758,7 +758,7 @@ I could see scenarios where the enhancement would want to know that its host has
 
 One way to do this is if the platform adds an event that can be subscribed to for elements:  Elements currently have a built-in property, "isConnected".  It would be great if the elements also emitted a standard event when the element becomes [connected and (possibly another)](https://github.com/whatwg/dom/issues/533) [event](https://twitter.com/jaffathecake/status/1521023821003767808) or [signal](https://github.com/whatwg/dom/issues/1296) when it becomes disconnected.
 
-Another way would be to add support for "connectedCallback/disconnectedCallback" to the ElementEnhancement interface -- that would explicitly be called when the *enhancedElement* connects / disconnects, not when the enhancement attaches to the enhancements property gateway (if applicable).
+Another way would be to add support for "connectedCallback/disconnectedCallback" to the ElementEnhancement mixin interface -- that would explicitly be called when the *enhancedElement* connects / disconnects, not when the enhancement attaches to the enhancements property gateway (if applicable).
 
 ## How to programmatically dispose of an enhancement
 
@@ -855,7 +855,7 @@ But I think some of the infrastructure behind this proposal could be useful to [
 3. ...supporting lazy-loading of such functionality as needed.
 4. ...declarative mapping of functionality similar to dependency injection.
 
-... while leveraging the exact same class definition used for custom enhancements.
+... while leveraging the exact same class definition used for custom enhancements (possible with a different mixin).
 
 ### Use cases?
 
@@ -865,7 +865,7 @@ Another use case is for robust web components that do far more than just being a
 
 One way a first-party component could adopt a first-party or third-party behavior/enhancement would be to do this by simply spawning and/or attaching the enhancement as discussed above, "at arms length".
 
-But suppose a behavior/enhancement's functionality is core to a custom element's mission, or close enough for government work? Suppose the custom element wants to provide key information that is not accessible from outside, like private data and/or the internals?  And/or suppose the custom element wants to nail down the name of the "custom prop" directly onto its namespaced object / prototype chain, so dependencies can leverage TypeScript and not have to be so vigilant about collisions between different (versioned) libraries that use the same name (beyond vigilance towards the shadow scoped name of the element itself).  As well as pinning down the (base) attribute tied to the enhancement?
+But suppose a behavior/enhancement's functionality is core to a custom element's mission, or close enough for government work? Suppose the custom element wants to provide key information that is not accessible from outside, like private data and/or the internals?  And/or suppose the custom element wants to nail down the name of the "custom prop" directly onto its namespaced object / prototype chain, so dependencies can leverage TypeScript and not have to be so vigilant about collisions between different (versioned) libraries that use the same name (beyond vigilance towards the shadow scoped name of the element itself).  As well as pinning down the (base) attribute(s) tied to the enhancement?
 
 I propose a significant amendment to this proposal, support for...:
 
@@ -876,14 +876,14 @@ I propose a significant amendment to this proposal, support for...:
 Here, no "enh-" prefix is required for attributes.  In fact, enh- prefixed attributes will be ignored.
 
 ```TypeScript
-class MyPhotoTakerEnhancement extends ElementEnhancement{
+class MyPhotoTakerEnhancement extends ElementFeature(EventTarget){
     constructor(enhancedElement: Element, info: MyPhotoTakerFeatureInfo){
         super();
         ...
     }
 }
 
-class YourBadgeMakerEnhancement extends ElementEnhancement{
+class YourBadgeMakerEnhancement extends ElementFeature(EventTarget){
     constructor(enhancedElement: Element, info: YourPhotoTakerFeatureInfo){
         super();
         ...
@@ -923,19 +923,20 @@ class ClubMember extends HTMLElement implements ClubMemberProps{
 
 I think this would allow for testable Mock Objects, especially if these methods (especially .attachFeature) is/are made overridable by a super class.
 
-The type definition for FeatureInfo would closely resemble that of EnhancementInfo, but some fields of EnhancementInfo don't quite make sense in this context, and other fields may make more sense in the context of features (none of have been identified yet):
+The type definition for FeatureInfo would closely resemble that of EnhancementInfo, but some fields of EnhancementInfo don't quite make sense in this context, and other fields may make more sense in the context of features, like the last two:
 
 ```TypeScript
 type Enhancer = {new(): ElementEnhancement} | () => Promise<{new(): ElementEnhancement}>
 interface FeatureInfo {
-    spawn: Enhancer
+    spawn: Feature
     base?: Base
     branches?: Branches
     leaves?: Leaves
     map: {key: AttrCoordinates: AttrHandlerInfo}
     //only attach the feature if the base attribute is present on the element
     attachOnBase?: boolean
-
+    //Instantiate the feature immediately when the custom element is created.
+    loadEagerly?: boolean
 }
 ```
 
@@ -961,9 +962,9 @@ customElementRegistry.define('club-member', ClubMember, {
 
 ```
 
-Here the platform would attach the feature in the base HTML class (preferably in the constructor, I think) using the afore mentioned methods.  I think support for both lazy loading on demand (based on a matching attribute or another property access that is detectable by the platform as described above), as well as eagerly during element construction should be provided.
+Here the platform would attach the feature in the base HTML class (preferably in the constructor, I think) using the afore mentioned methods, if loadEagerly is set to true.  If loadEagerly is false (the default?), the platform will only instantiate it when it finds a matching attribute or detects property access in ways that have been described above.
 
-Both ways of attaching the enhancement would result in calling a new reserved method, featureAddedCallback, allowing the userland code to pass in such things as private data and element internals to the enhancement.
+Both ways of attaching the enhancement would result in calling a new reserved method, featureAddedCallback, allowing the userland code to pass in such things as private data and element internals to the enhancement. (Alternatively, maybe an event could be dispatched for this purpose)
 
 
 ## Support for a view model DOM fragment manager tied to the itemscope attribute.
@@ -988,7 +989,7 @@ So I am advocating no fewer than three "registries", as far as categories of cla
 So, just to provide a sample API to make things less abstract, suppose the API for registering the Itemscope managers looks like this:
 
 ```JavaScript
-document.body.registerItemScopeManager('my-item', class extends ItemscopeManager{
+document.body.registerItemScopeManager('my-item', class extends ItemscopeManager(Object){
     get ssn(){
         ...
     }
