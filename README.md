@@ -758,7 +758,7 @@ I could see scenarios where the enhancement would want to know that its host has
 
 One way to do this is if the platform adds an event that can be subscribed to for elements:  Elements currently have a built-in property, "isConnected".  It would be great if the elements also emitted a standard event when the element becomes [connected and (possibly another)](https://github.com/whatwg/dom/issues/533) [event](https://twitter.com/jaffathecake/status/1521023821003767808) or [signal](https://github.com/whatwg/dom/issues/1296) when it becomes disconnected.
 
-Another way would be to add support for "connectedCallback/disconnectedCallback" to the enhancement -- that would explicitly be called when the *enhancedElement* connects / disconnects, not when the enhancement attaches to the enhancements property gateway (if applicable).
+Another way would be to add support for "connectedCallback/disconnectedCallback" to the ElementEnhancement interface -- that would explicitly be called when the *enhancedElement* connects / disconnects, not when the enhancement attaches to the enhancements property gateway (if applicable).
 
 ## How to programmatically dispose of an enhancement
 
