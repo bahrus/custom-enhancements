@@ -923,10 +923,12 @@ class ClubMember extends HTMLElement implements ClubMemberProps{
 
 I think this would allow for testable Mock Objects, especially if these methods (especially .attachFeature) is/are made overridable by a super class.
 
+This code can be run at any time, not just in the constructor
+
 The type definition for FeatureInfo would closely resemble that of EnhancementInfo, but some fields of EnhancementInfo don't quite make sense in this context, and other fields may make more sense in the context of features, like the last two:
 
 ```TypeScript
-type Enhancer = {new(): ElementEnhancement} | () => Promise<{new(): ElementEnhancement}>
+type Feature = {new(): ElementEnhancement} | () => Promise<{new(): ElementEnhancement}>
 interface FeatureInfo {
     spawn: Feature
     base?: Base
