@@ -677,7 +677,7 @@ The platform would search the registry for any enhancements that has a mapping w
 
 The suggestion to use Symbol.for with a guid, as opposed to just Symbol(), is based on some negative experiences I've had with multiple versions of the same library being referenced, but is not required.  Regular symbols could also be used when that risk can be avoided.
 
-## Attaching based on presence of attributes
+## Spawning/Attaching based on presence of attributes
 
 If any one of the  (enh-*) attributes matching the pattern of base/branch/leaf is found on an element in the live DOM tree, this would cause the platform to instantiate an instance of the corresponding class.
 
