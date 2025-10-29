@@ -483,7 +483,7 @@ Unlike dataset, the enhancements property, added to the Element prototype, would
 // use this if "spawn" points to an already imported class
 const enhancementInstance = oElement.enhancements.get(enhancementInfo);
 //use this if "spawn" points to an an async loader or you aren't sure
-//If it is asynchronous that case, get should throw an error
+//In the asynchronous case, get should throw an error
 const lazyLoadedInstance = await oElement.enhancements.await(enhancementInfo);
 //await is definitely necessary here
 const resolvedInstance = await oElement.enhancements.whenResolved(enhancementInfo);
@@ -525,7 +525,7 @@ The whenResolved method would throw an error (catchable via try/catch with await
 The purpose of having this "whenResolved" feature is explained towards the end of this proposal.
 
 > [!NOTE]
-> I think it would be quite reasonable for these methods to accept an additional parameter where the registry can be passed in, and call the define method on that registry.
+> I think it would be quite reasonable for these methods to accept an additional parameter where the registry can be passed in, and call the define method on that registry when applicable.
 
 ## Reducing developer guilt and allowing for a nice API by formally endorsing attaching the spawned instance to the element's "enhancements" property gateway
 
@@ -580,7 +580,7 @@ const enhancementInstance = oElement.enhancements.get(enhancementInfo);
  
 ## A helper property to make setting properties easier.
 
-In addition to the two methods above, the enhancements property would contain a lazy property which would return/instantiate a proxy if invoked/retrieved, which can then dynamically return an instance of the enhancement, if the enhancement has already attached.  If it hasn't attached yet, it will return either an empty object, or whatever value has been placed there previously.
+In addition to the three methods above, the enhancements property would contain a lazy property which would return/instantiate a proxy if invoked/retrieved, which can then dynamically return an instance of the enhancement, if the enhancement has already attached.  If it hasn't attached yet, it will return either an empty object, or whatever value has been placed there previously.
 
 > [!Note]
 > This will only work for enhancements where the enhKey property is specified.
@@ -618,9 +618,9 @@ oElement.enhancements.steelEnhancer.carbonPercent = 0.2;
 
 ```
 
-In the case of an async attach definition, the property value object would sit there, ready to be absorbed into the enhancement during the asynchronous attachedCallback handshake, which could happen right away if already loaded, or whenever the customEnhancements.whenDefined is resolved for this enhancement.
+In the case of an async attach definition, the property value object would sit there, ready to be absorbed into the enhancement in the constructor, which could happen right away if already loaded, or whenever the customEnhancements.whenDefined is resolved for this enhancement.
 
-The attaching in the background convenience would only be possible if the developer has already registered enhKey = "steelInhancer" in an applicable registry.
+The attaching in the background convenience would only be possible if the developer has already registered enhKey = "steelEnhancer" in an applicable registry.
 
 Due to this property, setPropsFor, being a proxy, the convenience of this approach likely comes at a cost.  Proxies do impose a bit of a performance penalty, so a framework or library that uses this feature would be well-advised to add a little bit of nuance to the code, to set properties directly to the enhancement once it is known that the enhancement has attached.  For example, use this property the first time setting a property value, and then more directly for subsequent times.  Or, alternatively, implement the identical logic described above within the library code, thus avoiding the use of this special property altogether.
 
@@ -645,7 +645,7 @@ class YourEnhancement extends ElementEnhancement(EventTarget)
 
 //Here's where the dependency injection occurs
 const customEnhancementRegistry = new CustomEnhancementRegistry;
-registry.define([
+customEnhancementRegistry.define([
     {
         map: {
             [isHappy]: 'isHappy'
@@ -720,7 +720,7 @@ An example, in concept, of such a class, used in a POC for this proposal, can be
 
 ```html
 <template>
-    <div>
+    <div generateids>
         <span #></span>
         <button be-counted='{
             "transform": {
@@ -728,11 +728,11 @@ An example, in concept, of such a class, used in a POC for this proposal, can be
             }
         }'></button>
     </div>
-    <section>
+    <section generateids>
         <span #></span>
         <button be-counted='{
             "transform": {
-                "# span": "value"
+                "#{{span}}": "value"
             }
         }'></button>
     </section>
