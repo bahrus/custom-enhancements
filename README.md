@@ -686,7 +686,7 @@ I also suggest that it would be great if, during template instantiation supporte
 Another integration nicety I would like to see supported by built-in template instantiation is to be able to bind sub objects from the host to the enhancements gateway.  So for example:
 
 ```html
-<input :enhancements.withSteel.carbonPercent={{carbonPercent}} >
+<input :enhancements.steelEnhancer.carbonPercent={{carbonPercent}} >
 ```
 
 would work (using FAST web component syntax here.  Lit uses a . instead).
