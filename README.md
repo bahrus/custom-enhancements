@@ -110,7 +110,7 @@ Why ElementEnhancement and not (Custom)Attribute? This proposal "breaks" if we c
 
 Also, a single element enhancement can "own" multiple attributes (for enhancements that are particularly semantic in nature).
 
-So why not use the customElements' registry, why come up with a new registry, customEnhancements?  This point was raised, quite respectfully, at the face to face,  and seems to me like it may have some merit, and I suspect "under the hood" might make a tremendous amount of sense.  But from a developer point of view, it seems strange to use the  "customElements" object to add edhancements to built-in elements, so I wonder if the "under the hood" considerations could be camouflaged, in the name of clarity?  I again eagerly await the formal proposal from the WebKit team(?) where this is spelled out.
+So why not use the customElements' registry, why come up with a new registry, customEnhancements?  This point was raised, quite respectfully, at the face to face,  and seems to me like it may have some merit, and I suspect "under the hood" might make a tremendous amount of sense.  But from a developer point of view, it seems strange to use the  "customElements" object to add enhancements to built-in elements, so I wonder if the "under the hood" considerations could be camouflaged, in the name of clarity?  I again eagerly await the formal proposal from the WebKit team(?) where this is spelled out.
 
 The bottom line is I don't think the slight differences with custom elements make this proposal any more complex than defining a custom element.
 
@@ -133,7 +133,7 @@ const enhancementInfo: EnhancementInfo = {
     },
     //optional -- this is one place we can optionally find the instance of the class that gets created:
     // oElement.enhancements[enhKey], i.e. oElement.enhancements.greetings
-    // Don't be afraid to use, but you can avoid possible name clashes by not using is there's no need
+    // Don't be afraid to use, but you can avoid possible name clashes by not using if there's no need
     // to publicly expose the api to other components / libraries
     /** @type {string | symbol | undefined} **/
     enhKey: 'greetings',
@@ -591,7 +591,7 @@ This would allow consumers of the enhancement to pass property values (and only 
 oElement.enhancements.setPropsFor.steelEnhancer.carbonPercent = 0.2;
 ```
 
-These value settings would either get applied directly to oElement.enhancements.withSteel if it has already been attached.  Or, if it hasn't been attached yet, the browser would set (or merge) the value into the property, and begin attaching the enhancement in the background:
+These value settings would either get applied directly to oElement.enhancements.steelEnhancer if it has already been attached.  Or, if it hasn't been attached yet, the browser would set (or merge) the value into the property, and begin attaching the enhancement in the background:
 
 ```JavaScript
 if(oElement.enhancements.steelEnhancer=== undefined) {
