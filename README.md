@@ -588,7 +588,7 @@ In addition to the three methods above, the enhancements property would contain 
 This would allow consumers of the enhancement to pass property values (and only property values) ahead of the upgrade (or after the upgrade), so that no "await" is necessary, nor any imperative looking code:
 
 ```JavaScript
-oElement.enhancements.setPropsFor.steelEnhancer.carbonPercent = 0.2;
+oElement.enhancements.set.steelEnhancer.carbonPercent = 0.2;
 ```
 
 These value settings would either get applied directly to oElement.enhancements.steelEnhancer if it has already been attached.  Or, if it hasn't been attached yet, the browser would set (or merge) the value into the property, and begin attaching the enhancement in the background:
@@ -622,7 +622,7 @@ In the case of an async attach definition, the property value object would sit t
 
 The attaching in the background convenience would only be possible if the developer has already registered enhKey = "steelEnhancer" in an applicable registry.
 
-Due to this property, setPropsFor, being a proxy, the convenience of this approach likely comes at a cost.  Proxies do impose a bit of a performance penalty, so a framework or library that uses this feature would be well-advised to add a little bit of nuance to the code, to set properties directly to the enhancement once it is known that the enhancement has attached.  For example, use this property the first time setting a property value, and then more directly for subsequent times.  Or, alternatively, implement the identical logic described above within the library code, thus avoiding the use of this special property altogether.
+Due to this lazy property, set, being a proxy, the convenience of this approach likely comes at a cost.  Proxies do impose a bit of a performance penalty, so a framework or library that uses this feature would be well-advised to add a little bit of nuance to the code, to set properties directly to the enhancement once it is known that the enhancement has attached.  For example, use this property the first time setting a property value, and then more directly for subsequent times.  Or, alternatively, implement the identical logic described above within the library code, thus avoiding the use of this special property altogether.
 
 ## Symbolic Prop Shortcuts and support for dependency injection
 
