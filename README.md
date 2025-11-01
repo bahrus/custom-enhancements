@@ -1039,6 +1039,13 @@ class CustomButton extends HTMLElement {
     }
 
 }
+
+interface CustomButton {
+    behaviors: {
+        command: CommandCustomElementFeature
+    }
+}
+
 class CommandCustomElementFeature extends CustomElementFeature(EventTarget){
     #internals;
     constructor(customElement: HTMLElement, commandFeatureInfo: FeatureInfo){
@@ -1047,29 +1054,31 @@ class CommandCustomElementFeature extends CustomElementFeature(EventTarget){
     }
 
     get commandForElement() {
-        return this.internals_.commandForElement ?? null;
+        return this.#internals.commandForElement ?? null;
     }
 
     set commandForElement(element) {
-        this.internals_.commandForElement = element;
+        this.#internals.commandForElement = element;
     }
 
     get command() {
-        return this.internals_.command ?? '';
+        return this.#internals.command ?? '';
     }
 
     set command(value) {
-        this.internals_.command = value;
+        this.#internals.command = value;
     }
 
     set internals(nv){
         this.#internals = nv;
     }
 }
-customElements.define('custom-button', CustomButton);
+customElements.define('custom-button', CustomButton, {
+    features: {
+
+    }
+});
 ```
-
-
 
 
 # Support for a view model DOM fragment manager tied to the itemscope attribute.
