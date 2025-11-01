@@ -1085,8 +1085,24 @@ class CommandCustomElementFeature extends CustomElementFeature(EventTarget){
 customElements.define('custom-button', CustomButton, {
     features: {
         '?.behaviors?.command': {
-            ctr: CommandCustomElementFeature,
+            spawn: CommandCustomElementFeature,
+            base: 'command',
+            branches: {
+                prefix: '',
+                names: ['', 'ForElement'],
+            },
+            map: {
+                    '0.0': {
+                        instanceOf: String,
+                        mapsTo: '?.behaviors?.command'
+                    },
+                    '1.0': {
+                        instanceOf: HTMLElement,
+                        mapsTo: 'commandForElement'
+                    }
+            }
             passThrough: ['command', 'commandForElement']
+            
         }
     }
 });
