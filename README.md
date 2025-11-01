@@ -1042,7 +1042,7 @@ class CustomButton extends HTMLElement {
         this.#internals = this.attachInternals();
         this.addEventListener('feature-added', e => {
             //opt in
-            //maybe this can be done by the platform, based on a static spported Features
+            //maybe this can be done by the platform, based on a static supported Features
             //property, as shown below
             if(!(e.target instanceof CommandCustomElementFeature)) return; 
             e.target.internals = this.#internals;
@@ -1056,11 +1056,12 @@ class CustomButton extends HTMLElement {
 
 interface CustomButton {
     behaviors: {
-        command: CommandCustomElementFeature
+        command: CommandInterface
     }
 }
 
-class CommandCustomElementFeature extends CustomElementFeature(EventTarget){
+//or a mixin would work well also, I think
+class CommandCustomElementFeature extends CustomElementFeature(EventTarget) implements CommandInterface{
     #internals;
     constructor(customElement: HTMLElement, commandFeatureInfo: FeatureInfo){
         super();
@@ -1115,7 +1116,7 @@ customElements.define('custom-button', CustomButton, {
 
 What the platform would do with this:
 
-1.  Auto define properties on the CustomButton prototype, **if not already defined**: "behaviors" (to a simple Class?)    
+1.  Auto define properties on the CustomButton prototype, **if not already defined**: "behaviors" (to a simple Class?, or just an expando object?)    
 2.  The added "passThrough" setting would cause pass through properties 'command' and 'commandForElement' to be added to the top level, with  setters which would spawn the CommandCustomElementFeature if needed, and pass the values through to the same named property of the custom element feature class instance.
 
 I think it's okay to use the "behaviors" property here, for custom elements only, since "HTMLElement" is kind of like "Object" in this context and I can't see it interfering with future built in behaviors added to higher order elements.
