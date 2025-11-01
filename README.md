@@ -1032,27 +1032,16 @@ class CustomButton extends HTMLElement {
     constructor() {
         super();
         this.#internals = this.attachInternals();
+        this.addEventListener('feature-added', e => {
+            if(!(e.target instanceof CommandCustomElementFeature)) return;
+        })
     }
 
-    get commandForElement() {
-        return this.internals_.commandForElement ?? null;
-    }
-
-    set commandForElement(element) {
-        this.internals_.commandForElement = element;
-    }
-
-    get command() {
-        return this.internals_.command ?? '';
-    }
-
-    set command(value) {
-        this.internals_.command = value;
-    }
 }
 class CommandCustomElementFeature extends CustomElementFeature(EventTarget){
-    constructor(){
-
+    constructor(customElement: HTMLElement, commandFeatureInfo: FeatureInfo){
+        super();
+        this.channelEvent()
     }
 
     get commandForElement() {
