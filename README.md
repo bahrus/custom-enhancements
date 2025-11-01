@@ -416,7 +416,7 @@ Another aspect of this proposal that I think should be considered is that as the
 
 I started this journey placing great emphasis on the HTML attribute aspect of this, but as the concepts have marinated over time, I think it is a mistake to over emphasize that aspect.  The fundamental thing we are trying to do is to enhance existing elements, not attach strings to them.  
 
-When we enhance existing elements during template instantiation, the attributes (can) go away, in order to optimize performance.  It is much faster to pass data through a common gateway property, not through attributes.  For similar reasons, when one big enhancement needs to cobble smaller enhancements together, again, the best gateway is not through attributes, which again would be inefficient, and would result in big-time cluttering of the DOM, but rather through the same common property gateway through which all these enhancements would be linked. 
+When we enhance existing elements during template instantiation, the attributes (can) go away, in order to optimize performance.  It is much faster and flexible to pass data through a common gateway property, not through attributes.  For similar reasons, when one big enhancement needs to cobble smaller enhancements together, again, the best gateway is not through attributes, which again would be inefficient, and would result in big-time cluttering of the DOM, but rather through the same common property gateway through which all these enhancements would be linked. 
 
 ### Why "enhancements", and not "behaviors"?
 
@@ -436,8 +436,6 @@ Many are adding binding support to elements, which may or not resonate with deve
 
 So "enhancements" seems to cover all bases.
 
-Others prefer "behaviors" (but the others who do seem to think it is of zero consequence, whereas I think there is some substantial consequence to the decision, if that counts for anything). I'm open to both, maybe my reasoning above is wrong (but no one has yet to address my concerns head on).
-
 Another reason to consider:  I think it would be wonderful if built-in elements started providing structured, namespaced paths to various features of the element.  Like what was done with styles from the get-go. As it is, having all the key properties at the top level, sometimes splitting up related properties like command and commandFor, has made the api rather unwieldy.    I think "behaviors" would be a great property name for built-in elements to use to indicate these are platform behaviors.  If so, use of "enhancements" for third party, well, enhancements, makes a lot of sense, I think.  So developers could access these built in behaviors via:
 
 ```JavaScript
@@ -450,6 +448,8 @@ oButton.assignGingerly({
 ```
 
 Granted, some frameworks might not support the ability to tap into this at first, but I suspect would accommodate it if the platform went in this direction.
+
+Others prefer "behaviors" (but the others who do seem to think it is of zero consequence, whereas I think there is some substantial consequence to the decision, if that counts for anything). I'm open to both, maybe my reasoning above is wrong (but no one has yet to address my concerns head on).
 
 Choosing the right name seems important, as it ought to align somewhat with the reserved sub-property of the element, as well as the reserved prefix for attributes (think data- / dataset).
 
