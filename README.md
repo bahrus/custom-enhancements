@@ -1049,8 +1049,8 @@ class CustomButton extends HTMLElement {
         })
     }
 
-    //maybe?
-    static supportedFeatures: [CommandCustomElementFeature]
+    //we need a shorter name for this
+    static supportedFeaturesThatCanBePassedInternalsAutomaticaly: [CommandCustomElementFeature]
 
 }
 
