@@ -1042,10 +1042,15 @@ class CustomButton extends HTMLElement {
         this.#internals = this.attachInternals();
         this.addEventListener('feature-added', e => {
             //opt in
-            if(!(e.target instanceof CommandCustomElementFeature)) return;
+            //maybe this can be done by the platform, based on a static spported Features
+            //property, as shown below
+            if(!(e.target instanceof CommandCustomElementFeature)) return; 
             e.target.internals = this.#internals;
         })
     }
+
+    //maybe?
+    static supportedFeatures: [CommandCustomElementFeature]
 
 }
 
