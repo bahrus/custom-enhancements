@@ -882,14 +882,14 @@ Here, no "enh-" prefix is required for attributes.  In fact, enh- prefixed attri
 
 ```TypeScript
 class MyPhotoTaker extends CustomElementFeature(EventTarget){
-    constructor(enhancedElement: Element, info: MyPhotoTakerFeatureInfo){
+    constructor(customElement: HTMLElement, info: MyPhotoTakerFeatureInfo){
         super();
         ...
     }
 }
 
 class YourBadgeMaker extends CustomElementFeature(EventTarget){
-    constructor(enhancedElement: Element, info: YourPhotoTakerFeatureInfo){
+    constructor(customElement: HTMLElement, info: YourPhotoTakerFeatureInfo){
         super();
         ...
     }
@@ -1015,10 +1015,64 @@ class CustomButton extends HTMLElement {
 customElements.define('custom-button', CustomButton);
 ```
 
-Because there may be a growing number of such built-in behaviors that the developer will want to emulate, developers will naturally and understably flock toward the mixin model, versus more compositional approaches, just to see "native-like."  This could, in my view, encourage [problematic dependencies'(https://legacy.reactjs.org/blog/2016/07/13/mixins-considered-harmful.html).
+Because there may be a growing number of such built-in behaviors that the developer will want to emulate, developers will naturally and understandably flock toward the mixin model, versus more compositional approaches, just to seem more "native-like", indistinguishable from built-in buttons.  This could, in my view, encourage [problematic dependency anti-patterns](https://legacy.reactjs.org/blog/2016/07/13/mixins-considered-harmful.html).
 
 I think the platform could help address this concern as follows:
 
+### Scenario I  User makes internals public
+
+In the above example, the "internls_" property is actually made publicly accessible, which is how MDN documents this feature.  Safari makes [it private](https://webkit.org/blog/13711/elementinternals-and-form-associated-custom-elements/).  Going with the latter approach, suppose we did this:
+
+
+```TypeScript
+class CustomButton extends HTMLElement {
+    static buttonActivationBehaviors = true;
+    #internals;
+
+    constructor() {
+        super();
+        this.#internals = this.attachInternals();
+    }
+
+    get commandForElement() {
+        return this.internals_.commandForElement ?? null;
+    }
+
+    set commandForElement(element) {
+        this.internals_.commandForElement = element;
+    }
+
+    get command() {
+        return this.internals_.command ?? '';
+    }
+
+    set command(value) {
+        this.internals_.command = value;
+    }
+}
+class CommandCustomElementFeature extends CustomElementFeature(EventTarget){
+    constructor(){
+
+    }
+
+    get commandForElement() {
+        return this.internals_.commandForElement ?? null;
+    }
+
+    set commandForElement(element) {
+        this.internals_.commandForElement = element;
+    }
+
+    get command() {
+        return this.internals_.command ?? '';
+    }
+
+    set command(value) {
+        this.internals_.command = value;
+    }
+}
+customElements.define('custom-button', CustomButton);
+```
 
 
 
