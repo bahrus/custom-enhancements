@@ -1097,14 +1097,14 @@ customElements.define('custom-button', CustomButton, {
                 names: ['', 'ForElement'],
             },
             map: {
-                    '0.0': {
-                        instanceOf: String,
-                        mapsTo: '?.behaviors?.command'
-                    },
-                    '1.0': {
-                        instanceOf: HTMLElement,
-                        mapsTo: 'commandForElement'
-                    }
+                '0.0': {
+                    instanceOf: String,
+                    mapsTo: '?.behaviors?.command'
+                },
+                '1.0': {
+                    instanceOf: HTMLElement,
+                    mapsTo: 'commandForElement'
+                }
             }
             passThrough: ['command', 'commandForElement']
             
@@ -1115,10 +1115,10 @@ customElements.define('custom-button', CustomButton, {
 
 What the platform would do with this:
 
-1.  Define properties on the CustomButton prototype:  'command' and 'commandForElement'
+1.  Auto define properties on the CustomButton prototype:  'command' and 'commandForElement'
 2.  The setters for the properties would spawn the CommandCustomElementFeature if needed, and pass the values through to the same named property of the custom element feature class instance.
 
-
+I think it's okay to use the "behavior" property here, for custom elements only, since they are kind of like "Objects" and I can't see it interfering with future built in behaviors added to higher order elements.
 
 
 # Support for a view model DOM fragment manager tied to the itemscope attribute.
