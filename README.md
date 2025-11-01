@@ -983,6 +983,14 @@ class MyPhotoTaker extends ElementEnhancement(CustomElementFeature(EventTarget))
 
 In fact, at this point both mixins would be identical, as I've not found any functionality that would need to be different between the two.  But I think it would be safer to assume there might be in the future, hence the different mixins.
 
+# But wait, there's more!!!
+
+[Support for Prop-Passthrough's to custom element features](https://github.com/bahrus/custom-enhancements?tab=readme-ov-file#support-for-prop-passthroughs-to-custom-element-features)
+
+[Support for a view model DOM fragment manager tied to the itemscope attribute.](https://github.com/bahrus/custom-enhancements?tab=readme-ov-file#support-for-a-view-model-dom-fragment-manager-tied-to-the-itemscope-attribute)
+
+
+
 ## Support for Prop-Passthrough's to custom element features
 
 Unfortunately, some of the questionable design decisions made long ago behind DOM API's are likely to percolate to questionable design decisions to custom elements, with the advent of exposing platform behaviors.  I think the platform would have benefited from structuring functionality a little more, as it did with styles (and unlike aria, for example).  In particular, to emulate the built in button, developers will want to add [properties to the top level](https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/main/ElementInternalsType/explainer.md):
@@ -1089,9 +1097,7 @@ What the platform would do with this:
 1.  Define properties on the CustomButton prototype:  'command' and 'commandForElement'
 2.  The setters for the properties would spawn the CommandCustomElementFeature if needed, and pass the values through to the same named property of the custom element feature class instance.
 
-# But wait, there's more!!!
 
-[Support for a view model DOM fragment manager tied to the itemscope attribute.](https://github.com/bahrus/custom-enhancements?tab=readme-ov-file#support-for-a-view-model-dom-fragment-manager-tied-to-the-itemscope-attribute)
 
 
 # Support for a view model DOM fragment manager tied to the itemscope attribute.
