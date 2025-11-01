@@ -499,7 +499,7 @@ The whenResolved promise is returned after the developer sets:
 this.resolved = true;
 ```
 
-The base class of these enhancements, ElementEnhancement, then, contains a reserved property, resolved:
+The base mixin, ElementEnhancement, then, contains a reserved property, resolved:
 
 ```JavaScript
 function ElementEnhancement(Base){
