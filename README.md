@@ -846,7 +846,7 @@ To be able to distinguish that:
 I propose:
 
 1.  The base Event object gets an additional property:  "enhInfo", which is where we pass in the enhancementInfo registry definition.
-2.  The base Enhancement class has a method "channelEvent" that is a simple wrapper around "dispatchEvent" of the element that the enhancement adorns, but inserts enhInfo object into the event.
+2.  The base Enhancement class has a method "channelEvent" that is a simple wrapper around "dispatchEvent" of the element that the enhancement adorns, but inserts enhInfo object into the event. channelEvent would dispatch both from the enhancement class instance *as well as* the enhancedElement it is enhancing.
 
 ## How custom elements can opt in
 
@@ -881,14 +881,14 @@ I propose a significant amendment to this proposal, support for...:
 Here, no "enh-" prefix is required for attributes.  In fact, enh- prefixed attributes will be ignored.
 
 ```TypeScript
-class MyPhotoTakerEnhancement extends ElementFeature(EventTarget){
+class MyPhotoTaker extends CustomElementFeature(EventTarget){
     constructor(enhancedElement: Element, info: MyPhotoTakerFeatureInfo){
         super();
         ...
     }
 }
 
-class YourBadgeMakerEnhancement extends ElementFeature(EventTarget){
+class YourBadgeMaker extends CustomElementFeature(EventTarget){
     constructor(enhancedElement: Element, info: YourPhotoTakerFeatureInfo){
         super();
         ...
@@ -896,8 +896,8 @@ class YourBadgeMakerEnhancement extends ElementFeature(EventTarget){
 }
 
 interface ClubMemberProps {
-    photoTaker:  MyPhotoTakerEnhancement | undefined;
-    badgeMaker: YourBadgeMakerEnhancement | undefined;
+    photoTaker:  MyPhotoTaker | undefined;
+    badgeMaker: YourBadgeMaker | undefined;
 }
 
 class ClubMember extends HTMLElement implements ClubMemberProps{
@@ -907,17 +907,17 @@ class ClubMember extends HTMLElement implements ClubMemberProps{
         // take place, like fetch calls, etc, it is almost as good as synchronous?
         super();
         this.attachInternals()
-            .attachFeature<MyPhotoTakerEnhancement, ClubMember>(MyPhotoTakerEnhancementInfo)
+            .attachFeature<MyPhotoTaker, ClubMember>(MyPhotoTakerEnhancementInfo)
             .toInstance(this)  //toInstance should expect an instance of ClubMember, TypeScript definers
             .atProp('photoTaker') // atProp should expect a keyof ClubMember for its parameter, TypeScript definers
-            .attachFeature<YourBadgeMakerEnhancement, ClubMember>(YourBadgeMakerEnhancementInfo)
+            .attachFeature<YourBadgeMaker, ClubMember>(YourBadgeMakerEnhancementInfo)
             .toInstance(this)
             .atProp('badgeMaker');
     }
 
-    photoTaker: MyPhotoTakerEnhancement;
+    photoTaker: MyPhotoTaker;
 
-    badgeMaker: YourBadgeMakerEnhancement;
+    badgeMaker: YourBadgeMaker;
 
     featureAddedCallback(prop: keyof ClubMember, info: FeatureInfo){
         ...
@@ -933,7 +933,7 @@ This code can be run at any time, not just in the constructor
 The type definition for FeatureInfo would closely resemble that of EnhancementInfo, but some fields of EnhancementInfo don't quite make sense in this context, and other fields may make more sense in the context of features, like the last two:
 
 ```TypeScript
-type Feature = {new(): ElementEnhancement} | () => Promise<{new(): ElementEnhancement}>
+type Feature = {new(): CustomElementFeature} | () => Promise<{new(): CustomElementFeature}>
 interface FeatureInfo {
     spawn: Feature
     base?: Base
@@ -956,8 +956,8 @@ In addition, we should provide for a way to declaratively attach when we don't n
 ```TypeScript
 class ClubMember extends HTMLElement {
     
-    photoTaker: MyPhotoTakerEnhancement | undefined;
-    badgeMaker: YourBadgeMakerEnhancement | undefined;
+    photoTaker: MyPhotoTaker | undefined;
+    badgeMaker: YourBadgeMaker | undefined;
 }
 
 customElementRegistry.define('club-member', ClubMember, {
@@ -971,7 +971,17 @@ customElementRegistry.define('club-member', ClubMember, {
 
 Here the platform would attach the feature in the base HTML class (preferably in the constructor, I think) using the afore mentioned methods, if loadEagerly is set to true.  If loadEagerly is false (the default?), the platform will only instantiate it when it finds a matching attribute or detects property access in ways that have been described above.
 
-Both ways of attaching the enhancement would result in calling a new reserved method, featureAddedCallback, allowing the userland code to pass in such things as private data and element internals to the enhancement. (Alternatively, maybe an event could be dispatched for this purpose)
+Both ways of attaching the enhancement would result in calling a new reserved method, featureAddedCallback, allowing the userland code to pass in such things as private data and element internals to the enhancement. (Alternatively, maybe an event could be dispatched for this purpose).
+
+## Serving dual roles
+
+I think it should (almost?) always be possible to use the same class to support both ElementEnhancements *and* CustomElementFeatures -- simply wrap both mixins:
+
+```JavaScript
+class MyPhotoTaker extends ElementEnhancement(CustomElementFeature(EventTarget))
+```
+
+In fact, at this point both mixins would be identical, as I've not found any functionality that would need to be different between the two.  But I think it would be safer to assume there might be in the future, hence the different mixins.
 
 
 ## Support for a view model DOM fragment manager tied to the itemscope attribute.
