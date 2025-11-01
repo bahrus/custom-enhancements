@@ -985,6 +985,43 @@ In fact, at this point both mixins would be identical, as I've not found any fun
 
 ## Support for Prop-Passthrough's to custom element features
 
+Unfortunately, some of the questionable design decision behind DOM API are likely to percolate to questionable design decisions to custom elements, with the advent of exposing platform behaviors.  I think the platform would have benefited from structuring functionality a little more, as it did with styles (and unlike aria, for example).  In particular, to emulate the built in button, developers will want to add [properties to the top level](https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/main/ElementInternalsType/explainer.md):
+
+```TypeScript
+class CustomButton extends HTMLElement {
+    static buttonActivationBehaviors = true;
+
+    constructor() {
+        super();
+        this.internals_ = this.attachInternals();
+    }
+
+    get commandForElement() {
+        return this.internals_.commandForElement ?? null;
+    }
+
+    set commandForElement(element) {
+        this.internals_.commandForElement = element;
+    }
+
+    get command() {
+        return this.internals_.command ?? '';
+    }
+
+    set command(value) {
+        this.internals_.command = value;
+    }
+}
+customElements.define('custom-button', CustomButton);
+```
+
+Because there may be a growing number of such built-in behaviors that the developer will want to emulate, developers will naturally and understably flock toward the mixin model, versus more compositional approaches, just to see "native-like."  This could, in my view, encourage [problematic dependencies'(https://legacy.reactjs.org/blog/2016/07/13/mixins-considered-harmful.html).
+
+I think the platform could help address this concern as follows:
+
+
+
+
 
 # Support for a view model DOM fragment manager tied to the itemscope attribute.
 
