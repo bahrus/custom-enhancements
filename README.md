@@ -529,7 +529,7 @@ The purpose of having this "whenResolved" feature is explained towards the end o
 
 ## Reducing developer guilt and allowing for a nice API by formally endorsing attaching the spawned instance to the element's "enhancements" property gateway
 
-A key config setting, "enhKey," would cause the spawned instance to be attached to the new, proposed "enhancements" property gateway that would be added to the Element prototype.
+A key config setting, "enhKey," would cause the spawned instance to be attached at that name to the new, proposed "enhancements" property gateway that would be added to the Element prototype.
 
 Use of the enhKey means that the developer will be responsible for avoiding name-spacing conflicts with other enhancements registered in the same registry. 
 
