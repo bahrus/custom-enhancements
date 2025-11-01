@@ -584,7 +584,7 @@ I think it does.  In this case, the platform would be providing something like J
  
 ## A helper property to make setting properties easier.
 
-In addition to the three methods above, the enhancements property would contain a lazy property which would return/instantiate a proxy if invoked/retrieved, which can then dynamically return an instance of the enhancement, if the enhancement has already attached.  If it hasn't attached yet, it will return either an empty object, or whatever value has been placed there previously.
+In addition to the three methods above, the enhancements property would contain a lazy property, "set", which would return/instantiate a proxy if invoked/retrieved, which can then dynamically return an instance of the enhancement, if the enhancement has already attached.  If it hasn't attached yet, it will return either an empty object, or whatever value has been placed there previously.
 
 > [!Note]
 > This will only work for enhancements where the enhKey property is specified.
