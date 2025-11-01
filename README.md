@@ -1019,7 +1019,7 @@ Because there may be a growing number of such built-in behaviors that the develo
 
 I think the platform could help address this concern as follows:
 
-### Scenario I More static, declarative approach
+### Scenario I - Static, declarative approach
 
 In the above example, the "internals_" property is actually made publicly accessible, which is how MDN documents this feature.  Safari makes [it private](https://webkit.org/blog/13711/elementinternals-and-form-associated-custom-elements/) in their demonstrations.  Going with the latter approach, and adopting the more static, declarative way of attaching features, suppose we did this:
 
@@ -1033,6 +1033,7 @@ class CustomButton extends HTMLElement {
         super();
         this.#internals = this.attachInternals();
         this.addEventListener('feature-added', e => {
+            //opt in
             if(!(e.target instanceof CommandCustomElementFeature)) return;
             e.target.internals = this.#internals;
         })
@@ -1086,7 +1087,7 @@ customElements.define('custom-button', CustomButton, {
 What the platform would do with this:
 
 1.  Define properties on the CustomButton prototype:  'command' and 'commandForElement'
-2.  The setters for the properties would spawn the CommandCustomElementFeature if needed, and pass the values through.
+2.  The setters for the properties would spawn the CommandCustomElementFeature if needed, and pass the values through to the same named property of the custom element feature class instance.
 
 
 # Support for a view model DOM fragment manager tied to the itemscope attribute.
