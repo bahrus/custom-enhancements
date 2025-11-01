@@ -1115,10 +1115,10 @@ customElements.define('custom-button', CustomButton, {
 
 What the platform would do with this:
 
-1.  Auto define properties on the CustomButton prototype, **if not already defined**: "behaviors" (to a simple Class), as well as 'command' and 'commandForElement'     
-2.  The setters for the properties would spawn the CommandCustomElementFeature if needed, and pass the values through to the same named property of the custom element feature class instance.
+1.  Auto define properties on the CustomButton prototype, **if not already defined**: "behaviors" (to a simple Class?)    
+2.  The added "passThrough" setting would cause pass through properties 'command' and 'commandForElement' to be added to the top level, with  setters which would spawn the CommandCustomElementFeature if needed, and pass the values through to the same named property of the custom element feature class instance.
 
-I think it's okay to use the "behaviors" property here, for custom elements only, since they are kind of like "Objects" and I can't see it interfering with future built in behaviors added to higher order elements.
+I think it's okay to use the "behaviors" property here, for custom elements only, since "HTMLElement" is kind of like "Object" in this context and I can't see it interfering with future built in behaviors added to higher order elements.
 
 
 # Support for a view model DOM fragment manager tied to the itemscope attribute.
