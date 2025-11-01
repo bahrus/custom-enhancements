@@ -1083,7 +1083,10 @@ customElements.define('custom-button', CustomButton, {
 });
 ```
 
+What this would do:
 
+1.  Define properties on the CustomButton prototype:  'command' and 'commandForElement'
+2.  The setters for the properties would spawn the CommandCustomElementFeature if needed, and pass the values through.
 
 
 # Support for a view model DOM fragment manager tied to the itemscope attribute.
