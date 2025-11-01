@@ -906,6 +906,9 @@ class ClubMember extends HTMLElement implements ClubMemberProps{
         //I think async should be supported, though, but maybe if no real async operations 
         // take place, like fetch calls, etc, it is almost as good as synchronous?
         super();
+        this.addEventListener('feature-added', e => {
+            ...
+        });
         this.attachInternals()
             .attachFeature<MyPhotoTaker, ClubMember>(MyPhotoTakerEnhancementInfo)
             .toInstance(this)  //toInstance should expect an instance of ClubMember, TypeScript definers
@@ -919,9 +922,6 @@ class ClubMember extends HTMLElement implements ClubMemberProps{
 
     badgeMaker: YourBadgeMaker;
 
-    featureAddedCallback(prop: keyof ClubMember, info: FeatureInfo){
-        ...
-    }
 }
 
 ```
@@ -971,7 +971,7 @@ customElementRegistry.define('club-member', ClubMember, {
 
 Here the platform would attach the feature in the base HTML class (preferably in the constructor, I think) using the afore mentioned methods, if loadEagerly is set to true.  If loadEagerly is false (the default?), the platform will only instantiate it when it finds a matching attribute or detects property access in ways that have been described above.
 
-Both ways of attaching the enhancement would result in calling a new reserved method, featureAddedCallback, allowing the userland code to pass in such things as private data and element internals to the enhancement. (Alternatively, maybe an event could be dispatched for this purpose).
+Both ways of attaching the enhancement would result in dispatching an event, 'feature-added", allowing the userland code to pass in such things as private data and element internals to the enhancement.
 
 ## Serving dual roles
 
@@ -985,7 +985,7 @@ In fact, at this point both mixins would be identical, as I've not found any fun
 
 ## Support for Prop-Passthrough's to custom element features
 
-Unfortunately, some of the questionable design decision behind DOM API are likely to percolate to questionable design decisions to custom elements, with the advent of exposing platform behaviors.  I think the platform would have benefited from structuring functionality a little more, as it did with styles (and unlike aria, for example).  In particular, to emulate the built in button, developers will want to add [properties to the top level](https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/main/ElementInternalsType/explainer.md):
+Unfortunately, some of the questionable design decisions made long ago behind DOM API's are likely to percolate to questionable design decisions to custom elements, with the advent of exposing platform behaviors.  I think the platform would have benefited from structuring functionality a little more, as it did with styles (and unlike aria, for example).  In particular, to emulate the built in button, developers will want to add [properties to the top level](https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/main/ElementInternalsType/explainer.md):
 
 ```TypeScript
 class CustomButton extends HTMLElement {
@@ -1015,13 +1015,13 @@ class CustomButton extends HTMLElement {
 customElements.define('custom-button', CustomButton);
 ```
 
-Because there may be a growing number of such built-in behaviors that the developer will want to emulate, developers will naturally and understandably flock toward the mixin model, versus more compositional approaches, just to seem more "native-like", indistinguishable from built-in buttons.  This could, in my view, encourage [problematic dependency anti-patterns](https://legacy.reactjs.org/blog/2016/07/13/mixins-considered-harmful.html).
+Because there may be a growing number of such built-in behaviors that the developer will want to emulate, developers will naturally and understandably flock toward the mixin model, to avoid unnessary clutter, versus more compositional approaches, just to seem more "native-like", indistinguishable from built-in buttons.  This could, in my view, encourage [problematic dependency anti-patterns](https://legacy.reactjs.org/blog/2016/07/13/mixins-considered-harmful.html).
 
 I think the platform could help address this concern as follows:
 
-### Scenario I  User makes internals public
+### Scenario I More static, declarative approach
 
-In the above example, the "internls_" property is actually made publicly accessible, which is how MDN documents this feature.  Safari makes [it private](https://webkit.org/blog/13711/elementinternals-and-form-associated-custom-elements/).  Going with the latter approach, and adopting the more static, declarative way of attaching features, suppose we did this:
+In the above example, the "internals_" property is actually made publicly accessible, which is how MDN documents this feature.  Safari makes [it private](https://webkit.org/blog/13711/elementinternals-and-form-associated-custom-elements/) in their demonstrations.  Going with the latter approach, and adopting the more static, declarative way of attaching features, suppose we did this:
 
 
 ```TypeScript
