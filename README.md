@@ -1021,7 +1021,7 @@ I think the platform could help address this concern as follows:
 
 ### Scenario I  User makes internals public
 
-In the above example, the "internls_" property is actually made publicly accessible, which is how MDN documents this feature.  Safari makes [it private](https://webkit.org/blog/13711/elementinternals-and-form-associated-custom-elements/).  Going with the latter approach, suppose we did this:
+In the above example, the "internls_" property is actually made publicly accessible, which is how MDN documents this feature.  Safari makes [it private](https://webkit.org/blog/13711/elementinternals-and-form-associated-custom-elements/).  Going with the latter approach, and adopting the more static, declarative way of attaching features, suppose we did this:
 
 
 ```TypeScript
@@ -1083,7 +1083,7 @@ customElements.define('custom-button', CustomButton, {
 });
 ```
 
-What this would do:
+What the platform would do with this:
 
 1.  Define properties on the CustomButton prototype:  'command' and 'commandForElement'
 2.  The setters for the properties would spawn the CommandCustomElementFeature if needed, and pass the values through.
