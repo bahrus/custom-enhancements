@@ -1050,7 +1050,7 @@ class CustomButton extends HTMLElement {
     }
 
     //we need a shorter name for this
-    static supportedFeaturesThatCanBePassedInternalsAutomaticaly: [CommandCustomElementFeature]
+    static supportedFeaturesThatCanBePassedInternalsAutomatically: [CommandCustomElementFeature]
 
 }
 
