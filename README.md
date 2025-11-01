@@ -8,7 +8,7 @@ Last update: Nov 1, 2025
 
 This is [one](https://github.com/whatwg/html/issues/2271) [of](https://eisenbergeffect.medium.com/2023-state-of-web-components-c8feb21d4f16) [a](https://github.com/WICG/webcomponents/issues/1029) [number](https://github.com/WICG/webcomponents/issues/727) of interesting proposals, one of which (or some combination?) can hopefully get buy-in from all three browser vendors.  This proposal borrows heavily from the others.
 
-## Custom Attributes For [Simple Enhancements](https://www.w3.org/TR/design-principles/#simplicity)
+# Custom Attributes For [Simple Enhancements](https://www.w3.org/TR/design-principles/#simplicity)
 
 Say all you need to do is to create an isolated behavior/enhancement/hook/whatever associated with an attribute -- say "log-to-console".  It enhances elements adorned with that attribute, logging the value of the attribute to the console when the element is clicked.  Here's how that would be done with this proposal.  It could be done more simply, with hard coded values, and without the commentary noise, so please allow for that when weighing the complexity.
 
@@ -179,7 +179,7 @@ const enhancementInfo: EnhancementInfo = {
 type branchitude = number;
 type leafitude = number;
 type AttrCoordinates = `{branchitude}.{leafitude}`;
-class MyEnhancement extends ElementEnhancer(EventTarget) {
+class MyEnhancement extends ElementEnhancement(EventTarget) {
 
     constructor(enhancedElement, enhanceInfo: EnhancementInfo){}
 
@@ -983,8 +983,10 @@ class MyPhotoTaker extends ElementEnhancement(CustomElementFeature(EventTarget))
 
 In fact, at this point both mixins would be identical, as I've not found any functionality that would need to be different between the two.  But I think it would be safer to assume there might be in the future, hence the different mixins.
 
+## Support for Prop-Passthrough's to custom element features
 
-## Support for a view model DOM fragment manager tied to the itemscope attribute.
+
+# Support for a view model DOM fragment manager tied to the itemscope attribute.
 
 There are many scenarios where it makes sense to have one "central" element manager, that frameworks / libraries can expect, that manages the data and/or view model and/or binding and/or event handling for a DOM element and its children, plus extensions of that element that are linked to it via the itemref attribute:
 
