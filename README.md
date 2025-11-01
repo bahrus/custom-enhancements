@@ -525,7 +525,7 @@ The whenResolved method would throw an error (catchable via try/catch with await
 The purpose of having this "whenResolved" feature is explained towards the end of this proposal.
 
 > [!NOTE]
-> I think it would be quite reasonable for these methods to accept an additional parameter where the registry can be passed in, and call the define method on that registry when applicable.
+> I think it would be quite reasonable for these methods to accept an additional parameter where the registry can be passed in, and call the define method on that registry when applicable, and throw an error if a conflicting enhancement has already been registered.
 
 ## Reducing developer guilt and allowing for a nice API by formally endorsing attaching the spawned instance to the element's "enhancements" property gateway
 
@@ -561,7 +561,7 @@ customEnhancements.define({
 });
 ```
 
-In the above example, we have two strings that we need to consider from the point of view of colliding with other enhancements (and with attributes of the (custom) elements themselves):  The name of the enhancement - "logger" - and the attribute(s) tied to it, if any:  'log-to-console'.  Both will need to be considered as far as best ways of managing these within each custom registry.  It may be that the easiest solution will require some sort of pattern between the name of the enhancement and the attributes associated with that name (for example, insisting that the name of the enhancement matches the beginning of the camelCased strings of all the "owned" attributes), but really, I don't see how enforcing this would benefit anything.  This proposal opts to allow the developer to name the enhKey independent of how the attributes are named.  The attributes for a single enhancement must share the same base, if help from the platform is desired.  Other enhancements can share that same base, but sharing the entire  base-branch-leaf-prefix combo between different enhancements should be discouraged (but not forbidden). It would result in multiple enhancements getting spawned.  
+In the above example, we have two strings that we need to consider from the point of view of colliding with other enhancements (and with attributes of the (custom) elements themselves):  The name of the enhancement - "logger" - and the attribute(s) tied to it, if any:  'log-to-console'.  This proposal holds that the attributes for a single enhancement must share the same base, if help from the platform is desired.  Other enhancements can share that same base, and even share the entire  base-branch-leaf-prefix combo between different enhancements. It would result in multiple enhancements getting spawned.  
 
 > [!NOTE]
 > Each specified enhKey must be unique within a registry.
@@ -577,6 +577,10 @@ If no enhKey is specified by the parties registering the enhancement in the regi
 ```JavaScript
 const enhancementInstance = oElement.enhancements.get(enhancementInfo);
 ```
+
+### Does it make sense to define an enhancement with no enhKey and no base attribute?
+
+I think it does.  In this case, the platform would be providing something like JQuery's [data](https://api.jquery.com/data/) feature, but more powerful (supporting one per enhancement).
  
 ## A helper property to make setting properties easier.
 
