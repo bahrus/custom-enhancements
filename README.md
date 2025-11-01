@@ -110,13 +110,10 @@ Why ElementEnhancement and not (Custom)Attribute? This proposal "breaks" if we c
 
 Also, a single element enhancement can "own" multiple attributes (for enhancements that are particularly semantic in nature).
 
-So why not use the customElements' registry, why come up with a new registry, customEnhancements?  This point was raised, quite respectfully, at the face to face,  and seems to me like it may have some merit, and I suspect "under the hood" might make a tremendous amount of sense.  But from a developer point of view, it seems strange to use the  "customElements" object to add enhancements to built-in elements, so I wonder if the "under the hood" considerations could be camouflaged, in the name of clarity?  I again eagerly await the formal proposal from the WebKit team(?) where this is spelled out.
-
-The bottom line is I don't think the slight differences with custom elements make this proposal any more complex than defining a custom element.
+So why not use the customElements' registry, why come up with a new registry, customEnhancements?  This point was raised, quite respectfully, at the face to face,  and seems to me like it may have some merit, and I suspect "under the hood" might make a tremendous amount of sense.  But from a developer point of view, it seems strange to use the  "customElements" object to add enhancements to built-in elements, so I wonder if the "under the hood" considerations could be camouflaged, in the name of clarity?  I eagerly await the formal proposal from the WebKit team(?) where this is spelled out.
 
 > [!NOTE]
 > I agree 100% with others that scoped registry being fully settled before some combination of these proposals get rolled out into production would appear to be the wise course of action.  Now that Safari has rolled out scoped registries, this proposal is incorporating the concepts.
-
 
 ## ElementEnhancement API Shape
 
@@ -161,7 +158,8 @@ const enhancementInfo: EnhancementInfo = {
             mapsTo: 'firstHelloGreeting'
         },
         //optional
-        //this is for property binding using ["assignGingerly"](https://github.com/bahrus/custom-enhancements?tab=readme-ov-file#symbolic-prop-shortcuts-and-support-for-dependency-injection), 
+        //this is for property binding using "assignGingerly".  
+        //See https://github.com/bahrus/custom-enhancements?tab=readme-ov-file#symbolic-prop-shortcuts-and-support-for-dependency-injection 
         [isHello]: 'isHello'
     },
     //entirely optional
@@ -205,7 +203,7 @@ class MyEnhancement extends ElementEnhancer(EventTarget) {
 
     //  Entirely optional filtering conditions for when the enhancement should be
     // allowed to be spawned.
-    static supportedInstanceTypes = //entirely optional
+    static supportedInstanceTypes = 
         [
             HTMLInputElement, 
             HTMLTextArea, 
@@ -270,18 +268,20 @@ as this would allow for more readable syntax:
 
 ### Filter support with supportedInstanceTypes, supportedCSSMatches
 
-Having filtering support is there to benefit the developer first and foremost -- the developer is essentially publishing a "contract" of what kinds of elements they can support.  The idea for using supportedInstanceTypes, proposed [here](https://github.com/WICG/webcomponents/issues/1029) seems like it has some quite positive benefits:
+Having filtering support is there to benefit the developer first and foremost -- the developer is essentially publishing a "contract" of what kinds of elements they can support.  
+
+Another key reason for adding this filtering capability is performance -- there is a cost to instantiating an enhancement class, adding it to the enhancements gateway, invoking the callback, and holding on to the class instance in memory, so anything we can do to declaratively prevent that seems like a win for all involved.
+
+The idea for using supportedInstanceTypes, proposed [here](https://github.com/WICG/webcomponents/issues/1029) seems like it has some quite positive benefits:
 
 1.  I think it could help avoid some timing issues of attempting to start enhancing an unknown element, by essentially enforcing a loading sequence of dependencies. 
 2.  In some cases, especially with custom elements, it could group a bunch of custom elements together based on the base class.  CSS currently isn't so good at selecting elements based on a common prefix.
 3.  The names can be validated by TypeScript.
 
-Another key reason for adding this filtering capability is performance -- there is a cost to instantiating an enhancement class, adding it to the enhancements gateway, invoking the callback, and holding on to the class instance in memory, so anything we can do to declaratively prevent that seems like a win for all involved.
-
 <details>
     <summary>But at what cost?</summary>
 
-Now, a well designed build process of a closed system web application would theoretically make validations from the platform redundant -- it would generate compile-time errors when it encounters tags that are adorned with an enhancement, when that enhancement has declared such tags as off-limits.  Meaning in such a closed, deterministic system, the extra checks that the platform would apply before initiating the run-time handshake would be redundant, and thus wasteful.  I guess I'll leave that conundrum as our first open question of the proposal, which doesn't strike me as very significant, but you never know.
+Now, a well designed build process of a closed system web application would theoretically make validations from the platform redundant -- it would generate compile-time errors when it encounters tags that are adorned with an enhancement, when that enhancement has declared such tags as off-limits.  Meaning in such a closed, deterministic system, the extra checks that the platform would apply before initiating the run-time handshake would be redundant, and thus wasteful. 
 
 I *think* the solution for this conundrum would be if the build process also removes the filtering properties (supportedInstanceTypes, supportedCSSMatches) during the build.
 
@@ -395,7 +395,7 @@ I think that would be a great start.  But the rest of this proposal outlines som
 
 ## Justification for enh-
 
-The next thing beyond that announcement would be what many (including myself) are clamoring for:
+The next thing beyond that announcement would be what many (including myself) are clamoring for:  Safely adding custom attributes.
 
 The platform informs web component developers to not use any attributes with a prefix that pairs up with the property gateway name, "enhancements"; that that prefix is only to be used by third parties to match up with the sub-property of "enhancements" they claim ownership of.  My suggestion is enh-*.  Continuing to use data- seems fundamentally flawed from a semantic point of view, and would also result in more overlapping uses between these two very different attribute meanings. 
 
@@ -406,9 +406,9 @@ So if server-rendered HTML looks as follows:
 <my-custom-element enh-your-enhancement='{"bar": "foo"}'>
 ```
 
-... we can expect to see a class instance associated with each of those attributes, accessible via oInput.enhancements.myEnhancement and oMyCustomElement.enhancements.yourEnhancement.  That simple relationship may not need to be rigid, or maybe it would, depending on how this proposal would integrate with scoped registries.
+... we can expect (but not guaranteed) to see a class instance associated with each of those attributes, accessible via oInput.enhancements.myEnhancement and oMyCustomElement.enhancements.yourEnhancement.
 
-The requirement for the prefix can be dropped only if built-in elements are targeted, in which case the only requirement is that the attribute(s) contain (a) dash(es).  
+The requirement for the prefix can be dropped only if built-in elements are targeted, in which case the only requirement is that the attribute(s) contain (a) dash(es) or non ascii characters.  
 
 Another aspect of this proposal that I think should be considered is that as the template instantiation proposal gels, looking for opportunities for these enhancements to play a role in the template instantiation process would be great. Many of the most popular such libraries do provide similar binding support as what template instantiation aims to support.  Basically, look for opportunities to make custom element enhancements serve the dual purpose of making template instantiation extendable, especially if that adds even a small benefit to performance.
 
