@@ -801,7 +801,7 @@ Along the lines of the discussion above about loading enhancements in a predicta
 
 A related requirement has been identified by the web component community, called [defer-hydration](https://github.com/webcomponents-cg/community-protocols/blob/main/proposals/defer-hydration.md).  While the use case is a bit different, the end requirement is quite similar.
 
-To support this important use case, we propose the pattern:  defer-[base].  Until the attribute is removed from the element, the whenAttached / whenResolved methods discussed above cannot proceed:
+To support this important use case, we propose the pattern:  defer-[base].  Until the attribute is removed from the element, the get / await / whenResolved methods discussed above cannot proceed:
 
 
 ```html
