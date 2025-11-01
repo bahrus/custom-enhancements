@@ -1075,10 +1075,15 @@ class CommandCustomElementFeature extends CustomElementFeature(EventTarget){
 }
 customElements.define('custom-button', CustomButton, {
     features: {
-
+        '?.behaviors?.command': {
+            ctr: CommandCustomElementFeature,
+            passThrough: ['command', 'commandForElement']
+        }
     }
 });
 ```
+
+
 
 
 # Support for a view model DOM fragment manager tied to the itemscope attribute.
