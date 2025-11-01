@@ -406,7 +406,7 @@ So if server-rendered HTML looks as follows:
 <my-custom-element enh-your-enhancement='{"bar": "foo"}'>
 ```
 
-... we can expect (but not guaranteed) to see a class instance associated with each of those attributes, accessible via oInput.enhancements.myEnhancement and oMyCustomElement.enhancements.yourEnhancement.
+... we can expect (but not guarantee) to see a class instance associated with each of those attributes, accessible via oInput.enhancements.myEnhancement and oMyCustomElement.enhancements.yourEnhancement typically.
 
 The requirement for the prefix can be dropped only if built-in elements are targeted, in which case the only requirement is that the attribute(s) contain (a) dash(es) or non ascii characters.  
 
