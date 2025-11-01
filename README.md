@@ -491,7 +491,7 @@ const resolvedInstance = await oElement.enhancements.whenResolved(enhancementInf
 
 All three of these methods would see if the enhancement has already been instantiated for the element, and if so, pass that back.  If not, the method will spawn an instance of the class constructor returned by the *spawn* option. This assumes the element passes all the "supports/matches" criteria.
 
-I'm a little uncertain how important it is to provide for both ".get" and ".await".  I *think* using await automatically yields a microtask, even if there is no actual async call.  If that is not the case, I think we only need one of the two ("get") and just use await to be safe.
+I'm a little uncertain how important it is to provide for both ".get" and ".await".  I *think* using await automatically yields a microtask, even if there is no actual async call.  If that is not the case, I think we only need one of the two ("get") and just use the await keyword to be safe.
 
 The whenResolved promise is returned after the developer sets:
 
