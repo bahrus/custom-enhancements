@@ -1089,6 +1089,10 @@ What the platform would do with this:
 1.  Define properties on the CustomButton prototype:  'command' and 'commandForElement'
 2.  The setters for the properties would spawn the CommandCustomElementFeature if needed, and pass the values through to the same named property of the custom element feature class instance.
 
+# But wait, there's more!!!
+
+[Support for a view model DOM fragment manager tied to the itemscope attribute.](https://github.com/bahrus/custom-enhancements?tab=readme-ov-file#support-for-a-view-model-dom-fragment-manager-tied-to-the-itemscope-attribute)
+
 
 # Support for a view model DOM fragment manager tied to the itemscope attribute.
 
