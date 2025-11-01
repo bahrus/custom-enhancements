@@ -647,7 +647,7 @@ class YourEnhancement extends ElementEnhancement(EventTarget)
     set madAboutFourteen(nv){}
 }
 
-//Here's where the dependency injection occurs
+//Here's where the dependency injection mapping takes place
 const customEnhancementRegistry = new CustomEnhancementRegistry;
 customEnhancementRegistry.define([
     {
@@ -673,11 +673,12 @@ inputEl.assignGingerly({
     '?.style.height': '40px',
     '?.enhancements?.mellowYellow?.madAboutFourteen': true
 });
+inputEl.set[isMellow] = false;
 divContainer.appendChild(inputEl);
 document.body.appendChild(divContainer);
 ```
 
-The platform would search the registry for any enhancements that has a mapping with a matching symbol of isHappy, and if found, instantiate the instance if needed, then set the property value.
+The platform would search the registry for any enhancements that has a mapping with a matching symbol of isHappy and isMellow, and if found, instantiate the instance if needed, then set the property value.
 
 The suggestion to use Symbol.for with a guid, as opposed to just Symbol(), is based on some negative experiences I've had with multiple versions of the same library being referenced, but is not required.  Regular symbols could also be used when that risk can be avoided.
 
