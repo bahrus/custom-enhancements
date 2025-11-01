@@ -1093,10 +1093,6 @@ customElements.define('custom-button', CustomButton, {
         '?.behaviors?.command': {
             spawn: CommandCustomElementFeature,
             base: 'command',
-            branches: {
-                prefix: '',
-                names: ['', 'ForElement'],
-            },
             map: {
                 '0.0': {
                     instanceOf: String,
