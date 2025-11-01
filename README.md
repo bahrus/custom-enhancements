@@ -1015,7 +1015,7 @@ class CustomButton extends HTMLElement {
 customElements.define('custom-button', CustomButton);
 ```
 
-Because there may be a growing number of such built-in behaviors that the developer will want to emulate, developers will naturally and understandably flock toward the mixin model, to avoid unnessary clutter, versus more compositional approaches, just to seem more "native-like", indistinguishable from built-in buttons.  This could, in my view, encourage [problematic dependency anti-patterns](https://legacy.reactjs.org/blog/2016/07/13/mixins-considered-harmful.html).
+Because there may be a growing number of such built-in behaviors that the developer will want to emulate, developers will naturally and understandably flock toward the mixin model, to avoid unnecessary clutter, versus more compositional approaches, just to seem more "native-like", indistinguishable from built-in buttons.  This could, in my view, encourage [problematic dependency anti-patterns](https://legacy.reactjs.org/blog/2016/07/13/mixins-considered-harmful.html).
 
 I think the platform could help address this concern as follows:
 
@@ -1050,7 +1050,7 @@ class CommandCustomElementFeature extends CustomElementFeature(EventTarget){
     #internals;
     constructor(customElement: HTMLElement, commandFeatureInfo: FeatureInfo){
         super();
-        this.channelEvent()
+        this.channelEvent(new FeatureAddedEvent()); //FeatureAddedEvent would be a platform provided event
     }
 
     get commandForElement() {
