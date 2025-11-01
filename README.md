@@ -448,6 +448,7 @@ oButton.assignGingerly({
 ```
 
 [![In which I discover my keyboard has no support for print screen.  Screenshot of what happens if you type $0. on a random HTML Element.  The scrollbar can't even get past the D's.  Fortunately, "command" starts with c, so it can reach it for now.](https://github.com/bahrus/custom-enhancements/blob/baseline/20251101_182222.jpg?raw=true)
+In which I discover my keyboard has no support for print screen.  Screenshot of what happens if you type $0. on a random HTML Element.  The scrollbar can't even get past the D's.  Fortunately, "command" starts with c, so it can reach it for now.
 
 
 Granted, some frameworks might not support the ability to tap into this at first, but I suspect would accommodate it if the platform went in this direction.
