@@ -1101,7 +1101,7 @@ customElements.define('custom-button', CustomButton, {
             map: {
                 '0.0': {
                     instanceOf: String,
-                    mapsTo: '?.behaviors?.command?.command'
+                    mapsTo: 'command'
                 },
             },
             passThrough: ['command', 'commandForElement']
