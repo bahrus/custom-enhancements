@@ -1005,7 +1005,7 @@ interface CustomElementFeature{
 
 What if the feature need not expose any public interface?
 
-Simply prefix the key with a #.  This will cause the FeatureAdded event to fire, allowing the custom element to assign the feature to a private property if needed.
+Simply prefix the key with a #.  This will cause the FeatureAdded event to fire, without attempting to attach the feature, allowing the custom element to assign the feature to a private property if needed.
 
 ```TypeScript
 class ClubMember extends HTMLElement {
