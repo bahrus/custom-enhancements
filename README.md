@@ -50,7 +50,8 @@ customEnhancements.define({
 
 Done!
 
-> [!NOTE]  What follows is a ridiculously large proposal.  At the risk of stating the obvious, I think it would make sense to roll it out in stages, starting with the most pressing, least controversial needs. Flaws in obscure features that I may have missed shouldn't jettison other asks, I hope.
+> [!NOTE]  
+> What follows is a ridiculously large proposal.  At the risk of stating the obvious, I think it would make sense to roll it out in stages, starting with the most pressing, least controversial needs. Flaws in obscure features that I may have missed shouldn't jettison other asks, I hope.
 
 ## Why the use of mixins?
 
