@@ -4,15 +4,13 @@ Bruce B. Anderson
 
 PR's, Issues [welcome](https://github.com/bahrus/custom-enhancements)
 
-Last update: Nov 1, 2025
+Last update: Nov 2, 2025
 
 This is [one](https://github.com/whatwg/html/issues/2271) [of](https://eisenbergeffect.medium.com/2023-state-of-web-components-c8feb21d4f16) [a](https://github.com/WICG/webcomponents/issues/1029) [number](https://github.com/WICG/webcomponents/issues/727) of interesting proposals, one of which (or some combination?) can hopefully get buy-in from all three browser vendors.  This proposal borrows heavily from the others.
 
 # Custom Attributes For [Simple Enhancements](https://www.w3.org/TR/design-principles/#simplicity)
 
 Say all you need to do is to create an isolated behavior/enhancement/hook/whatever associated with an attribute -- say "log-to-console".  It enhances elements adorned with that attribute, logging the value of the attribute to the console when the element is clicked.  Here's how that would be done with this proposal.  It could be done more simply, with hard coded values, and without the commentary noise, so please allow for that when weighing the complexity.
-
-> [!NOTE]  This is a ridiculously large proposal.  At the risk of stating the obvious, I think it would make sense to roll it out in stages, starting with the most pressing needs. 
 
 
 ```JS
@@ -51,6 +49,8 @@ customEnhancements.define({
 ```
 
 Done!
+
+> [!NOTE]  What follows is a ridiculously large proposal.  At the risk of stating the obvious, I think it would make sense to roll it out in stages, starting with the most pressing, least controversial needs. Flaws in obscure features that I may have missed shouldn't jettison other asks, I hope.
 
 ## Why the use of mixins?
 
