@@ -645,7 +645,7 @@ class MyEnhancement extends ElementEnhancement(EventTarget)
 }
 
 export const isMellow = Symbol.for('BqnnTPWRHkWdVGWcGQoAiw');
-class YourEnhancement extends ElementEnhancement(EventTarget)
+class YourEnhancement extends ElementEnhancement(EventTarget){
     get isMellow(){}
     set isMellow(nv){}
     get madAboutFourteen(){}
