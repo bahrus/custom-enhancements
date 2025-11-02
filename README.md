@@ -992,6 +992,8 @@ interface CustomElementFeature{
 
 # But wait, there's more!!!
 
+[Support for nested features](https://github.com/bahrus/custom-enhancements?tab=readme-ov-file#support-for-nested-features)
+
 [Support for Prop-Passthrough's to custom element features](https://github.com/bahrus/custom-enhancements?tab=readme-ov-file#support-for-prop-passthroughs-to-custom-element-features)
 
 [Support for a view model DOM fragment manager tied to the itemscope attribute.](https://github.com/bahrus/custom-enhancements?tab=readme-ov-file#support-for-a-view-model-dom-fragment-manager-tied-to-the-itemscope-attribute)
