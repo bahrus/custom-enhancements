@@ -1011,7 +1011,7 @@ class MyBadgeMaker extends CustomElementFeature(EventTarget) implements MyBadgeM
 // Properties could be added to the prototype, probably producing better performance
 class RegistrationFeatures {
     myPhotoTaker: MyPhotoTaker | undefined;
-    MyBadgeMaker: MyBadgeMaker | undefined;
+    myBadgeMaker: MyBadgeMaker | undefined;
 }
 
 class ClubMember extends HTMLElement{
