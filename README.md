@@ -1038,7 +1038,7 @@ So the platform should be able to assume that whenever it comes time to attach t
 
 ## Support for Prop-Passthrough's to custom element features
 
-Unfortunately, some of the questionable design decisions made long ago behind DOM API's are likely to percolate to questionable design decisions to custom elements, with the advent of exposing platform behaviors.  I think the platform would have benefited from structuring functionality a little more, as it did with styles (and unlike aria, for example).  In particular, to emulate the built in button, developers will want to add [properties to the top level](https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/main/ElementInternalsType/explainer.md):
+Unfortunately, some of the questionable design decisions made long ago behind DOM API's are likely to percolate to questionable design decisions to custom elements, with the advent of exposing platform behaviors.  I think the platform would have benefited from structuring functionality a little more, as it did with styles (and unlike aria, for example).  In particular, to emulate the built-in button, developers will want to add [properties to the top level](https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/main/ElementInternalsType/explainer.md):
 
 ```TypeScript
 class CustomButton extends HTMLElement {
@@ -1070,7 +1070,7 @@ customElements.define('custom-button', CustomButton);
 
 Because there may be a growing number of such built-in behaviors that the developer will want to emulate, developers will naturally and understandably flock toward the mixin model, to avoid unnecessary clutter, versus more compositional approaches, just to seem more "native-like", indistinguishable from built-in buttons.  This could, in my view, encourage [problematic dependency anti-patterns](https://legacy.reactjs.org/blog/2016/07/13/mixins-considered-harmful.html).
 
-I think the platform could help address this concern as follows:
+I harbor no illusions that developers will be unanimously abandoning brittle mixins in favor of this platform nicety, but I still think it is worthwhile considering offering this ability, especially as the code to emulate these behaviors would tend to be quite small.  I could see interest growing in this ability in scenarios where the amount of custom code that gets embedded i the getters / setters increases.
 
 ### Scenario I - Static, declarative approach
 
