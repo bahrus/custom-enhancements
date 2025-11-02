@@ -988,7 +988,17 @@ I think it should (almost?) always be possible to use the same class to support 
 class MyPhotoTaker extends ElementEnhancement(CustomElementFeature(EventTarget))
 ```
 
-In fact, at this point both mixins would be identical, as I've not found any functionality that would need to be different between the two.  But I think it would be safer to assume there might be in the future, hence the different mixins.
+## Differences between the two mixins
+
+I think it makes sense for the CustomElementFeature to have a standard, reserved setter (similar to connectedCallback) for passing in the custom element internals:
+
+```TypeScript
+interface CustomElementFeature{
+    resolved?: boolean
+    set internals(elementInternals: HTMLElementInternals)
+    channelEven(event: Event, options: EventInitOptions)
+}
+```
 
 # But wait, there's more!!!
 
@@ -996,6 +1006,9 @@ In fact, at this point both mixins would be identical, as I've not found any fun
 
 [Support for a view model DOM fragment manager tied to the itemscope attribute.](https://github.com/bahrus/custom-enhancements?tab=readme-ov-file#support-for-a-view-model-dom-fragment-manager-tied-to-the-itemscope-attribute)
 
+
+
+## Support for nested features
 
 
 ## Support for Prop-Passthrough's to custom element features
