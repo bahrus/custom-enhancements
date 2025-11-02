@@ -993,7 +993,7 @@ interface CustomElementFeature{
 
 # But wait, there's more!!!
 
-[Support for private features]
+[Support for private features](https://github.com/bahrus/custom-enhancements?tab=readme-ov-file#support-for-private-features)
 
 [Support for nested features](https://github.com/bahrus/custom-enhancements?tab=readme-ov-file#support-for-nested-features)
 
