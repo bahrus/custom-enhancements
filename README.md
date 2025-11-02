@@ -865,7 +865,7 @@ But I think some of the infrastructure behind this proposal could be useful to [
 3. ...supporting lazy-loading of such functionality as needed.
 4. ...declarative mapping of functionality similar to dependency injection.
 
-... while leveraging the exact same class definition used for custom enhancements (possible with a different mixin).
+... while leveraging the exact same class definition used for custom enhancements (possibly with a different mixin).
 
 ### Use cases?
 
