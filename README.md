@@ -1072,7 +1072,7 @@ customElements.define('custom-button', CustomButton);
 
 Because there may be a growing number of such built-in behaviors that the developer will want to emulate, developers will naturally and understandably flock toward the mixin model, to avoid unnecessary clutter, versus more compositional approaches, just to seem more "native-like", indistinguishable from built-in buttons.  This could, in my view, encourage [problematic dependency anti-patterns](https://legacy.reactjs.org/blog/2016/07/13/mixins-considered-harmful.html).
 
-I harbor no illusions that developers will be unanimously abandoning brittle mixins in favor of this platform nicety described below.  The amount of custom code that the developer would inject to achieve this built-in functionality, in the property getters / setters, would start out, at least, to be quite small. Thus the benefits of DI (testing, loose coupling, etc) would be small.  Still, I think it is worthwhile considering offering this ability, because I could see interest growing in this ability in scenarios where the amount of custom code that gets embedded in the getters / setters increases, so the benefits begin to outweigh the "costs".
+I harbor no illusions that developers will be unanimously abandoning brittle mixins in favor of this platform nicety described below.  The amount of custom code that the developer would inject to achieve this built-in functionality in the property getters / setters would start out, at least, to be quite small. Thus the benefits of DI (testing, loose coupling, etc) would be small.  Still, I think it is worthwhile considering offering this ability, because I could see interest growing in this ability in scenarios where the amount of custom code that gets embedded in the getters / setters increases, so the benefits begin to outweigh the "costs".
 
 ### Scenario I - Static, declarative approach
 
@@ -1140,6 +1140,7 @@ class CommandCustomElementFeature extends CustomElementFeature(EventTarget) impl
         this.#internals.command = value;
     }
 
+    //standard name recognized by the platform
     set internals(nv){
         this.#internals = nv;
     }
