@@ -993,6 +993,8 @@ interface CustomElementFeature{
 
 # But wait, there's more!!!
 
+[Support for private features]
+
 [Support for nested features](https://github.com/bahrus/custom-enhancements?tab=readme-ov-file#support-for-nested-features)
 
 [Support for Prop-Passthrough's to custom element features](https://github.com/bahrus/custom-enhancements?tab=readme-ov-file#support-for-prop-passthroughs-to-custom-element-features)
@@ -1003,7 +1005,25 @@ interface CustomElementFeature{
 
 What if the feature need not expose any public interface?
 
+Simply prefix the key with a #.  This will cause the FeatureAdded event to fire, allowing the custom element to assign the feature to a private property if needed.
 
+```TypeScript
+class ClubMember extends HTMLElement {
+    
+    photoTaker: MyPhotoTaker | undefined;
+    badgeMaker: YourBadgeMaker | undefined;
+}
+
+customElementRegistry.define('club-member', ClubMember, {
+    features: {
+        '#photoTaker': MyPhotoTakerFeatureInfo,
+        '#badgeMaker': YourBadgeMakerFeatureInfo
+    }
+});
+
+```
+
+Done!
 
 The next two asks are probably the lowest in the priority list, as I can see it being a hard sell.  They've also not yet been vetted with an actual implementation anywhere that I know of.
 
