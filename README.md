@@ -873,6 +873,8 @@ One of the "slam dunk" use cases that come to mind is applying behaviors/enhance
 
 Another use case is for robust web components that do far more than just being a cool button or tab control -- components that provide business functionality, including managing domain objects.  These components would benefit from specializing, and breaking down the large component into smaller sub units.  Some sub units could utilize store libraries, like MobX stores, for example.
 
+And another important use case is providing a nicely structured API to implement built-in behaviors provided by the platform, and orchestrating the handoff of access to internals and private data.
+
 One way a first-party component could adopt a first-party or third-party behavior/enhancement would be to do this by simply spawning and/or attaching the enhancement as discussed above, "at arms length".
 
 But suppose a behavior/enhancement's functionality is core to a custom element's mission, or close enough for government work? Suppose the custom element wants to provide key information that is not accessible from outside, like private data and/or the internals?  And/or suppose the custom element wants to nail down the name of the "custom prop" directly onto its namespaced object / prototype chain, so dependencies can leverage TypeScript and not have to be so vigilant about collisions between different (versioned) libraries that use the same name (beyond vigilance towards the shadow scoped name of the element itself).  As well as pinning down the (base) attribute(s) tied to the enhancement?
