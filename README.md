@@ -12,7 +12,7 @@ This is [one](https://github.com/whatwg/html/issues/2271) [of](https://eisenberg
 
 Say all you need to do is to create an isolated behavior/enhancement/hook/whatever associated with an attribute -- say "log-to-console".  It enhances elements adorned with that attribute, logging the value of the attribute to the console when the element is clicked.  Here's how that would be done with this proposal.  It could be done more simply, with hard coded values, and without the commentary noise, so please allow for that when weighing the complexity.
 
-> [!Note]  This is a ridiculously large proposal.  At the risk of stating the obvious, I think it would make sense to roll it out in stages, started with the most pressing needs.
+> [!NOTE]  This is a ridiculously large proposal.  At the risk of stating the obvious, I think it would make sense to roll it out in stages, started with the most pressing needs.
 
 
 ```JS
