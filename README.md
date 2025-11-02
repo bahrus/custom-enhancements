@@ -12,7 +12,7 @@ This is [one](https://github.com/whatwg/html/issues/2271) [of](https://eisenberg
 
 Say all you need to do is to create an isolated behavior/enhancement/hook/whatever associated with an attribute -- say "log-to-console".  It enhances elements adorned with that attribute, logging the value of the attribute to the console when the element is clicked.  Here's how that would be done with this proposal.  It could be done more simply, with hard coded values, and without the commentary noise, so please allow for that when weighing the complexity.
 
-> [!NOTE]  This is a ridiculously large proposal.  At the risk of stating the obvious, I think it would make sense to roll it out in stages, starting with the most pressing needs.
+> [!NOTE]  This is a ridiculously large proposal.  At the risk of stating the obvious, I think it would make sense to roll it out in stages, starting with the most pressing needs. 
 
 
 ```JS
@@ -110,8 +110,6 @@ I believe doing so will make dependency injection, as discussed far below, more 
  
 Why ElementEnhancement and not (Custom)Attribute? This proposal "breaks" if we change it to that name, and the good news is there are some viable, interesting proposals, linked to above, which take that approach.  I think this naming convention, which may take a little bit of getting used to based on current parlance, aligns much better with the ultimate goal of this proposal.  This proposal sees custom attributes as a means to an end, just as "custom tag name" is a means to a more abstract end:  A custom (HTML) Element. 
 
-Also, a single element enhancement can "own" multiple attributes (for enhancements that are particularly semantic in nature).
-
 So why not use the customElements' registry, why come up with a new registry, customEnhancements?  This point was raised, quite respectfully, at the face to face,  and seems to me like it may have some merit, and I suspect "under the hood" might make a tremendous amount of sense.  But from a developer point of view, it seems strange to use the  "customElements" object to add enhancements to built-in elements, so I wonder if the "under the hood" considerations could be camouflaged, in the name of clarity?  I eagerly await the formal proposal from the WebKit team(?) where this is spelled out.
 
 > [!NOTE]
@@ -181,15 +179,13 @@ const enhancementInfo: EnhancementInfo = {
 type branchitude = number;
 type leafitude = number;
 type AttrCoordinates = `{branchitude}.{leafitude}`;
-class MyEnhancement extends ElementEnhancement(EventTarget) {
+class MyEnhancement extends ElementEnhancement<TSupportedElements = Element>(EventTarget) {
 
-    constructor(enhancedElement, enhanceInfo: EnhancementInfo){}
+    constructor(enhancedElement: TSupportedElements, enhanceInfo: EnhancementInfo){}
 
-    dispose(enhancedElement, enhanceInfo: EnhancementInfo){
+    dispose(enhancedElement: TSupportedElements, enhanceInfo: EnhancementInfo){
         //prior to garbage collection
     }
-    
-    
 	
     //maybe we don't need this, 
     // given the better mapping support
@@ -280,14 +276,6 @@ The idea for using supportedInstanceTypes, proposed [here](https://github.com/WI
 2.  In some cases, especially with custom elements, it could group a bunch of custom elements together based on the base class.  CSS currently isn't so good at selecting elements based on a common prefix.
 3.  The names can be validated by TypeScript.
 
-<details>
-    <summary>But at what cost?</summary>
-
-Now, a well designed build process of a closed system web application would theoretically make validations from the platform redundant -- it would generate compile-time errors when it encounters tags that are adorned with an enhancement, when that enhancement has declared such tags as off-limits.  Meaning in such a closed, deterministic system, the extra checks that the platform would apply before initiating the run-time handshake would be redundant, and thus wasteful. 
-
-I *think* the solution for this conundrum would be if the build process also removes the filtering properties (supportedInstanceTypes, supportedCSSMatches) during the build.
-
-</details>
 
 >[!NOTE]
 >Bear in mind that if no "allowedCSSMatches/allowedInstanceTypes" is specified (the default), and if the "base/branches/leaves" option is also not specified or is empty, the platform will *not* automatically enhance every element.  The platform will only act when it finds a matching attribute pattern.  But it will **allow** enhancements to be programmatically spawned by the developer on all element types in that scenario.  In fact, the platform will **ignore** the base/branches/leaves criteria altogether when the developer programmatically spawns an enhancement, only using the "allowed*" value(s) (combined with the static supported* values specified by the enhancement author) to prevent unauthorized enhancements. 
@@ -408,7 +396,7 @@ So if server-rendered HTML looks as follows:
 <my-custom-element enh-your-enhancement='{"bar": "foo"}'>
 ```
 
-... we can expect (but not guarantee) to see a class instance associated with each of those attributes, accessible via oInput.enhancements.myEnhancement and oMyCustomElement.enhancements.yourEnhancement typically.
+... we can expect (but not guarantee) to see a class instance associated with each of those attributes, accessible via oInput.enhancements.myEnhancement and oMyCustomElement.enhancements.yourEnhancement, typically.
 
 The requirement for the prefix can be dropped only if built-in elements are targeted, in which case the only requirement is that the attribute(s) contain (a) dash(es) or non ascii characters.  
 
@@ -489,7 +477,7 @@ Unlike dataset, the enhancements property, added to the Element prototype, would
 ```JavaScript
 // use this if "spawn" points to an already imported class
 const enhancementInstance = oElement.enhancements.get(enhancementInfo);
-//use this if "spawn" points to an an async loader or you aren't sure
+//use this if "spawn" points to an an async loader or you aren't sure.
 //In the asynchronous case, get should throw an error
 const lazyLoadedInstance = await oElement.enhancements.await(enhancementInfo);
 //await is definitely necessary here
@@ -910,10 +898,7 @@ interface ClubMemberProps {
 }
 
 class ClubMember extends HTMLElement implements ClubMemberProps{
-    async constructor(){ 
-        //so async probably not allowed for constructors
-        //I think async should be supported, though, but maybe if no real async operations 
-        // take place, like fetch calls, etc, it is almost as good as synchronous?
+    constructor(){ 
         super();
         this.addEventListener('feature-added', e => {
             ...
@@ -937,7 +922,7 @@ class ClubMember extends HTMLElement implements ClubMemberProps{
 
 I think this would allow for testable Mock Objects, especially if these methods (especially .attachFeature) is/are made overridable by a super class.
 
-This code can be run at any time, not just in the constructor
+This code can be run at any time, not just in the constructor.
 
 The type definition for FeatureInfo would closely resemble that of EnhancementInfo, but some fields of EnhancementInfo don't quite make sense in this context, and other fields may make more sense in the context of features, like the last two:
 
@@ -952,6 +937,7 @@ interface FeatureInfo {
     //only attach the feature if the base attribute is present on the element
     attachOnBase?: boolean
     //Instantiate the feature immediately when the custom element is created.
+    //Applicable to the declarative support described below.
     loadEagerly?: boolean
 }
 ```
@@ -978,7 +964,7 @@ customElementRegistry.define('club-member', ClubMember, {
 
 ```
 
-Here the platform would attach the feature in the base HTML class (preferably in the constructor, I think) using the afore mentioned methods, if loadEagerly is set to true.  If loadEagerly is false (the default?), the platform will only instantiate it when it finds a matching attribute or detects property access in ways that have been described above.
+Here the platform would attach the feature in the base HTML class (preferably in the constructor, I think) using the afore mentioned methods, if loadEagerly is set to true.  If loadEagerly is false (the default), the platform will only instantiate it when it finds a matching attribute or detects property access in ways that have been described above.
 
 Both ways of attaching the enhancement would result in dispatching an event, 'feature-added", allowing the userland code to pass in such things as private data and element internals to the enhancement.
 
@@ -997,7 +983,7 @@ I think it makes sense for the CustomElementFeature to have a standard, reserved
 ```TypeScript
 interface CustomElementFeature{
     resolved?: boolean
-    set internals(elementInternals: HTMLElementInternals)
+    set internals?(elementInternals: HTMLElementInternals)
     channelEven(event: Event, options: EventInitOptions)
 }
 ```
@@ -1008,11 +994,46 @@ interface CustomElementFeature{
 
 [Support for a view model DOM fragment manager tied to the itemscope attribute.](https://github.com/bahrus/custom-enhancements?tab=readme-ov-file#support-for-a-view-model-dom-fragment-manager-tied-to-the-itemscope-attribute)
 
+The next two asks are probably the lowest in the priority list, as I can see it being a hard sell.  They've also not yet been vetted with an actual implementation anywhere that I know of.
+
 
 
 ## Support for nested features
 
-For really large components that make use of many features / behaviors / enhancements, whatever, it would be nice to be able to 
+For really large components that make use of many features / behaviors / enhancements / whatever, it would be nice to be able to group them into "property bag" categories, so that the api becomes more scalable and manageable (unlike the platform).
+
+I think given the limited value this feature would seem to provide, we could leave much up to the developer:
+
+```TypeScript
+class MyPhotoTaker extends CustomElementFeature(EventTarget) implements MyPhotoTaker{}
+class MyBadgeMaker extends CustomElementFeature(EventTarget) implements MyBadgeMaker{}
+
+// Properties could be added to the prototype, probably producing better performance
+class RegistrationFeatures {
+    myPhotoTaker: MyPhotoTaker | undefined;
+    MyBadgeMaker: MyBadgeMaker | undefined;
+}
+
+class ClubMember extends HTMLElement{
+    #registrationFeatures: Features;
+    get registrationFeatures(){
+        return this.#registrationFeatures;
+    }
+    
+    constructor(){
+        this.#registrationFeatures = new RegistrationFeatures();
+    }
+}
+
+customElementRegistry.define('club-member', ClubMember, {
+    features: {
+        '?.registrationFeatures?.photoTaker': MyPhotoTakerFeatureInfo,
+        '?.registrationFeatures?.badgeMaker': YourPhotoTakerFeatureInfo,
+    }
+})
+```
+
+So the platform should be able to assume that whenever it comes time to attach the features, the RegistrationFeatures instance will already be assigned to the registrationFeatures property, so there is no ambiguity about how to instantiate it.  I.e. we limit the dependency injection to that last property path (photoTaker/badgeMaker).
 
 
 ## Support for Prop-Passthrough's to custom element features
