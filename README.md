@@ -1004,7 +1004,7 @@ The next two asks are probably the lowest in the priority list, as I can see it 
 
 For really large components that make use of many features / behaviors / enhancements / whatever, it would be nice to be able to group them into "property bag" categories, so that the api becomes more scalable and manageable (unlike the platform).
 
-I think given that these categories would tend to be fairly stable over time, and not have much custom logic if any,  we could leave much up to the developer:
+I think given that these categories would tend to be fairly stable over time, and not have much custom logic if any,  we could leave much up to the developer to "hard code" these property bag classes without the benefit of dependency injection:
 
 ```TypeScript
 class MyPhotoTaker extends CustomElementFeature(EventTarget) implements MyPhotoTaker{}
