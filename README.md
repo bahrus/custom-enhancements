@@ -999,6 +999,12 @@ interface CustomElementFeature{
 
 [Support for a view model DOM fragment manager tied to the itemscope attribute.](https://github.com/bahrus/custom-enhancements?tab=readme-ov-file#support-for-a-view-model-dom-fragment-manager-tied-to-the-itemscope-attribute)
 
+## Support for private features
+
+What if the feature need not expose any public interface?
+
+
+
 The next two asks are probably the lowest in the priority list, as I can see it being a hard sell.  They've also not yet been vetted with an actual implementation anywhere that I know of.
 
 
