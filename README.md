@@ -1125,6 +1125,8 @@ class CustomButton extends HTMLElement {
         super();
         this.#behaviors = new Behaviors;
         this.#internals = this.attachInternals();
+        //optional -- can skip this is theres no need to be untrusting
+        //of how your users register your component.
         this.addEventListener('feature-added', e => {
             //optional, if there's any reason to be wary of trusting how
             //the custom was registered (I don't see a scenario where that would be the case)
