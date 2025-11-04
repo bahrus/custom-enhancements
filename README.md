@@ -1126,16 +1126,19 @@ class CustomButton extends HTMLElement {
         this.#behaviors = new Behaviors;
         this.#internals = this.attachInternals();
         this.addEventListener('feature-added', e => {
-            //opt in
+            //optional, if there's any reason to be wary of trusting how
+            //the custom was registered (I don't see a scenario where that would be the case)
+            if(!(e.target instanceof CommandCustomElementFeature)) return; 
+
             //alternatively, this can be done by the platform, 
             //based on a static autoInjectInternals setting
             //as shown below
-            if(!(e.target instanceof CommandCustomElementFeature)) return; 
             e.target.internals = this.#internals;
         })
     }
 
-    static autoInjectInternals: [CommandCustomElementFeature]
+    //optional
+    static autoInjectInternals: true
 
 }
 
@@ -1197,6 +1200,10 @@ What the platform would do with the passThrough setting:
 Add simple pass-through properties 'command' and 'commandForElement' to the top level of the CustomButton class, with  setters which would spawn the CommandCustomElementFeature if needed, and pass the values through to the same named property of the custom element feature class instance, however deeply we specify as far as the path.
 
 I think it's okay to use the "behaviors" property here, for custom elements only, since "HTMLElement" is kind of like "Object" in this context and I can't see it interfering with future built in behaviors added to higher order elements, nor cause developer confusion.
+
+## See what we did there
+
+Other than the entirely optional double-checking in the feature-added event handler, the top level custom element has fully, 100% delegated implementation of the command behavior.  It doesn't even need to add "command" to the list of observed attributes, because the feature is taking care of watching for that attribute.  It's really clean, and can focus on whatever top level functionality it needs to focus on.
 
 
 # Support for a view model DOM fragment manager tied to the itemscope attribute.
