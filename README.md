@@ -1201,9 +1201,9 @@ Add simple pass-through properties 'command' and 'commandForElement' to the top 
 
 I think it's okay to use the "behaviors" property here, for custom elements only, since "HTMLElement" is kind of like "Object" in this context and I can't see it interfering with future built in behaviors added to higher order elements, nor cause developer confusion.
 
-## See what we did there
+## See what we did there?
 
-Other than the entirely optional double-checking in the feature-added event handler, the top level custom element has fully, 100% delegated implementation of the command behavior.  It doesn't even need to add "command" to the list of observed attributes, because the feature is taking care of watching for that attribute.  It's really clean, and can focus on whatever top level functionality it needs to focus on.
+Other than the entirely optional double-checking in the feature-added event handler, the top level custom element has fully, 100% delegated implementation of the command behavior.  It doesn't even need to add "command" to the list of observed attributes, because the feature is taking care of watching for that attribute.  It's really "clean", and can focus on whatever top level functionality it needs to focus on that makes the custom button "custom".
 
 
 # Support for a view model DOM fragment manager tied to the itemscope attribute.
