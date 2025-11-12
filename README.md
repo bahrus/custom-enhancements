@@ -881,14 +881,15 @@ I propose a significant amendment to this proposal, support for...:
 Here, no "enh-" prefix is required for attributes.  In fact, enh- prefixed attributes will be ignored.
 
 ```TypeScript
-class MyPhotoTaker extends CustomElementFeature(EventTarget){
+interface PhotoTaker{}
+class MyPhotoTaker extends CustomElementFeature(EventTarget) implements PhotoTaker{
     constructor(customElement: HTMLElement, info: MyPhotoTakerFeatureInfo){
         super();
         ...
     }
 }
-
-class YourBadgeMaker extends CustomElementFeature(EventTarget){
+interface BadgeMaker{}
+class YourBadgeMaker extends CustomElementFeature(EventTarget) implements BadgeMaker{
     constructor(customElement: HTMLElement, info: YourPhotoTakerFeatureInfo){
         super();
         ...
@@ -896,8 +897,8 @@ class YourBadgeMaker extends CustomElementFeature(EventTarget){
 }
 
 interface ClubMemberProps {
-    photoTaker:  MyPhotoTaker | undefined;
-    badgeMaker: YourBadgeMaker | undefined;
+    photoTaker:  PhotoTaker | undefined;
+    badgeMaker:  BadgeMaker | undefined;
 }
 
 class ClubMember extends HTMLElement implements ClubMemberProps{
@@ -907,17 +908,17 @@ class ClubMember extends HTMLElement implements ClubMemberProps{
             ...
         });
         this.attachInternals()
-            .attachFeature<MyPhotoTaker, ClubMember>(MyPhotoTakerEnhancementInfo)
+            .attachFeature<PhotoTaker, ClubMember>(MyPhotoTakerEnhancementInfo)
             .toInstance(this)  //toInstance should expect an instance of ClubMember, TypeScript definers
             .atProp('photoTaker') // atProp should expect a keyof ClubMember for its parameter, TypeScript definers
-            .attachFeature<YourBadgeMaker, ClubMember>(YourBadgeMakerEnhancementInfo)
+            .attachFeature<BadgeMaker, ClubMember>(YourBadgeMakerEnhancementInfo)
             .toInstance(this)
             .atProp('badgeMaker');
     }
 
-    photoTaker: MyPhotoTaker;
+    photoTaker: PhotoTaker;
 
-    badgeMaker: YourBadgeMaker;
+    badgeMaker: BadgeMaker;
 
 }
 
