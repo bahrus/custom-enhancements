@@ -955,8 +955,8 @@ In addition, we should provide for a way to declaratively attach when we don't n
 ```TypeScript
 class ClubMember extends HTMLElement {
     
-    photoTaker: MyPhotoTaker | undefined;
-    badgeMaker: YourBadgeMaker | undefined;
+    photoTaker: PhotoTaker | undefined;
+    badgeMaker: BadgeMaker | undefined;
 }
 
 customElementRegistry.define('club-member', ClubMember, {
