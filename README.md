@@ -970,7 +970,7 @@ customElementRegistry.define('club-member', ClubMember, {
 
 Here the platform would attach the feature in the base HTML class (preferably in the constructor, I think) using the afore mentioned methods, if loadEagerly is set to true.  If loadEagerly is false (the default), the platform will only instantiate it when it finds a matching attribute or detects property access in ways that have been described above.
 
-Both ways of attaching the enhancement would result in dispatching an event, 'feature-added", allowing the userland code to pass in such things as private data and element internals to the enhancement.
+Both ways of attaching the enhancement would result in dispatching an event, '"featureadded", allowing the userland code to pass in such things as private data and element internals to the enhancement.
 
 ## Serving dual roles
 
@@ -988,7 +988,7 @@ I think it makes sense for the CustomElementFeature to have a standard, reserved
 interface CustomElementFeature{
     resolved?: boolean
     set internals?(elementInternals: HTMLElementInternals)
-    channelEven(event: Event, options: EventInitOptions)
+    channelEvent(event: Event, options: EventInitOptions)
 }
 ```
 
