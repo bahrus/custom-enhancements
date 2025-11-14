@@ -1028,8 +1028,6 @@ Done!
 
 The next two asks are probably the lowest in the priority list, as I can see it being a hard sell.  They've also not yet been vetted with an actual implementation anywhere that I know of.
 
-
-
 ## Support for nested features
 
 For really large components that make use of many features / behaviors / enhancements / whatever, it would be nice to be able to group them into "property bag" categories, so that the api becomes more scalable and manageable (unlike the platform).
@@ -1271,7 +1269,7 @@ ${myList.map(item => html`
 What this would do:  
 
 1.  Before instantiating the "tbd" property of the tr element, merge whatever properties were passed to the "tbd" placeholder.
-4.  After the instantiation, "setting" the property to an object would **not** replace the class or function prototype instance with the object, but rather the setter for "tbd" would interject, and do an Object.assign of the passed in object into the custom element/enhancement instance.
+2.  After the instantiation, "setting" the property to an object would **not** replace the class or function prototype instance with the object, but rather the setter for "tbd" would interject, and do an Object.assign of the passed in object into the custom element/enhancement instance.
 
 What the real name of "tbd" should be is completely open in my mind.  Nothing jumps out at me as the "correct" answer.  Names that would make sense to me are:  "host", "vm", "viewModel", "scope", "ism" or "ish" -- short for itemscope host.  I guess I'm leaning towards the latter -- it is short, and is kind of a play on "is".
 
