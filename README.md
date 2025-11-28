@@ -632,7 +632,7 @@ We can skip the step of either passing in enhancementInfo, as well as referencin
 
 ```JavaScript
 export const isHappy = Symbol.for('TFWsx0YH5E6eSfhE7zfLxA');
-class MyEnhancement extends ElementEnhancement(EventTarget)
+class MyEnhancement extends ElementEnhancement(EventTarget){
     get isHappy(){}
     set isHappy(nv){}
 }
