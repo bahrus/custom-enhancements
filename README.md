@@ -15,19 +15,19 @@ Say all you need to do is to create an isolated behavior/enhancement/hook/whatev
 
 ```JS
 customElementRegistry.mount({
-    base: 'log-to-console', //canonical name of our (base) custom attribute.
-    do: function(enhancedElement: Element, {mountInfo}: {mountInfo: MountInfo}){
-        const {base} = mountInfo;
+    baseAttr: 'log-to-console', //canonical name of our (base) custom attribute.
+    do: function(el, {mountInfo}){
+        const {baseAttr} = mountInfo;
         // in this example, base will simply equal 'log-to-console', 
         // but this code is demonstrating how to code defensively, so that
         // the party (or parties) responsible for registering the enhancement 
         // could choose to modify the name(s), either globally, 
         // or inside a scoped registry in a different file.
-        enhancedElement.addEventListener('click', e => {
+        el.addEventListener('click', e => {
             const {target} = e;
             console.log(
-                target.getAttribute(`enh-${base}`) 
-                || target.getAttribute(`${base}`));
+                target.getAttribute(`enh-${baseAttr}`) 
+                || target.getAttribute(`${baseAttr}`));
         })
     }
 });
@@ -57,7 +57,7 @@ Classes are also supported, as described below.  But for this simple example, a 
 
 ## Why "mount"?
 
-Just a suggestion.  It ties in with this [additional proposal](https://github.com/WICG/webcomponents/issues/896)  Other suggestions are "inject", "enhance", "enhanceWith", "decorate", "decorateWith", the sky is the limit.  The specific suggestion of "inject" will become clearer in what follows, hopefully.
+Just a suggestion.  It ties in with this [additional / primitive proposal](https://github.com/WICG/webcomponents/issues/896) which this proposal might be considered to be extending.  Other suggestions are "inject", "enhance", "enhanceWith", "decorate", "decorateWith", the sky is the limit.  The specific suggestion of "inject" will become clearer in what follows, hopefully.
 
 ## Why the long attribute names?
 
@@ -75,7 +75,7 @@ So developers wanting to capitalize on that and benefit from shorter names could
 
 ```JS
 export const mountInfo = {
-    base: '🪵'
+    baseAttr: '🪵'
 }
 ```
 
@@ -107,15 +107,15 @@ If the requirements for an enhancement would benefit from a stateful class that 
 
 ```JS
 customElementRegistry.mount({
-    base: 'log-to-console', //canonical name of our (base) custom attribute.
+    baseAttr: 'log-to-console', //canonical name of our (base) custom attribute.
     spawn: class {
-        constructor(enhancedElement: Element, {mountInfo: MountInfo}){
+        constructor(enhancedElement, {mountInfo}){
             super();
-            const {base} = mountInfo;
+            const {baseAttr} = mountInfo;
             enhancedElement.addEventListener('click', e => {
                 const {target} = e;
                 console.log(
-                       target.getAttribute(`enh-${base}`)
+                       target.getAttribute(`enh-${baseAttr}`)
                     || target.getAttribute(base)
                 ); 
             });
@@ -124,7 +124,13 @@ customElementRegistry.mount({
 });
 ```
 
-A function prototype can still be used.  The word "spawn" as opposed to "do" indicates to use "new ..." before "invoking" the class constructor or function signature, and also to hold on to a weak reference keyed off the passed in enhancement info object (more on that later).
+A function prototype can still be used.  The word "spawn" as opposed to "do" indicates a number of significant differences in behavior:
+
+1.  Spawn will use "new ..." before "invoking" the class constructor or function signature
+2.  Unlike "do", "spawn" will cause a weak reference keyed off the passed in enhancement info object (more on that later), in order to provide a way for other parties to gain access to the.
+
+The do function only gets called the first time all the criteria contained in mountInfo is met.
+
 
 ## How do I, or my users, access my class instance, and/or public properties / methods therein?
 
@@ -141,7 +147,7 @@ In lots of ways, which we will discuss far below.  We want to make this as conve
 export const isHello = Symbol.for('o8u9z9so50iLU_WwKk6O7Q');
 const mountInfo: MountInfo = {
     //optional
-    do(enhancedElement: Element, info: MountInfo){}
+    do(enhancedElement: Element, {info, signal}: {info: MountInfo, signal: AbortSignal}){}
     //optional.
     //Can point directly to an already loaded Class constructor, or
     //as shown below, it can point to an async loader that allows
@@ -157,7 +163,7 @@ const mountInfo: MountInfo = {
     /** @type {string | symbol | undefined} **/
     enhKey: 'greetings',
     //optional
-    base: 'my-greetings',
+    baseAttr: 'my-greetings',
     //optional -- only applicable if base is present
     attrTree:[
         //allow for standalone base attribute
@@ -195,7 +201,7 @@ const mountInfo: MountInfo = {
         SomeAlreadyLoadedCustomElementClass
     ],
     //optional
-    whereCSSMatches: 'input[type="text], textarea',
+    whereElementMatches: 'input[type="text], textarea',
     //optional
     //can only enhance element if base attribute is present
     //very low priority requirement
@@ -276,7 +282,7 @@ At the risk of overwhelming the reader, I want to amend the api above with a lit
 
 ```JS
 const mountInfo: MountInfo = {
-    base: '[_]greetings',
+    baseAttr: '[_]greetings',
     attrTree:[
         '', 
         {
@@ -322,7 +328,7 @@ The idea for using supportedInstanceTypes, proposed [here](https://github.com/WI
 
 
 >[!NOTE]
->Bear in mind that if no "whereCSSMatches/whereInstanceTypes" is specified (the default), and if the "base/attrTree" option is also not specified or is empty, the platform will *not* automatically enhance every element.  The platform will only act when it finds a matching attribute pattern and/or css match and/or instanceType.  But it will **allow** enhancements to be programmatically spawned by the developer on all element types in that scenario.  In fact, the platform will **ignore** the base/branches/leaves criteria altogether when the developer programmatically spawns an enhancement, only using the "allowed*" value(s) (combined with the static supported* values specified by the enhancement author) to prevent unauthorized enhancements. 
+>Bear in mind that if no "whereElementMatches/whereInstanceTypes" is specified (the default), and if the "base/attrTree" option is also not specified or is empty, the platform will *not* automatically enhance every element.  The platform will only act when it finds a matching attribute pattern and/or css match and/or instanceType.  But it will **allow** enhancements to be programmatically spawned by the developer on all element types in that scenario.  In fact, the platform will **ignore** the base/branches/leaves criteria altogether when the developer programmatically spawns an enhancement, only using the "allowed*" value(s) (combined with the static supported* values specified by the enhancement author) to prevent unauthorized enhancements. 
 
 ###  What, if any, are the benefits of having a "has" (or some other equivalent) attribute?
 
@@ -552,11 +558,11 @@ customElements.mount({
     //name of our "custom prop", accessible via oElement.enhancements[enhKey], 
     //which is where we will find an instance of the class defined below.
     enhKey: 'logger',
-    base: 'log-to-console', //canonical name of our (base) custom attribute.
+    baseAttr: 'log-to-console', //canonical name of our (base) custom attribute.
     spawn: class extends ElementEnhancement(EventTarget) {
         constructor(enhancedElement: Element, mountInfo: MountInfo){
             super();
-            const {base} = mountInfo;
+            const {baseAttr} = mountInfo;
             // in this example, base will simply equal 'log-to-console', 
             // but this code is demonstrating how to code defensively, so that
             // the party (or parties) responsible for registering the enhancement 
@@ -564,7 +570,7 @@ customElements.mount({
             // or inside a scoped registry in a different file.
             enhancedElement.addEventListener('click', e => {
                 console.log(
-                       enhancedElement.getAttribute(`enh-${base}`)
+                       enhancedElement.getAttribute(`enh-${baseAttr}`)
                     || enhancedElement.getAttribute(base)
                 ); 
             });
@@ -1208,7 +1214,7 @@ customElements.define('custom-button', CustomButton, {
     features: {
         '?.behaviors?.command': {
             spawn: CommandCustomElementFeature,
-            base: 'command',
+            baseAttr: 'command',
             map: {
                 '0.0': {
                     instanceOf: String,
