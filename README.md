@@ -4,7 +4,7 @@ Bruce B. Anderson
 
 PR's, Issues [welcome](https://github.com/bahrus/custom-enhancements)
 
-Last update: Nov 2, 2025
+Last update: Jan 1, 2026
 
 This is [one](https://github.com/whatwg/html/issues/2271) [of](https://eisenbergeffect.medium.com/2023-state-of-web-components-c8feb21d4f16) [a](https://github.com/WICG/webcomponents/issues/1029) [number](https://github.com/WICG/webcomponents/issues/727) of interesting proposals, one of which (or some combination?) can hopefully get buy-in from all three browser vendors.  This proposal borrows heavily from the others.
 
@@ -14,7 +14,7 @@ Say all you need to do is to create an isolated behavior/enhancement/hook/whatev
 
 
 ```JS
-customEnhancements.define({
+customElementRegistry.inject({
     base: 'log-to-console', //canonical name of our (base) custom attribute.
     do: function(enhancedElement: Element, enhancementInfo: EnhancementInfo){
         const {base} = enhancementInfo;
@@ -50,7 +50,7 @@ Done!
 
 ## Why a function, and not a class or a class mixin?
 
-Classes are also supported, as described below.  But for this simple example, a class would appear to be overkill.  Note that event listeners do not in [themselves cause a memory leak](https://github.com/whatwg/dom/issues/1396).
+Classes are also supported, as described below.  But for this simple example, a class would appear to be overkill.  Note that event listeners do *not* in [themselves cause a memory leak](https://github.com/whatwg/dom/issues/1396).
 
 ## Why the long attribute names?
 
@@ -58,7 +58,7 @@ It would be great if we could use a short attribute name, like "log".  That can 
 
 While it is a bit dicey to be supporting these single word attributes for custom elements, attributes that could conflict with future global attributes, that ship has sailed, and I view it as similar to key words in JavaScript, just a risk we have agreed is acceptable.
 
-This proposal views the risks of following suit as being too high when we move on to enhancing higher-order components, especially as the platform is happily introducing more of them (🥳).  There is an informal understanding that built-in attributes won't have dashes in them (e.g. onclick, etc), except once in a blue moon (aria-*), so insisting on dashes in this context seems prudent.
+This proposal views the risks of following suit as being too high when we move on to enhancing higher-order components, especially as the platform is happily introducing more of them (🥳).  There is an informal understanding that built-in attributes won't have dashes in them (e.g. onclick, etc), [except once in a blue moon](https://github.com/webplatformco/project-custom-attributes/?tab=readme-ov-file#naming) (aria-*), so insisting on dashes in this context seems prudent.
 
 The extra enh- is there to avoid conflicting with attributes that a custom element author may be using, so one of the aspects of this proposal is to suggest that the platform reserve "enh-" prefix similar to how it reserved "data-".
 
