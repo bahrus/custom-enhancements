@@ -16,22 +16,17 @@ Say all you need to do is to create an isolated behavior/enhancement/hook/whatev
 ```JS
 customEnhancements.define({
     base: 'log-to-console', //canonical name of our (base) custom attribute.
-    spawn: class extends ElementEnhancement(EventTarget) {
-        constructor(enhancedElement: Element, enhancementInfo: EnhancementInfo){
-            super();
-            const {base} = enhancementInfo;
-            // in this example, base will simply equal 'log-to-console', 
-            // but this code is demonstrating how to code defensively, so that
-            // the party (or parties) responsible for registering the enhancement 
-            // could choose to modify the name(s), either globally, 
-            // or inside a scoped registry in a different file.
-            enhancedElement.addEventListener('click', e => {
-                console.log(
-                       enhancedElement.getAttribute(`enh-${base}`)
-                    || enhancedElement.getAttribute(base)
-                ); 
-            });
-        }
+    do: function(enhancedElement: Element, enhancementInfo: EnhancementInfo){
+        const {base} = enhancementInfo;
+        // in this example, base will simply equal 'log-to-console', 
+        // but this code is demonstrating how to code defensively, so that
+        // the party (or parties) responsible for registering the enhancement 
+        // could choose to modify the name(s), either globally, 
+        // or inside a scoped registry in a different file.
+        enhancedElement.addEventListener('click', e => {
+            const {target} = e;
+            console.log(target.getAttribute(`enh-${base}`) ||)
+        })
     }
 });
 ```
@@ -53,9 +48,9 @@ Done!
 > [!NOTE]  
 > What follows is a ridiculously large proposal.  At the risk of stating the obvious, I think it would make sense to roll it out in stages, starting with the most pressing, least controversial needs. Flaws in obscure features that I may have missed shouldn't jettison other asks, I hope.
 
-## Why the use of mixins?
+## Why a function, and not a class or a class mixin?
 
-[It allows for more flexibility](https://bsky.app/profile/justinfagnani.com/post/3m47lpjywm22a).  Feel free to create your own base class, though!
+Classes are also supported, as described below.  But for this simple example, a class would appear to be overkill.  Note that event listeners do not in [themselves cause a memory leak](https://github.com/whatwg/dom/issues/1396).
 
 ## Why the long attribute names?
 
