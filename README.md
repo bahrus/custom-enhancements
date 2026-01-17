@@ -4,7 +4,7 @@ Bruce B. Anderson
 
 PR's, Issues [welcome](https://github.com/bahrus/custom-enhancements)
 
-Last update: Jan 1, 2026
+Last update: Jan 17, 2026
 
 This is [one](https://github.com/whatwg/html/issues/2271) [of](https://eisenbergeffect.medium.com/2023-state-of-web-components-c8feb21d4f16) [a](https://github.com/WICG/webcomponents/issues/1029) [number](https://github.com/WICG/webcomponents/issues/727) of interesting proposals, one of which (or some combination?) can hopefully get buy-in from all three browser vendors.  This proposal borrows heavily from the others.
 
@@ -16,7 +16,7 @@ Say all you need to do is to create an isolated behavior/enhancement/hook/whatev
 ```JS
 customElementRegistry.mount({
     base: 'log-to-console', //canonical name of our (base) custom attribute.
-    do: function(enhancedElement: Element, {mountInfo}: MountInfo){
+    do: function(enhancedElement: Element, {mountInfo}: {mountInfo: MountInfo}){
         const {base} = mountInfo;
         // in this example, base will simply equal 'log-to-console', 
         // but this code is demonstrating how to code defensively, so that
@@ -322,7 +322,7 @@ The idea for using supportedInstanceTypes, proposed [here](https://github.com/WI
 
 
 >[!NOTE]
->Bear in mind that if no "allowedCSSMatches/allowedInstanceTypes" is specified (the default), and if the "base/branches/leaves" option is also not specified or is empty, the platform will *not* automatically enhance every element.  The platform will only act when it finds a matching attribute pattern.  But it will **allow** enhancements to be programmatically spawned by the developer on all element types in that scenario.  In fact, the platform will **ignore** the base/branches/leaves criteria altogether when the developer programmatically spawns an enhancement, only using the "allowed*" value(s) (combined with the static supported* values specified by the enhancement author) to prevent unauthorized enhancements. 
+>Bear in mind that if no "whereCSSMatches/whereInstanceTypes" is specified (the default), and if the "base/attrTree" option is also not specified or is empty, the platform will *not* automatically enhance every element.  The platform will only act when it finds a matching attribute pattern and/or css match and/or instanceType.  But it will **allow** enhancements to be programmatically spawned by the developer on all element types in that scenario.  In fact, the platform will **ignore** the base/branches/leaves criteria altogether when the developer programmatically spawns an enhancement, only using the "allowed*" value(s) (combined with the static supported* values specified by the enhancement author) to prevent unauthorized enhancements. 
 
 ###  What, if any, are the benefits of having a "has" (or some other equivalent) attribute?
 
@@ -501,7 +501,7 @@ The reason I think it would be reasonable for the prefix enh-* to be required, o
 2.  But should a custom enhancement author choose a name that happens to coincide with one of the attribute names of another author's custom element, which seems quite likely to happen frequently, it still leaves the messy situation that the custom element's attribute gets improperly flagged as an enhancement.
 3.  However, it could be argued, depending on how smoothly working with scoped registry proves to be in this context, that such catastrophes could be averted using the scoped registry.  This proposal provides out-of-the-box support for renaming any and all the attributes associated with an enhancement.  So maybe it shouldn't be required, and may seem silly for developers working in a closed environment, with enhancements they have no interest in publishing for general consumption.  But even so, I think it would be quite useful for the platform to at a minimum provide for a key prefix that developers can use to help avoid having to be always on the watch out for such collisions (which might not become immediately apparent until some user discovers it in production).
 
-#  When should the class instance be created by the platform?
+#  When should the spawn and/or do mount operations be supported by the platform?
 
 ## Spawning/referencing methods of the enhancements property
 
@@ -696,11 +696,15 @@ The platform would search the registry for any enhancements that has a mapping w
 
 The suggestion to use Symbol.for with a guid, as opposed to just Symbol(), is based on some negative experiences I've had with multiple versions of the same library being referenced, but is not required.  Regular symbols could also be used when that risk can be avoided.
 
-## Spawning/Attaching based on presence of attributes
+## Spawning/Attaching based on presence of attributes and/or whereCssMatches
 
-If any one of the  (enh-*) attributes matching the pattern of base/branch/leaf is found on an element in the live DOM tree, this would cause the platform to instantiate an instance of the corresponding class.
+If any one of the  (enh-*) attributes matching the pattern of base/branch/leaf is found on an element in the live DOM tree, this would cause the platform to instantiate an instance of the corresponding class, assuming other conditions are also met (whereCssMatches, whereInstanceOf).
 
-I also suggest that it would be great if, during template instantiation supported natively by the platform, the platform can do whatever helps in achieving the most efficient outcome as far as recognizing these custom attributes.  One key feature this would provide is a way to extend the template instantiation process -- plug-ins essentially.  Especially if this means things could be done in "one-pass".  I don't claim any expertise in this area.  If the experts find little to no performance gain from this kind of integration, perhaps it is asking too much.  Doing this in userland would be quite straightforward (on a second pass, after the built-in instantiation has completed). 
+If no base is specified (and thus attrTree is not applicable), but "whereCssMatches" is specified, this would also cause the spawn and/or do reactions.  Likewise with "whereInstanceOf".  Perhaps in the latter case, the prototype can be modified, assuming no additional conditions (low, low priority).
+
+I also suggest that it would be great if, during template instantiation supported natively by the platform, the platform can do whatever helps in achieving the most efficient outcome as far as recognizing these custom attributes.  One key feature this would provide is a way to extend the template instantiation process -- plug-ins essentially.  Especially if this means things could be done in "one-pass".  I don't claim any expertise in this area.  If the experts find little to no performance gain from this kind of integration, perhaps it is asking too much.  Doing this in userland would be quite straightforward (on a second pass, after the built-in instantiation has completed).
+
+My suspicion is that the best performing solution would be to do a "template compilation step", and convert all the attributes (with an opt-out capability) to a set of JavaScript instructions keyed off of the "coordinates" of the node, as implemented [here](https://github.com/bahrus/spawning).
 
 Another integration nicety I would like to see supported by built-in template instantiation is to be able to bind sub objects from the host to the enhancements gateway.  So for example:
 
@@ -765,19 +769,25 @@ The problem with using this inline binding in our template, which we might want 
 
 Because this proposal is advocating that the MountInfo interface that is passed into the define method has enough information to map from the attribute to the parsed properties, it's my view that this would allow template instantiation supported by the platform (or userland implementations) to avoid unnecessary string parsing, by making judicious use of caching.
 
+Again, I think [this](https://github.com/bahrus/spawning) is probably optimal way.
+
 ## Support for connected/disconnected callback of the element being enhanced?
 
 When should the enhancement be purged from memory?
 
+
 This is an area likely to require some critical feedback from browser vendors, but I will nevertheless express some thoughts on the matter.
 
-One time it definitely would **not** be purged is if the (enh-*) attributes, if present, are removed from the enhanced element, since as we've discussed, the custom attribute aspect is only one way to attach an enhancement.  A developer may want to remove the attributes to reduce clutter, or before transferring to another Shadow DOM realm to avoid unexpected side effects of being transported in.
+This proposal is hoping that the browser engineers can figure out a way to not count these spawned enhancements when doing reference counting, and when the reference count minus spawned enhancements reaches 0, call the (configurable) dispose method of the function prototype / class and purge.
+
+
+One time it definitely would **not** be purged is if the (enh-*) attributes, if present, are removed from the enhanced element, since as we've discussed, the custom attribute aspect is only one way to attach an enhancement.  A developer may want to remove the attributes to reduce clutter, optimize for template instantiation, or before transferring to another Shadow DOM realm to avoid unexpected side effects of being transported in.
 
 I could see scenarios where the enhancement would want to know that its host has been disconnected and (re) connected.  So the custom enhancement should have a way of being notified that this transfer took place.
 
 One way to do this is if the platform adds an event that can be subscribed to for elements:  Elements currently have a built-in property, "isConnected".  It would be great if the elements also emitted a standard event when the element becomes [connected and (possibly another)](https://github.com/whatwg/dom/issues/533) [event](https://twitter.com/jaffathecake/status/1521023821003767808) or [signal](https://github.com/whatwg/dom/issues/1296) when it becomes disconnected.
 
-Another way would be to add support for "connectedCallback/disconnectedCallback" to the ElementEnhancement mixin interface -- that would explicitly be called when the *enhancedElement* connects / disconnects, not when the enhancement attaches to the enhancements property gateway (if applicable).
+Another way would be to allow developers to specify a key name for the connected and disconnected callbacks.  I prefer the previous solution.
 
 ## How to programmatically dispose of an enhancement
 
@@ -859,8 +869,8 @@ To be able to distinguish that:
 
 I propose:
 
-1.  The base Event object gets an additional property:  "enhInfo", which is where we pass in the mountInfo registry definition.
-2.  The base Enhancement class has a method "channelEvent" that is a simple wrapper around "dispatchEvent" of the element that the enhancement adorns, but inserts enhInfo object into the event. channelEvent would dispatch both from the enhancement class instance *as well as* the enhancedElement it is enhancing.
+The base Event object gets an additional built in property:  "mountInfo", which is where we pass in the mountInfo registry definition.
+
 
 ## How custom elements can opt in
 
@@ -874,7 +884,7 @@ But I think some of the infrastructure behind this proposal could be useful to [
 3. ...supporting lazy-loading of such functionality as needed.
 4. ...declarative mapping of functionality similar to dependency injection.
 
-... while leveraging the exact same class definition used for custom enhancements (possibly with a different mixin).
+... while leveraging the exact same class definition as above.
 
 ### Use cases?
 
@@ -899,14 +909,14 @@ Here, no "enh-" prefix is required for attributes.  In fact, enh- prefixed attri
 ```TypeScript
 interface PhotoTaker{}
 class MyPhotoTaker extends CustomElementFeature(EventTarget) implements PhotoTaker{
-    constructor(customElement: HTMLElement, info: MyPhotoTakerFeatureInfo){
+    constructor(customElement: HTMLElement, {info}: {info: MyPhotoTakerFeatureInfo}){
         super();
         ...
     }
 }
 interface BadgeMaker{}
 class YourBadgeMaker extends CustomElementFeature(EventTarget) implements BadgeMaker{
-    constructor(customElement: HTMLElement, info: YourPhotoTakerFeatureInfo){
+    constructor(customElement: HTMLElement, {info}: {info: YourPhotoTakerFeatureInfo}){
         super();
         ...
     }
