@@ -158,14 +158,15 @@ const mountInfo: MountInfo = {
     enhKey: 'greetings',
     //optional
     base: 'my-greetings',
-    //optional
+    //optional -- only applicable if base is present
     attrTree:[
+        //allow for standalone base attribute
         '', 
         {
             'hello': ['', 'how-are-you', 'hows-it-going']
         },
         {
-            'goodbye': ['', 'last-words', 'ps']
+            'goodbye': ['', 'last-words', 'ps':['', 'pps']]
         }
     ]
     //optional
@@ -275,6 +276,7 @@ At the risk of overwhelming the reader, I want to amend the api above with a lit
 
 ```JS
 const mountInfo: MountInfo = {
+    base: '[_]greetings',
     attrTree:[
         '', 
         {
@@ -590,7 +592,7 @@ If no enhKey is specified by the parties registering the enhancement in the regi
 const enhancementInstance = oElement.enh.get(mountInfo);
 ```
 
-### Does it make sense to define an enhancement with no enhKey and no base attribute?
+### Does it make sense to define a spawn mount with no enhKey and no base attribute and no whereCssMatches?
 
 I think it does.  In this case, the platform would be providing something like JQuery's [data](https://api.jquery.com/data/) feature, but more powerful (supporting one per enhancement).
  
