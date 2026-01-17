@@ -52,6 +52,10 @@ Done!
 
 Classes are also supported, as described below.  But for this simple example, a class would appear to be overkill.  Note that event listeners do *not* in [themselves cause a memory leak](https://github.com/whatwg/dom/issues/1396).
 
+## Why "inject"?
+
+Just a suggestion.  Other suggestions are "enhance", "enhanceWith",...
+
 ## Why the long attribute names?
 
 It would be great if we could use a short attribute name, like "log".  That can be done for custom elements, why not custom enhancements?  This is especially important to consider because, as we will see, this proposal supports multiple attributes "owned" by an enhancement, so allowing for small names would help reduce carpal syndrome.
@@ -139,6 +143,7 @@ const enhancementInfo: EnhancementInfo = {
     //Can point directly to an already loaded Class constructor, or
     //as shown below, it can point to an async loader that allows
     //for lazy loading on demand.
+    // either "do" or "spawn" is required.  Both is also fine.
     spawn: async () => {
         return MyEnhancementClassConstructor
     },
