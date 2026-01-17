@@ -25,7 +25,9 @@ customElementRegistry.inject({
         // or inside a scoped registry in a different file.
         enhancedElement.addEventListener('click', e => {
             const {target} = e;
-            console.log(target.getAttribute(`enh-${base}`) ||)
+            console.log(
+                target.getAttribute(`enh-${base}`) 
+                || target.getAttribute(`${base}`));
         })
     }
 });
@@ -48,13 +50,14 @@ Done!
 > [!NOTE]  
 > What follows is a ridiculously large proposal.  At the risk of stating the obvious, I think it would make sense to roll it out in stages, starting with the most pressing, least controversial needs. Flaws in obscure features that I may have missed shouldn't jettison other asks, I hope.
 
+
 ## Why a function, and not a class or a class mixin?
 
 Classes are also supported, as described below.  But for this simple example, a class would appear to be overkill.  Note that event listeners do *not* in [themselves cause a memory leak](https://github.com/whatwg/dom/issues/1396).
 
 ## Why "inject"?
 
-Just a suggestion.  Other suggestions are "enhance", "enhanceWith",...
+Just a suggestion.  Other suggestions are "enhance", "enhanceWith", "decorate", "decorateWith", the sky is the limit.  The specific suggestion of "inject" will become clearer in what follows, hopefully.
 
 ## Why the long attribute names?
 
@@ -153,22 +156,24 @@ const enhancementInfo: EnhancementInfo = {
     // to publicly expose the api to other components / libraries
     /** @type {string | symbol | undefined} **/
     enhKey: 'greetings',
-    //optional
-    base: 'my-greetings',
-    //optional
-    branches: ['', 'hello', 'goodbye'],
-    //optional 
-    leaves: {
-        hello: ['', 'how-are-you', 'hows-it-going'],
-        goodbye: ['', 'last-words', 'ps'] 
-    },
+    attrTree:{
+        'my-greetings':[
+            '', 
+            {
+                'hello': ['', 'how-are-you', 'hows-it-going']
+            },
+            {
+                'goodbye': ['', 'last-words', 'ps']
+            }
+        ]
+    }
     //optional
     map: {
-        '0.0': {
+        '0': {
             instanceOf: 'Object',
             mapsTo: '.'
         },
-        '1.0': {
+        '1': {
             instanceOf: 'Boolean',
             mapsTo: 'isHello'
         },
@@ -192,7 +197,7 @@ const enhancementInfo: EnhancementInfo = {
     //optional
     //can only enhance element if base attribute is present
     baseRequired: false,
-    //optional -- if needed to prevent memory leaks,
+    //optional -- if needed to prevent memory leaks, mutation observers, etc
     //specify name of method of class instance (or function prototype) to use
     //this would be called before the enhanced element is about to 
     //purged from memory, assuming it is possible to prevent
@@ -200,11 +205,25 @@ const enhancementInfo: EnhancementInfo = {
     disposeKey: 'dispose'
     //optional -- if scheduling enhancements in sequence is needed, class must extend EventTarget (mixin someday?), and have a property with name specified below and dispatch event name when property switches to true:
     resolvedKey: 'resolved'
+    //optional -- name of method that handles attribute changes
+    //though personally I would rather we go with better mapping support
+    //it is quite easy for developers to add mutation observers for this
+    attributeChangeKey: 'attributeChangedCallback'
 };
 type branchitude = number;
 type leafitude = number;
-type AttrCoordinates = `{branchitude}.{leafitude}`;
-class MyEnhancement {
+//in this example, we can "hard code"
+// the names branches and leafs
+// but this api will allow n-levels deep
+type AttrCoordinates = 
+    | `{branchitude}` 
+    | `{branchitude}.{leafitude}`;
+class MyEnhancement<
+    HTMLInputElement, 
+    HTMLTextArea, 
+    SomeAlreadyLoadedCustomElementClass, 
+    SVGElement, 
+    HTMLMarqueeElement> {
 
     constructor(enhancedElement: TSupportedElements, enhanceInfo: EnhancementInfo, initVals?: unknown){}
 
@@ -228,6 +247,7 @@ class MyEnhancement {
 
     //  Entirely optional filtering conditions for when the enhancement should be
     // allowed to be spawned.
+    // maybe typescript could be enhanced to check for consistency?
     static supportedInstanceTypes = 
         [
             HTMLInputElement, 
@@ -320,7 +340,7 @@ I amended this proposal, though, to support multiple attributes for a single enh
 2.  Some frameworks may prefer to modify state via attributes instead of properties.
 3.  Styling may benefit as well.
 
-However, I think by supporting multiple attributes, requiring that they have dashes or at least one non ascii character, and knowing that developers will go out of their way to avoid clashing with other libraries, we can achieve the same effect without telling the entire IT industry that their way of doing things is wrong.  **Almost no one is using a "has" attribute, so we should, I think, bend over backwards to not impose a new requirement in order to utilize the platform, without an extremely strong reason**.  So with this proposal, we can have attributes that naturally group together.  To take one very practical example where this makes sense:  Suppose we want to provide a userland implementation of [this proposal](https://github.com/whatwg/html/issues/2404).  We could define it like this, which this proposal supports:
+However, I think by supporting multiple attributes, requiring that they have dashes (or at least one underscore or a prefix like enh-?) or at least one non ascii character, and knowing that developers will go out of their way to avoid clashing with other libraries, we can achieve the same effect without telling the entire IT industry that their way of doing things is wrong.  **Almost no one is using a "has" attribute, so we should, I think, bend over backwards to not impose a new requirement in order to utilize the platform, without an extremely strong reason**.  So with this proposal, we can have attributes that naturally group together.  To take one very practical example where this makes sense:  Suppose we want to provide a userland implementation of [this proposal](https://github.com/whatwg/html/issues/2404).  We could define it like this, which this proposal supports:
 
 ```html
 <time lang="ar-EG" 
@@ -400,8 +420,8 @@ So, for an alternative to custom built-in extensions to be worthwhile, I strongl
 So the bottom-line is that the crux of this proposal is to allow developers to do this (with a little tender loving care):
 
 ```JavaScript
-oInput.enhancements.myEnhancement.foo = bar;
-oMyCustomElement.enhancements.yourEnhancement.bar = foo;
+oInput.enh.myEnhancement.foo = bar;
+oMyCustomElement.enh.yourEnhancement.bar = foo;
 ```
 
 in a way that is recognized by the platform.
@@ -414,7 +434,7 @@ I think that would be a great start.  But the rest of this proposal outlines som
 
 The next thing beyond that announcement would be what many (including myself) are clamoring for:  Safely adding custom attributes.
 
-The platform informs web component developers to not use any attributes with a prefix that pairs up with the property gateway name, "enhancements"; that that prefix is only to be used by third parties to match up with the sub-property of "enhancements" they claim ownership of.  My suggestion is enh-*.  Continuing to use data- seems fundamentally flawed from a semantic point of view, and would also result in more overlapping uses between these two very different attribute meanings. 
+The platform informs web component developers to not use any attributes with a prefix that pairs up with the property gateway name, "enh"; that that prefix is only to be used by third parties to match up with the sub-property of "enh" they claim ownership of.  My suggestion is enh-*.  Continuing to use data- seems fundamentally flawed from a semantic point of view, and would also result in more overlapping uses between these two very different attribute meanings. 
 
 So if server-rendered HTML looks as follows:
 
@@ -423,7 +443,7 @@ So if server-rendered HTML looks as follows:
 <my-custom-element enh-your-enhancement='{"bar": "foo"}'>
 ```
 
-... we can expect (but not guarantee) to see a class instance associated with each of those attributes, accessible via oInput.enhancements.myEnhancement and oMyCustomElement.enhancements.yourEnhancement, typically.
+... we can expect (but not guarantee) to see a class instance associated with each of those attributes, accessible via oInput.enh.myEnhancement and oMyCustomElement.enh.yourEnhancement, typically.
 
 The requirement for the prefix can be dropped only if built-in elements are targeted, in which case the only requirement is that the attribute(s) contain (a) dash(es) or non ascii characters.  
 
@@ -435,7 +455,7 @@ I started this journey placing great emphasis on the HTML attribute aspect of th
 
 When we enhance existing elements during template instantiation, the attributes (can) go away, in order to optimize performance.  It is much faster and flexible to pass data through a common gateway property, not through attributes.  For similar reasons, when one big enhancement needs to cobble smaller enhancements together, again, the best gateway is not through attributes, which again would be inefficient, and would result in big-time cluttering of the DOM, but rather through the same common property gateway through which all these enhancements would be linked. 
 
-### Why "enhancements", and not "behaviors"?
+### Why "enh", and not "behaviors"?
 
 Granted, the majority of enhancements would likely fit our common idea of what constitutes a ["behavior"](https://www.brainbell.com/tutors/XML/XML_Book_B/DHTML_Behaviors.htm#:~:text=DHTML%20Behaviors%20are%20lightweight%20components%20that%20extend%20the,referenced%20in%20Internet%20Explorer%205%20by%20using%20styles.).
 
@@ -470,7 +490,6 @@ Even in our current day when the platform provides no such structure, it would n
 
 > In which I discover my keyboard has no support for print screen.  Screenshot of what happens if you type "$0." on a random HTML Element.  The scrollbar can't even get past the D's.  Fortunately, "command" starts with c, so it can reach it for now.
 
-
 Granted, some frameworks might not support the ability to tap into this at first, but I suspect would accommodate it if the platform went in this direction.
 
 Others prefer "behaviors" (but the others who do seem to think it is of zero consequence, whereas I think there is some substantial consequence to the decision, if that counts for anything). I'm open to both, maybe my reasoning above is wrong (but no one has yet to address my concerns head on).
@@ -485,18 +504,6 @@ The reason I think it would be reasonable for the prefix enh-* to be required, o
 2.  But should a custom enhancement author choose a name that happens to coincide with one of the attribute names of another author's custom element, which seems quite likely to happen frequently, it still leaves the messy situation that the custom element's attribute gets improperly flagged as an enhancement.
 3.  However, it could be argued, depending on how smoothly working with scoped registry proves to be in this context, that such catastrophes could be averted using the scoped registry.  This proposal provides out-of-the-box support for renaming any and all the attributes associated with an enhancement.  So maybe it shouldn't be required, and may seem silly for developers working in a closed environment, with enhancements they have no interest in publishing for general consumption.  But even so, I think it would be quite useful for the platform to at a minimum provide for a key prefix that developers can use to help avoid having to be always on the watch out for such collisions (which might not become immediately apparent until some user discovers it in production).
 
-## Global api's.
-
-All of the customElements methods would have a corresponding method in customEnhancements.  For example:
-
-1.  customEnhancements.define
-2.  customEnhancements.whenDefined
-3.  customEnhancements.upgrade
-4.  oElement.attachShadow
-5.  document.createElement
-
-The same solution for scoped registries would be applied to these methods.
-
 #  When should the class instance be created by the platform?
 
 ## Spawning/referencing methods of the enhancements property
@@ -505,43 +512,27 @@ Unlike dataset, the enhancements property, added to the Element prototype, would
 
 ```JavaScript
 // use this if "spawn" points to an already imported class
-const enhancementInstance = oElement.enhancements.get(enhancementInfo);
+const enhancementInstance = oElement.enh.get(enhancementInfo);
 //use this if "spawn" points to an an async loader or you aren't sure.
 //In the asynchronous case, get should throw an error
-const lazyLoadedInstance = await oElement.enhancements.await(enhancementInfo);
+const lazyLoadedInstance = await oElement.enh.await(enhancementInfo);
 //await is definitely necessary here
-const resolvedInstance = await oElement.enhancements.whenResolved(enhancementInfo);
+const resolvedInstance = await oElement.enh.whenResolved(enhancementInfo);
 ```
 
 All three of these methods would see if the enhancement has already been instantiated for the element, and if so, pass that back.  If not, the method will spawn an instance of the class constructor returned by the *spawn* option. This assumes the element passes all the "supports/matches" criteria.
 
 I'm a little uncertain how important it is to provide for both ".get" and ".await".  I *think* using await automatically yields a microtask, even if there is no actual async call.  If that is not the case, I think we only need one of the two ("get") and just use the await keyword to be safe.
 
-The whenResolved promise is returned after the developer sets:
+The whenResolved promise will only resolve when:
+
+1.  The registering party specifies the name of the resolveKey in enhancementInfo
+2.  The enhancement author defines a class that extends EventTaget, and does:
 
 ```JavaScript
-this.resolved = true;
-```
-
-The base mixin, ElementEnhancement, then, contains a reserved property, resolved:
-
-```JavaScript
-function ElementEnhancement(Base){
-    return class extends Base{
-        #resolved = undefined;
-        get resolved(){
-            return this.#resolved;
-        }
-        set resolved(newValue){
-            this.#resolved = newValue;
-            if(newValue === true){
-                this.channelEvent(new Event('resolved'));
-            }else if(newValue === false){
-                this.channelEvent(new Event('rejected'));
-            }
-        }
-    }
-}
+const {resolvedKey} = enhancementInfo
+this[resolvedKey] = true;
+this.dispatchEvent(new Event(resolvedKey))
 ```
 
 The whenResolved method would throw an error (catchable via try/catch with await or .catch() if using the more traditional promise approach) when the developer sets this.resolved = false;
@@ -549,11 +540,11 @@ The whenResolved method would throw an error (catchable via try/catch with await
 The purpose of having this "whenResolved" feature is explained towards the end of this proposal.
 
 > [!NOTE]
-> I think it would be quite reasonable for these methods to accept an additional parameter where the registry can be passed in, and call the define method on that registry when applicable, and throw an error if a conflicting enhancement has already been registered.
+> I think it would be quite reasonable for these methods to accept an additional parameter where the registry and enhancement info can be passed in, and call the "inject" (subject to change) method on that registry when applicable, and throw an error if a conflicting enhancement has already been registered.  Not at all needed for day one.
 
 ## Reducing developer guilt and allowing for a nice API by formally endorsing attaching the spawned instance to the element's "enhancements" property gateway
 
-A key config setting, "enhKey," would cause the spawned instance to be attached at that name to the new, proposed "enhancements" property gateway that would be added to the Element prototype.
+A key config setting in the enhacementInfo, "enhKey," would cause the spawned instance to be attached at that name to the new, proposed "enhancements" property gateway that would be added to the Element prototype.
 
 Use of the enhKey means that the developer will be responsible for avoiding name-spacing conflicts with other enhancements registered in the same registry. 
 
@@ -585,7 +576,9 @@ customEnhancements.define({
 });
 ```
 
-In the above example, we have two strings that we need to consider from the point of view of colliding with other enhancements (and with attributes of the (custom) elements themselves):  The name of the enhancement - "logger" - and the attribute(s) tied to it, if any:  'log-to-console'.  This proposal holds that the attributes for a single enhancement must share the same base, if help from the platform is desired.  Other enhancements can share that same base, and even share the entire  base-branch-leaf-prefix combo between different enhancements. It would result in multiple enhancements getting spawned.  
+In the above example, we have two strings that we need to consider from the point of view of colliding with other enhancements (and with attributes of the (custom) elements themselves):  The name of the enhancement - "logger" - and the attribute(s) tied to it, if any:  'log-to-console'.  This proposal holds that the attributes for a single enhancement must share the same base, if help from the platform is desired.  Other enhancements can share that same base, and even share the entire  base-branch-leaf-prefix combo between different enhancements. It would result in multiple enhancements getting spawned. 
+
+[TODO] Give a good example of two enhancements that would want to share the same 
 
 > [!NOTE]
 > Each specified enhKey must be unique within a registry.
@@ -599,7 +592,7 @@ There are some very strong use cases for the developer to go ahead and opt to na
 If no enhKey is specified by the parties registering the enhancement in the registry, I think the platform should still provide a less elegant mechanism to access the spawned instance, and in fact was already provided above:
 
 ```JavaScript
-const enhancementInstance = oElement.enhancements.get(enhancementInfo);
+const enhancementInstance = oElement.enh.get(enhancementInfo);
 ```
 
 ### Does it make sense to define an enhancement with no enhKey and no base attribute?
@@ -616,13 +609,13 @@ In addition to the three methods above, the enhancements property would contain 
 This would allow consumers of the enhancement to pass property values (and only property values) ahead of the upgrade (or after the upgrade), so that no "await" is necessary, nor any imperative looking code:
 
 ```JavaScript
-oElement.enhancements.set.steelEnhancer.carbonPercent = 0.2;
+oElement.enh.set.steelEnhancer.carbonPercent = 0.2;
 ```
 
-These value settings would either get applied directly to oElement.enhancements.steelEnhancer if it has already been attached.  Or, if it hasn't been attached yet, the browser would set (or merge) the value into the property, and begin attaching the enhancement in the background:
+These value settings would either get applied directly to oElement.enh.steelEnhancer if it has already been attached.  Or, if it hasn't been attached yet, the browser would set (or merge) the value into the property, and begin attaching the enhancement in the background:
 
 ```JavaScript
-if(oElement.enhancements.steelEnhancer=== undefined) {
+if(oElement.enh.steelEnhancer=== undefined) {
     //get enhancement info for property "steelEnhancer"
     //if found:
     {
@@ -632,17 +625,17 @@ if(oElement.enhancements.steelEnhancer=== undefined) {
         }
         //else it must be an async lazy dynamic loader to a class constructor
         {
-            oElement.enhancements.steelEnhancer = {};
+            oElement.enh.steelEnhancer = {};
             //attach asynchronously in the background
         }
     }
     //else
     {
-        oElement.enhancements.steelEnhancer = {};
+        oElement.enh.steelEnhancer = {};
     }
     
 } 
-oElement.enhancements.steelEnhancer.carbonPercent = 0.2;
+oElement.enh.steelEnhancer.carbonPercent = 0.2;
 
 ```
 
@@ -794,7 +787,7 @@ Another way would be to add support for "connectedCallback/disconnectedCallback"
 I'm encountering a small number of use cases where we want enhancements to "do its thing", and then opt for early retirement.  The use cases I've encountered this with is primarily focused around an enhancement that does something with server-rendered HTML, which then goes idle afterwards, possibly to be replaced by a different kind of enhancement during template instantiation.  So I think it should be possible to do this via:
 
 ```JavaScript
-const detachedEnhancement = await oElement.enhancements.forget(enhancementInfo);
+const detachedEnhancement = await oElement.enh.forget(enhancementInfo);
 ```
 
 I think we would want this to remove the associated attribute(s) also, if applicable (which is a little messy, because other enhancements may share the base or even base/branch/leaf combos as stated above, so maybe not).
