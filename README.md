@@ -187,13 +187,13 @@ const enhancementInfo: EnhancementInfo = {
         [isHello]: 'isHello'
     },
     //entirely optional
-    allowedInstanceTypes: [            
+    whereInstanceOf: [            
         HTMLInputElement, 
         HTMLTextArea, 
         SomeAlreadyLoadedCustomElementClass
     ],
     //entirely optional
-    allowedCSSMatches: 'input[type="text], textarea',
+    whereCSSMatches: 'input[type="text], textarea',
     //optional
     //can only enhance element if base attribute is present
     baseRequired: false,
@@ -213,7 +213,7 @@ const enhancementInfo: EnhancementInfo = {
 type branchitude = number;
 type leafitude = number;
 //in this example, we can "hard code"
-// the names branches and leafs
+// the names "branches" and "leaves"
 // but this api will allow n-levels deep
 type AttrCoordinates = 
     | `{branchitude}` 
@@ -267,7 +267,21 @@ class MyEnhancement<
 At the risk of overwhelming the reader, I want to amend the api above with a little completely optional nuance to allow for different attribute delimiters at different levels of the hierarchy:
 
 ```JS
+const prefix = customElements.PREFIX;
 const enhancementInfo: EnhancementInfo = {
+    attrTree:{
+        '[_]my-greetings':{
+            [
+                '', 
+                {
+                    '[:]hello': ['', '[--]how-are-you', '[--]hows-it-going']
+                },
+                {
+                    '[::]goodbye': ['', '[---]last-words', '[-]ps']
+                }
+            ]
+        }
+    }
     base: {
         //prefix assumed to be '-' if not specified
         prefix: '_', 
