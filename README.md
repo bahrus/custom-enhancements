@@ -16,8 +16,8 @@ Say all you need to do is to create an isolated behavior/enhancement/hook/whatev
 ```JS
 customElementRegistry.mount({
     base: 'log-to-console', //canonical name of our (base) custom attribute.
-    do: function(enhancedElement: Element, enhancementInfo: EnhancementInfo){
-        const {base} = enhancementInfo;
+    do: function(enhancedElement: Element, {mountInfo}: MountInfo){
+        const {base} = mountInfo;
         // in this example, base will simply equal 'log-to-console', 
         // but this code is demonstrating how to code defensively, so that
         // the party (or parties) responsible for registering the enhancement 
@@ -74,7 +74,7 @@ However, I've become aware that there is another informal understanding -- that 
 So developers wanting to capitalize on that and benefit from shorter names could define, under this proposal, an alternative mapping.  For example:
 
 ```JS
-export const enhancementInfo = {
+export const mountInfo = {
     base: '🪵'
 }
 ```
@@ -109,9 +109,9 @@ If the requirements for an enhancement would benefit from a stateful class that 
 customElementRegistry.mount({
     base: 'log-to-console', //canonical name of our (base) custom attribute.
     spawn: class {
-        constructor(enhancedElement: Element, enhancementInfo: EnhancementInfo){
+        constructor(enhancedElement: Element, {mountInfo: MountInfo}){
             super();
-            const {base} = enhancementInfo;
+            const {base} = mountInfo;
             enhancedElement.addEventListener('click', e => {
                 const {target} = e;
                 console.log(
@@ -139,9 +139,9 @@ In lots of ways, which we will discuss far below.  We want to make this as conve
 ```TypeScript
 
 export const isHello = Symbol.for('o8u9z9so50iLU_WwKk6O7Q');
-const enhancementInfo: EnhancementInfo = {
+const mountInfo: MountInfo = {
     //optional
-    do(enhancedElement: Element, info: EnhancementInfo){}
+    do(enhancedElement: Element, info: MountInfo){}
     //optional.
     //Can point directly to an already loaded Class constructor, or
     //as shown below, it can point to an async loader that allows
@@ -156,17 +156,18 @@ const enhancementInfo: EnhancementInfo = {
     // to publicly expose the api to other components / libraries
     /** @type {string | symbol | undefined} **/
     enhKey: 'greetings',
-    attrTree:{
-        'my-greetings':[
-            '', 
-            {
-                'hello': ['', 'how-are-you', 'hows-it-going']
-            },
-            {
-                'goodbye': ['', 'last-words', 'ps']
-            }
-        ]
-    }
+    //optional
+    base: 'my-greetings',
+    //optional
+    attrTree:[
+        '', 
+        {
+            'hello': ['', 'how-are-you', 'hows-it-going']
+        },
+        {
+            'goodbye': ['', 'last-words', 'ps']
+        }
+    ]
     //optional
     map: {
         '0': {
@@ -186,24 +187,30 @@ const enhancementInfo: EnhancementInfo = {
         //See https://github.com/bahrus/custom-enhancements?tab=readme-ov-file#symbolic-prop-shortcuts-and-support-for-dependency-injection 
         [isHello]: 'isHello'
     },
-    //entirely optional
+    //optional
     whereInstanceOf: [            
         HTMLInputElement, 
         HTMLTextArea, 
         SomeAlreadyLoadedCustomElementClass
     ],
-    //entirely optional
+    //optional
     whereCSSMatches: 'input[type="text], textarea',
     //optional
     //can only enhance element if base attribute is present
+    //very low priority requirement
     baseRequired: false,
-    //optional -- if needed to prevent memory leaks, mutation observers, etc
+    //optional -- if need to prevent memory leaks, mutation observers, etc
     //specify name of method of class instance (or function prototype) to use
-    //this would be called before the enhanced element is about to 
+    //this would be called before the enhanced element is about to be
     //purged from memory, assuming it is possible to prevent
-    //these enhancements from being referenced counted.
+    //these enhancements from being referenced counted as far as garbage collection.
+    //only applicable if spawn has a value
     disposeKey: 'dispose'
-    //optional -- if scheduling enhancements in sequence is needed, class must extend EventTarget (mixin someday?), and have a property with name specified below and dispatch event name when property switches to true:
+    //optional -- only applicable if spawn has a value
+    // if scheduling enhancements in sequence is needed, 
+    // class must extend EventTarget (mixin someday?), 
+    // and have a property with name specified below 
+    // and dispatch event name when property switches to true:
     resolvedKey: 'resolved'
     //optional -- name of method that handles attribute changes
     //though personally I would rather we go with better mapping support
@@ -212,7 +219,7 @@ const enhancementInfo: EnhancementInfo = {
 };
 type branchitude = number;
 type leafitude = number;
-//in this example, we can "hard code"
+// in this example, we can "hard code"
 // the names "branches" and "leaves"
 // but this api will allow n-levels deep
 type AttrCoordinates = 
@@ -225,9 +232,9 @@ class MyEnhancement<
     SVGElement, 
     HTMLMarqueeElement> {
 
-    constructor(enhancedElement: TSupportedElements, enhanceInfo: EnhancementInfo, initVals?: unknown){}
+    constructor(enhancedElement: TSupportedElements, enhanceInfo: MountInfo, initVals?: unknown){}
 
-    dispose(enhancedElement: TSupportedElements, enhanceInfo: EnhancementInfo){
+    dispose(enhancedElement: TSupportedElements, enhanceInfo: MountInfo){
         //prior to garbage collection
         //assuming it is possible to prevent
         //these enhancements from being referenced counted.
@@ -267,51 +274,25 @@ class MyEnhancement<
 At the risk of overwhelming the reader, I want to amend the api above with a little completely optional nuance to allow for different attribute delimiters at different levels of the hierarchy:
 
 ```JS
-const prefix = customElements.PREFIX;
-const enhancementInfo: EnhancementInfo = {
-    attrTree:{
-        '[_]my-greetings':{
-            [
-                '', 
-                {
-                    '[:]hello': ['', '[--]how-are-you', '[--]hows-it-going']
-                },
-                {
-                    '[::]goodbye': ['', '[---]last-words', '[-]ps']
-                }
-            ]
-        }
-    }
-    base: {
-        //prefix assumed to be '-' if not specified
-        prefix: '_', 
-        name: 'my-greetings',
-    },
-    //optional
-    branches: {
-        //prefix assumed to be '-' if not specified
-        prefix: ':',
-        names: ['', 'hello', 'goodbye'],
-    },
-    //optional 
-    leaves: {
-        //prefix assumed to be '-' if not specified
-        hello: {
-            prefix: '--',
-            names: ['', 'how-are-you', 'hows-it-going']
+const mountInfo: MountInfo = {
+    attrTree:[
+        '', 
+        {
+            '[:]hello': ['', '[--]how-are-you', '[--]hows-it-going']
         },
-        goodbye:{
-            prefix: '---',
-            names: ['', 'last-words', 'ps']
+        {
+            '[::]goodbye': ['', '[---]last-words', '[-]ps']
         }
-        
-    },
+    ]
+
 
 };
 
 ```
 
-as this would allow for more readable syntax:
+If no prefix is specified, '-' is used by default.
+
+This would allow for more readable syntax:
 
 ```html
 <your-custom-element 
@@ -463,7 +444,7 @@ The requirement for the prefix can be dropped only if built-in elements are targ
 
 Another aspect of this proposal that I think should be considered is that as the template instantiation proposal gels, looking for opportunities for these enhancements to play a role in the template instantiation process would be great. Many of the most popular such libraries do provide similar binding support as what template instantiation aims to support.  Basically, look for opportunities to make custom element enhancements serve the dual purpose of making template instantiation extendable, especially if that adds even a small benefit to performance.
 
-## A note about naming, part II
+## A note about naming
 
 I started this journey placing great emphasis on the HTML attribute aspect of this, but as the concepts have marinated over time, I think it is a mistake to over emphasize that aspect.  The fundamental thing we are trying to do is to enhance existing elements, not attach strings to them.  
 
@@ -526,12 +507,12 @@ Unlike dataset, the enhancements property, added to the Element prototype, would
 
 ```JavaScript
 // use this if "spawn" points to an already imported class
-const enhancementInstance = oElement.enh.get(enhancementInfo);
+const enhancementInstance = oElement.enh.get(mountInfo);
 //use this if "spawn" points to an an async loader or you aren't sure.
 //In the asynchronous case, get should throw an error
-const lazyLoadedInstance = await oElement.enh.await(enhancementInfo);
+const lazyLoadedInstance = await oElement.enh.await(mountInfo);
 //await is definitely necessary here
-const resolvedInstance = await oElement.enh.whenResolved(enhancementInfo);
+const resolvedInstance = await oElement.enh.whenResolved(mountInfo);
 ```
 
 All three of these methods would see if the enhancement has already been instantiated for the element, and if so, pass that back.  If not, the method will spawn an instance of the class constructor returned by the *spawn* option. This assumes the element passes all the "supports/matches" criteria.
@@ -540,11 +521,11 @@ I'm a little uncertain how important it is to provide for both ".get" and ".awai
 
 The whenResolved promise will only resolve when:
 
-1.  The registering party specifies the name of the resolveKey in enhancementInfo
+1.  The registering party specifies the name of the resolveKey in mountInfo
 2.  The enhancement author defines a class that extends EventTaget, and does:
 
 ```JavaScript
-const {resolvedKey} = enhancementInfo
+const {resolvedKey} = mountInfo
 this[resolvedKey] = true;
 this.dispatchEvent(new Event(resolvedKey))
 ```
@@ -565,15 +546,15 @@ Use of the enhKey means that the developer will be responsible for avoiding name
 For example:
 
 ```JS
-customEnhancements.define({
+customElements.mount({
     //name of our "custom prop", accessible via oElement.enhancements[enhKey], 
     //which is where we will find an instance of the class defined below.
     enhKey: 'logger',
     base: 'log-to-console', //canonical name of our (base) custom attribute.
     spawn: class extends ElementEnhancement(EventTarget) {
-        constructor(enhancedElement: Element, enhancementInfo: EnhancementInfo){
+        constructor(enhancedElement: Element, mountInfo: MountInfo){
             super();
-            const {base} = enhancementInfo;
+            const {base} = mountInfo;
             // in this example, base will simply equal 'log-to-console', 
             // but this code is demonstrating how to code defensively, so that
             // the party (or parties) responsible for registering the enhancement 
@@ -606,7 +587,7 @@ There are some very strong use cases for the developer to go ahead and opt to na
 If no enhKey is specified by the parties registering the enhancement in the registry, I think the platform should still provide a less elegant mechanism to access the spawned instance, and in fact was already provided above:
 
 ```JavaScript
-const enhancementInstance = oElement.enh.get(enhancementInfo);
+const enhancementInstance = oElement.enh.get(mountInfo);
 ```
 
 ### Does it make sense to define an enhancement with no enhKey and no base attribute?
@@ -633,7 +614,7 @@ if(oElement.enh.steelEnhancer=== undefined) {
     //get enhancement info for property "steelEnhancer"
     //if found:
     {
-        //is steelEnhancerEnhancementInfo.spawn a class constructor?
+        //is steelEnhancerMountInfo.spawn a class constructor?
         {
 
         }
@@ -653,7 +634,7 @@ oElement.enh.steelEnhancer.carbonPercent = 0.2;
 
 ```
 
-In the case of an async attach definition, the property value object would sit there, ready to be absorbed into the enhancement in the constructor, which could happen right away if already loaded, or whenever the customEnhancements.whenDefined is resolved for this enhancement.
+In the case of an async attach definition, the property value object would sit there, ready to be absorbed into the enhancement in the constructor, which could happen right away if already loaded, or whenever the customElements.whenMounted is resolved for this enhancement.
 
 The attaching in the background convenience would only be possible if the developer has already registered enhKey = "steelEnhancer" in an applicable registry.
 
@@ -661,7 +642,7 @@ Due to this lazy property, set, being a proxy, the convenience of this approach 
 
 ## Symbolic Prop Shortcuts and support for dependency injection
 
-We can skip the step of either passing in enhancementInfo, as well as referencing the optional enhKey, which may not be totally stable when mixing together multiple third party libraries.  If instead, we want to "jump to the chase" and set (presumably) stable properties of the instance, we can do so as follows:
+We can skip the step of either passing in mountInfo, as well as referencing the optional enhKey, which may not be totally stable when mixing together multiple third party libraries.  If instead, we want to "jump to the chase" and set (presumably) stable properties of the instance, we can do so as follows:
 
 ```JavaScript
 export const isHappy = Symbol.for('TFWsx0YH5E6eSfhE7zfLxA');
@@ -780,7 +761,7 @@ Note that the enhancement class corresponding to this attribute may specify a de
 
 The problem with using this inline binding in our template, which we might want to repeat hundreds or thousands of times in the document, is that each time we clone the template, we would be copying that attribute along with it, and we would need to parse the values.
 
-Because this proposal is advocating that the EnhancementInfo interface that is passed into the define method has enough information to map from the attribute to the parsed properties, it's my view that this would allow template instantiation supported by the platform (or userland implementations) to avoid unnecessary string parsing, by making judicious use of caching.
+Because this proposal is advocating that the MountInfo interface that is passed into the define method has enough information to map from the attribute to the parsed properties, it's my view that this would allow template instantiation supported by the platform (or userland implementations) to avoid unnecessary string parsing, by making judicious use of caching.
 
 ## Support for connected/disconnected callback of the element being enhanced?
 
@@ -801,7 +782,7 @@ Another way would be to add support for "connectedCallback/disconnectedCallback"
 I'm encountering a small number of use cases where we want enhancements to "do its thing", and then opt for early retirement.  The use cases I've encountered this with is primarily focused around an enhancement that does something with server-rendered HTML, which then goes idle afterwards, possibly to be replaced by a different kind of enhancement during template instantiation.  So I think it should be possible to do this via:
 
 ```JavaScript
-const detachedEnhancement = await oElement.enh.forget(enhancementInfo);
+const detachedEnhancement = await oElement.enh.forget(mountInfo);
 ```
 
 I think we would want this to remove the associated attribute(s) also, if applicable (which is a little messy, because other enhancements may share the base or even base/branch/leaf combos as stated above, so maybe not).
@@ -876,7 +857,7 @@ To be able to distinguish that:
 
 I propose:
 
-1.  The base Event object gets an additional property:  "enhInfo", which is where we pass in the enhancementInfo registry definition.
+1.  The base Event object gets an additional property:  "enhInfo", which is where we pass in the mountInfo registry definition.
 2.  The base Enhancement class has a method "channelEvent" that is a simple wrapper around "dispatchEvent" of the element that the enhancement adorns, but inserts enhInfo object into the event. channelEvent would dispatch both from the enhancement class instance *as well as* the enhancedElement it is enhancing.
 
 ## How custom elements can opt in
@@ -941,10 +922,10 @@ class ClubMember extends HTMLElement implements ClubMemberProps{
             ...
         });
         this.attachInternals()
-            .attachFeature<PhotoTaker, ClubMember>(MyPhotoTakerEnhancementInfo)
+            .attachFeature<PhotoTaker, ClubMember>(MyPhotoTakerMountInfo)
             .toInstance(this)  //toInstance should expect an instance of ClubMember, TypeScript definers
             .atProp('photoTaker') // atProp should expect a keyof ClubMember for its parameter, TypeScript definers
-            .attachFeature<BadgeMaker, ClubMember>(YourBadgeMakerEnhancementInfo)
+            .attachFeature<BadgeMaker, ClubMember>(YourBadgeMakerMountInfo)
             .toInstance(this)
             .atProp('badgeMaker');
     }
@@ -961,7 +942,7 @@ I think this would allow for testable Mock Objects, especially if these methods 
 
 This code can be run at any time, not just in the constructor.
 
-The type definition for FeatureInfo would closely resemble that of EnhancementInfo, but some fields of EnhancementInfo don't quite make sense in this context, and other fields may make more sense in the context of features, like the last two:
+The type definition for FeatureInfo would closely resemble that of MountInfo, but some fields of MountInfo don't quite make sense in this context, and other fields may make more sense in the context of features, like the last two:
 
 ```TypeScript
 type Feature = {new(): CustomElementFeature} | () => Promise<{new(): CustomElementFeature}>
