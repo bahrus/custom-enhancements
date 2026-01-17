@@ -14,7 +14,7 @@ Say all you need to do is to create an isolated behavior/enhancement/hook/whatev
 
 
 ```JS
-customElementRegistry.inject({
+customElementRegistry.mount({
     base: 'log-to-console', //canonical name of our (base) custom attribute.
     do: function(enhancedElement: Element, enhancementInfo: EnhancementInfo){
         const {base} = enhancementInfo;
@@ -55,9 +55,9 @@ Done!
 
 Classes are also supported, as described below.  But for this simple example, a class would appear to be overkill.  Note that event listeners do *not* in [themselves cause a memory leak](https://github.com/whatwg/dom/issues/1396).
 
-## Why "inject"?
+## Why "mount"?
 
-Just a suggestion.  Other suggestions are "enhance", "enhanceWith", "decorate", "decorateWith", the sky is the limit.  The specific suggestion of "inject" will become clearer in what follows, hopefully.
+Just a suggestion.  It ties in with this [additional proposal](https://github.com/WICG/webcomponents/issues/896)  Other suggestions are "inject", "enhance", "enhanceWith", "decorate", "decorateWith", the sky is the limit.  The specific suggestion of "inject" will become clearer in what follows, hopefully.
 
 ## Why the long attribute names?
 
@@ -106,7 +106,7 @@ It doesn't seem to me that any of these concerns would "block" the platform from
 If the requirements for an enhancement would benefit from a stateful class that can be accessed publicly, use "spawn" instead of "do":
 
 ```JS
-customElementRegistry.inject({
+customElementRegistry.mount({
     base: 'log-to-console', //canonical name of our (base) custom attribute.
     spawn: class {
         constructor(enhancedElement: Element, enhancementInfo: EnhancementInfo){
@@ -124,7 +124,7 @@ customElementRegistry.inject({
 });
 ```
 
-A function prototype can still be used.  The word "spawn" as opposed to "do" indicates to use "new " before "invoking" the class constructor or function signature, and also to hold on to a weak reference keyed off the passed in enhancement info object (more on that later).
+A function prototype can still be used.  The word "spawn" as opposed to "do" indicates to use "new ..." before "invoking" the class constructor or function signature, and also to hold on to a weak reference keyed off the passed in enhancement info object (more on that later).
 
 ## How do I, or my users, access my class instance, and/or public properties / methods therein?
 
