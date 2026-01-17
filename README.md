@@ -57,7 +57,7 @@ Classes are also supported, as described below.  But for this simple example, a 
 
 ## Why "mount"?
 
-Just a suggestion.  It ties in with this [additional / primitive proposal](https://github.com/WICG/webcomponents/issues/896) which this proposal might be considered to be extending.  Other suggestions are "inject", "enhance", "enhanceWith", "decorate", "decorateWith", the sky is the limit.  The specific suggestion of "inject" will become clearer in what follows, hopefully.
+Just a suggestion.  It ties in with this [additional / primitive proposal](https://github.com/WICG/webcomponents/issues/896) which this proposal might be considered to be extending (and vice versa).  Other suggestions are "inject", "enhance", "enhanceWith", "decorate", "decorateWith", the sky is the limit.  The specific suggestion of "inject" will become clearer in what follows, hopefully.
 
 ## Why the long attribute names?
 
@@ -124,12 +124,13 @@ customElementRegistry.mount({
 });
 ```
 
-A function prototype can still be used.  The word "spawn" as opposed to "do" indicates a number of significant differences in behavior:
+A function prototype can also be used.  The word "spawn" as opposed to "do" indicates a number of significant differences in behavior:
 
 1.  Spawn will use "new ..." before "invoking" the class constructor or function signature
-2.  Unlike "do", "spawn" will cause a weak reference keyed off the passed in enhancement info object (more on that later), in order to provide a way for other parties to gain access to the.
+2.  Unlike "do", "spawn" will cause a weak reference keyed off the passed in mount info object (more on that later), in order to provide a way for other parties to gain access to the instance.
+3.  As mentioned earlier, spawned instances will be publicly accessible as described below.
 
-The do function only gets called the first time all the criteria contained in mountInfo is met.
+The do function only gets called the first time all the criteria contained in mountInfo is met.  Likewise, the spawn instance only gets created once, unless the developer disposes it, as described below.
 
 
 ## How do I, or my users, access my class instance, and/or public properties / methods therein?
@@ -141,6 +142,8 @@ In lots of ways, which we will discuss far below.  We want to make this as conve
 
 
 ## ElementEnhancement API Shape
+
+The structure below is optimized to allow for renaming things with as little pain as possible.
 
 ```TypeScript
 
@@ -156,10 +159,10 @@ const mountInfo: MountInfo = {
     spawn: async () => {
         return MyEnhancementClassConstructor
     },
-    //optional -- this is one place we can optionally find the instance of the class that gets created:
-    // oElement.enh[enhKey], i.e. oElement.enh.greetings
+    //optional -- this is one place we can optionally find the instance of the spawned class that gets created:
+    // oElement.enh[enhKey], e.g. oElement.enh.greetings
     // Don't be afraid to use, but you can avoid possible name clashes by not using if there's no need
-    // to publicly expose the api to other components / libraries
+    // to publicly expose the api outside of tightly constrained JavaScript
     /** @type {string | symbol | undefined} **/
     enhKey: 'greetings',
     //optional
