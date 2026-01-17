@@ -58,7 +58,7 @@ It would be great if we could use a short attribute name, like "log".  That can 
 
 While it is a bit dicey to be supporting these single word attributes for custom elements, attributes that could conflict with future global attributes, that ship has sailed, and I view it as similar to key words in JavaScript, just a risk we have agreed is acceptable.
 
-This proposal views the risks of following suit as being too high when we move on to enhancing higher-order components, especially as the platform is happily introducing more of them (🥳).  There is an informal understanding that built-in attributes won't have dashes in them (e.g. onclick, etc), [except once in a blue moon](https://github.com/webplatformco/project-custom-attributes/?tab=readme-ov-file#naming) (aria-*), so insisting on dashes in this context seems prudent.
+This proposal views the risks of following suit as being too high when we move on to enhancing higher-order components, especially as the platform is happily introducing more of them (🥳).  There is an informal understanding that built-in attributes won't have dashes in them (e.g. onclick, etc), [except once in a blue moon](https://github.com/webplatformco/project-custom-attributes/?tab=readme-ov-file#naming) (aria-*), so insisting on dashes (or maybe another short character like "_" ) in this context seems prudent.
 
 The extra enh- is there to avoid conflicting with attributes that a custom element author may be using, so one of the aspects of this proposal is to suggest that the platform reserve "enh-" prefix similar to how it reserved "data-".
 
@@ -91,25 +91,41 @@ Some risks to doing this:
 
 It doesn't seem to me that any of these concerns would "block" the platform from doing its thing, so this proposal opts to empower the developer to take these risks.
 
+> [!NOTE]
+> I agree 100% with others that scoped registry being fully settled before some combination of these proposals get rolled out into production would appear to be the wise course of action.  Now that Safari has rolled out scoped registries, this proposal is incorporating the concepts.
+
+## Support for classes
+
+If the requirements for an enhancement would benefit from a stateful class that can be accessed publicly, use "spawn" instead of "do":
+
+```JS
+customElementRegistry.inject({
+    base: 'log-to-console', //canonical name of our (base) custom attribute.
+    spawn: class {
+        constructor(enhancedElement: Element, enhancementInfo: EnhancementInfo){
+            super();
+            const {base} = enhancementInfo;
+            enhancedElement.addEventListener('click', e => {
+                const {target} = e;
+                console.log(
+                       target.getAttribute(`enh-${base}`)
+                    || target.getAttribute(base)
+                ); 
+            });
+        }
+    }
+});
+```
+
+A function prototype can still be used.  The word "spawn" as opposed to "do" indicates to use "new " before "invoking" the class constructor or function signature, and also to hold on to a weak reference keyed off the passed in enhancement info object (more on that later).
+
 ## How do I, or my users, access my class instance, and/or public properties / methods therein?
 
-In lots of ways, which we will discuss far below.  We want to make this as convenient for all parties as possible, which we will get into later.  But since we stipulated "isolated", we did not specify where or how in this simplest of examples.  Chillax!
+In lots of ways, which we will discuss far below.  We want to make this as convenient for all parties as possible, which we will get into later.  Chillax!
 
 > [!NOTE]
 > Adding public properties and methods to the class instance will *not* be accessible directly from the top level of the element being enhanced.
 
-## Why one argument in define?
-
-I believe doing so will make dependency injection, as discussed far below, more seamless.  I don't think this is applicable to custom elements.
-
-## A note about naming, part I
- 
-Why ElementEnhancement and not (Custom)Attribute? This proposal "breaks" if we change it to that name, and the good news is there are some viable, interesting proposals, linked to above, which take that approach.  I think this naming convention, which may take a little bit of getting used to based on current parlance, aligns much better with the ultimate goal of this proposal.  This proposal sees custom attributes as a means to an end, just as "custom tag name" is a means to a more abstract end:  A custom (HTML) Element. 
-
-So why not use the customElements' registry, why come up with a new registry, customEnhancements?  This point was raised, quite respectfully, at the face to face,  and seems to me like it may have some merit, and I suspect "under the hood" might make a tremendous amount of sense.  But from a developer point of view, it seems strange to use the  "customElements" object to add enhancements to built-in elements, so I wonder if the "under the hood" considerations could be camouflaged, in the name of clarity?  I eagerly await the formal proposal from the WebKit team(?) where this is spelled out.
-
-> [!NOTE]
-> I agree 100% with others that scoped registry being fully settled before some combination of these proposals get rolled out into production would appear to be the wise course of action.  Now that Safari has rolled out scoped registries, this proposal is incorporating the concepts.
 
 ## ElementEnhancement API Shape
 
@@ -117,7 +133,9 @@ So why not use the customElements' registry, why come up with a new registry, cu
 
 export const isHello = Symbol.for('o8u9z9so50iLU_WwKk6O7Q');
 const enhancementInfo: EnhancementInfo = {
-    //required.
+    //optional
+    do(enhancedElement: Element, info: EnhancementInfo){}
+    //optional.
     //Can point directly to an already loaded Class constructor, or
     //as shown below, it can point to an async loader that allows
     //for lazy loading on demand.
@@ -125,7 +143,7 @@ const enhancementInfo: EnhancementInfo = {
         return MyEnhancementClassConstructor
     },
     //optional -- this is one place we can optionally find the instance of the class that gets created:
-    // oElement.enhancements[enhKey], i.e. oElement.enhancements.greetings
+    // oElement.enh[enhKey], i.e. oElement.enh.greetings
     // Don't be afraid to use, but you can avoid possible name clashes by not using if there's no need
     // to publicly expose the api to other components / libraries
     /** @type {string | symbol | undefined} **/
@@ -165,22 +183,30 @@ const enhancementInfo: EnhancementInfo = {
         SomeAlreadyLoadedCustomElementClass
     ],
     //entirely optional
-    allowedCSSMatches: 'input, textarea',
+    allowedCSSMatches: 'input[type="text], textarea',
     //optional
     //can only enhance element if base attribute is present
-    baseRequired: false
-
-    initPropVals: any //set during the runtime attachment handshake
+    baseRequired: false,
+    //optional -- if needed to prevent memory leaks,
+    //specify name of method of class instance (or function prototype) to use
+    //this would be called before the enhanced element is about to 
+    //purged from memory, assuming it is possible to prevent
+    //these enhancements from being referenced counted.
+    disposeKey: 'dispose'
+    //optional -- if scheduling enhancements in sequence is needed, class must extend EventTarget (mixin someday?), and have a property with name specified below and dispatch event name when property switches to true:
+    resolvedKey: 'resolved'
 };
 type branchitude = number;
 type leafitude = number;
 type AttrCoordinates = `{branchitude}.{leafitude}`;
-class MyEnhancement extends ElementEnhancement<TSupportedElements = Element>(EventTarget) {
+class MyEnhancement {
 
-    constructor(enhancedElement: TSupportedElements, enhanceInfo: EnhancementInfo){}
+    constructor(enhancedElement: TSupportedElements, enhanceInfo: EnhancementInfo, initVals?: unknown){}
 
     dispose(enhancedElement: TSupportedElements, enhanceInfo: EnhancementInfo){
         //prior to garbage collection
+        //assuming it is possible to prevent
+        //these enhancements from being referenced counted.
     }
 	
     //maybe we don't need this, 
