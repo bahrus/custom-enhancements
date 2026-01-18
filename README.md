@@ -732,7 +732,7 @@ const inputEl = document.createElement('input');
 inputEl.assignGingerly({
     [isHappy]: true,
     [isMellow]: true,
-    '?.style.height': '40px',
+    '?.style?.height': '40px',
     '?.enh?.mellowYellow?.madAboutFourteen': true
 });
 inputEl.set[isMellow] = false;
@@ -829,7 +829,7 @@ This is an area likely to require some critical feedback from browser vendors, b
 This proposal is hoping that the browser engineers can figure out a way to not count these spawned enhancements when doing reference counting, and when the reference count minus spawned enhancements reaches 0, call the (configurable) dispose method of the function prototype / class and purge.
 
 
-One time it definitely would **not** be purged is if the (enh-*) attributes, if present, are removed from the enhanced element, since as we've discussed, the custom attribute aspect is only one way to invoke//spawn/attach an enhancement.  A developer may want to remove the attributes to reduce clutter, optimize for template instantiation, or before transferring to another Shadow DOM realm to avoid unexpected side effects of being transported in.
+One time it definitely would **not** be purged is if the (enh-*) attributes, if present, are removed from the enhanced element, since as we've discussed, the custom attribute aspect is only one way to invoke/spawn/attach an enhancement.  A developer may want to remove the attributes to reduce clutter, optimize for template instantiation, or before transferring to another Shadow DOM realm to avoid unexpected side effects of being transported in.
 
 I could see scenarios where the enhancement would want to know that its host has been disconnected and (re) connected.  So the custom enhancement should have a way of being notified that this transfer took place.
 
@@ -847,7 +847,7 @@ const detachedEnhancement = await oElement.enh.forget(mountInfo);
 
 I think we would want this to remove the associated attribute(s) also, if applicable (which is a little messy, because other enhancements may share the base or even base/branch/leaf combos as stated above, so maybe not).
 
-## How an enhancement class indicates it has hydrated 
+## How a spawned class indicates it has hydrated 
 
 Earlier in this document, I mentioned a feature built in to the base class, that indicates a state of "resolved".  Here's the explanation for one use case:
 
