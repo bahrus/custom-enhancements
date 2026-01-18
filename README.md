@@ -219,6 +219,7 @@ const mountInfo: MountInfo = {
     baseAttrRequired: false,
     // Doing this allows us to break free from 
     // rigid inheritance or mixin requirements
+    // whose ame we have to argue about endlessly
     lifecycleKeys:{
         /**
         optional -- if need to prevent memory leaks, mutation observers, etc
