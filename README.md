@@ -552,7 +552,7 @@ The purpose of having this "whenResolved" feature is explained towards the end o
 > [!NOTE]
 > I think it would be quite reasonable for these methods to accept an additional parameter where the registry and enhancement info can be passed in, and call the "inject" (subject to change) method on that registry when applicable, and throw an error if a conflicting enhancement has already been registered.  Not at all needed for day one.
 
-## Reducing developer guilt and allowing for a nice API by formally endorsing attaching the spawned instance to the element's "enhancements" property gateway
+## Reducing developer guilt and allowing for a nice API by formally endorsing attaching the spawned instance to the element's "enh" property gateway
 
 A key config setting in the enhacementInfo, "enhKey," would cause the spawned instance to be attached at that name to the new, proposed "enhancements" property gateway that would be added to the Element prototype.
 
