@@ -217,29 +217,43 @@ const mountInfo: MountInfo = {
     //can only enhance element if base attribute is present
     //very low priority requirement
     baseAttrRequired: false,
-    //optional -- if need to prevent memory leaks, mutation observers, etc
-    //specify name of method of class instance (or function prototype) to use
-    //this would be called before the enhanced element is about to be
-    //purged from memory, assuming it is possible to prevent
-    //these enhancements from being referenced counted as far as garbage collection.
-    //only applicable if spawn has a value
-    disposeKey: 'dispose'
-    //optional -- only applicable if spawn has a value
-    // if scheduling enhancements in sequence is needed, 
-    // class must extend EventTarget (mixin someday?), 
-    // and have a property with name specified below 
-    // and dispatch event name when property switches to true:
-    resolvedKey: 'resolved'
-    //optional -- name of method that handles attribute changes
-    //though personally I would rather we go with better mapping support
-    //it is quite easy for developers to add mutation observers for this
-    attributeChangeKey: 'attributeChangedCallback'
+    // Doing this allows us to break free from 
+    // rigid inheritance or mixin requirements
+    lifecycleKeys:{
+        /**
+        optional -- if need to prevent memory leaks, mutation observers, etc
+        specify name of method of class instance (or function prototype) to use
+        this would be called before the enhanced element is about to be
+        purged from memory, assuming it is possible to prevent
+        these enhancements from being referenced counted as far as garbage collection.
+        only applicable if spawn has a value
+        */
+        disposeKey: 'dispose',
+        /**
+        optional -- only applicable if spawn has a value
+        if scheduling enhancements in sequence is needed, 
+        class must extend EventTarget (mixin someday?), 
+        and have a property with name specified below 
+        and dispatch event name when property switches to true:
+        */
+        resolvedKey: 'resolved',
+        /**
+        optional -- name of method that handles attribute changes
+        though personally I would rather we go with better mapping support
+        it is quite easy for developers to add mutation observers for this
+        */
+        attributeChangeKey: 'attributeChangedCallback',
+    }
+
 };
+/**
+in this example, we can "hard code"
+the names "branches" and "leaves"
+but this api will allow n-levels deep
+*/
 type branchitude = number;
 type leafitude = number;
-// in this example, we can "hard code"
-// the names "branches" and "leaves"
-// but this api will allow n-levels deep
+
 type AttrCoordinates = 
     | `{branchitude}` 
     | `{branchitude}.{leafitude}`;
