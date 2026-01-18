@@ -575,9 +575,10 @@ customElements.mount({
             // could choose to modify the name(s), either globally, 
             // or inside a scoped registry in a different file.
             enhancedElement.addEventListener('click', e => {
+                const {target} = e;
                 console.log(
-                       enhancedElement.getAttribute(`enh-${baseAttr}`)
-                    || enhancedElement.getAttribute(base)
+                       target.getAttribute(`enh-${baseAttr}`)
+                    || target.getAttribute(base)
                 ); 
             });
         }
@@ -585,7 +586,7 @@ customElements.mount({
 });
 ```
 
-In the above example, we have two strings that we need to consider from the point of view of colliding with other enhancements (and with attributes of the (custom) elements themselves):  The name of the enhancement - "logger" - and the attribute(s) tied to it, if any:  'log-to-console'.  This proposal holds that the attributes for a single enhancement must share the same base, if help from the platform is desired.  Other enhancements can share that same base, and even share the entire  base-branch-leaf-prefix combo between different enhancements. It would result in multiple enhancements getting spawned. 
+In the above example, we have two strings that we need to consider from the point of view of colliding with other enhancements (and with attributes of the (custom) elements themselves):  The name of the enhancement - "logger" - and the attribute(s) tied to it, if any:  'log-to-console'.  This proposal holds that the attributes for a single enhancement must share the same base, if help from the platform is desired.  Other enhancements can share that same base, and even share the entire  baseAttr/attrTree combo between different enhancements. It would result in multiple enhancements getting spawned. 
 
 [TODO] Give a good example of two enhancements that would want to share the same 
 
