@@ -689,7 +689,7 @@ Due to this lazy property, set, being a proxy, the convenience of this approach 
 
 ## Symbolic Prop Shortcuts and support for dependency injection
 
-We can skip the step of either passing in mountInfo, as well as referencing the optional enhKey, which may not be totally stable when mixing together multiple third party libraries.  If instead, we want to "jump to the chase" and set (presumably) stable properties of the instance, we can do so as follows:
+We can skip the step of either passing in mountInfo, as well as referencing the optional enhKey, which may not be totally stable when mixing together multiple third party libraries.  If instead, we want to "jump to the chase" and [set](https://github.com/bahrus/assign-gingerly) (presumably) stable properties of the instance, we can do so as follows:
 
 ```JavaScript
 export const isHappy = Symbol.for('TFWsx0YH5E6eSfhE7zfLxA');
@@ -741,15 +741,15 @@ The platform would search the registry for any enhancements that has a mapping w
 
 The suggestion to use Symbol.for with a guid, as opposed to just Symbol(), is based on some negative experiences I've had with multiple versions of the same library being referenced, but is not required.  Regular symbols could also be used when that risk can be avoided.
 
-## Spawning/Attaching based on presence of attributes and/or whereElementMatches
+## Doing/Spawning/Attaching based on presence of attributes and/or whereElementMatches and/or whereInstanceOf
 
-If any one of the  (enh-*) attributes matching the pattern of base/branch/leaf is found on an element in the live DOM tree, this would cause the platform to instantiate an instance of the corresponding class, assuming other conditions are also met (whereElementMatches, whereInstanceOf).
+If any one of the  (enh-*) attributes matching the pattern of baseAttr/attrTree is found on an element in the live DOM tree, this would cause the platform to instantiate an instance of the corresponding class, assuming other conditions are also met (whereElementMatches, whereInstanceOf).
 
-If no base is specified (and thus attrTree is not applicable), but "whereElementMatches" is specified, this would also cause the spawn and/or do reactions.  Likewise with "whereInstanceOf".  Perhaps in the latter case, the prototype can be modified, assuming no additional conditions (low, low priority).
+If no baseAttr is specified (and thus attrTree is not applicable), but "whereElementMatches" is specified, this would also cause the spawn and/or do reactions.  Likewise with "whereInstanceOf".  Perhaps in the latter case, the prototype can be modified, assuming no additional conditions (low, low priority).
 
 I also suggest that it would be great if, during template instantiation supported natively by the platform, the platform can do whatever helps in achieving the most efficient outcome as far as recognizing these custom attributes.  One key feature this would provide is a way to extend the template instantiation process -- plug-ins essentially.  Especially if this means things could be done in "one-pass".  I don't claim any expertise in this area.  If the experts find little to no performance gain from this kind of integration, perhaps it is asking too much.  Doing this in userland would be quite straightforward (on a second pass, after the built-in instantiation has completed).
 
-My suspicion is that the best performing solution would be to do a "template compilation step", and convert all the attributes (with an opt-out capability) to a set of JavaScript instructions keyed off of the "coordinates" of the node, as implemented [here](https://github.com/bahrus/spawning).
+My suspicion is that the best performing solution would be to do a "template compilation step", and convert all the attributes (with an opt-out capability) to a set of JavaScript instructions keyed off of the "coordinates" of the node, as implemented [here](https://github.com/bahrus/spawning).  In short, (most of) the attributes go away, and the magic is applied "silently".
 
 Another integration nicety I would like to see supported by built-in template instantiation is to be able to bind sub objects from the host to the enhancements gateway.  So for example:
 
