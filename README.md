@@ -850,7 +850,7 @@ I think we would want this to remove the associated attribute(s) also, if applic
 
 ## How a spawned class indicates it has hydrated 
 
-Earlier in this document, I mentioned a feature built in to the base class, that indicates a state of "resolved".  Here's the explanation for one use case:
+Earlier in this document, I mentioned a configurable feature for indicating that the enhancement has "resolved" or "hydrated", whatever name the developer wants to use.  Why do we need this?
 
 In many cases, multiple enhancements are so loosely coupled, they can be run in parallel.
 
@@ -946,6 +946,18 @@ One way a first-party component could adopt a first-party or third-party behavio
 But suppose a behavior/enhancement's functionality is core to a custom element's mission, or close enough for government work? Suppose the custom element wants to provide key information that is not accessible from outside, like private data and/or the internals?  And/or suppose the custom element wants to nail down the name of the "custom prop" directly onto its namespaced object / prototype chain, so dependencies can leverage TypeScript and not have to be so vigilant about collisions between different (versioned) libraries that use the same name (beyond vigilance towards the shadow scoped name of the element itself).  As well as pinning down the (base) attribute(s) tied to the enhancement?
 
 I propose a significant amendment to this proposal, support for...:
+
+# But wait, there's more!!!
+
+[Custom Element Features](https://github.com/bahrus/custom-enhancements?tab=readme-ov-file#custom-element-features)
+
+[Support for private features](https://github.com/bahrus/custom-enhancements?tab=readme-ov-file#support-for-private-features)
+
+[Support for nested features](https://github.com/bahrus/custom-enhancements?tab=readme-ov-file#support-for-nested-features)
+
+[Support for Prop-Passthrough's to custom element features](https://github.com/bahrus/custom-enhancements?tab=readme-ov-file#support-for-prop-passthroughs-to-custom-element-features)
+
+[Support for a view model DOM fragment manager tied to the itemscope attribute.](https://github.com/bahrus/custom-enhancements?tab=readme-ov-file#support-for-a-view-model-dom-fragment-manager-tied-to-the-itemscope-attribute)
 
 # Custom Element Features
 
@@ -1057,25 +1069,9 @@ Here the platform would attach the feature in the base HTML class (preferably in
 
 Both ways of attaching the enhancement (imperatively and declaratively) would result the custom element instance in the platform dispatching a non bubbling event, "featureadded", allowing the userland code to pass in such things as private data and element internals to the enhancement.  It would be great if the platform could prevent outsiders from dispatching this event.
 
-## Serving dual roles
-
-I think it should (almost?) always be possible to use the same class to support both ElementEnhancements *and* CustomElementFeatures -- simply wrap both mixins:
-
-```JavaScript
-class MyPhotoTaker extends ElementEnhancement(CustomElementFeature(EventTarget))
-```
 
 
 
-# But wait, there's more!!!
-
-[Support for private features](https://github.com/bahrus/custom-enhancements?tab=readme-ov-file#support-for-private-features)
-
-[Support for nested features](https://github.com/bahrus/custom-enhancements?tab=readme-ov-file#support-for-nested-features)
-
-[Support for Prop-Passthrough's to custom element features](https://github.com/bahrus/custom-enhancements?tab=readme-ov-file#support-for-prop-passthroughs-to-custom-element-features)
-
-[Support for a view model DOM fragment manager tied to the itemscope attribute.](https://github.com/bahrus/custom-enhancements?tab=readme-ov-file#support-for-a-view-model-dom-fragment-manager-tied-to-the-itemscope-attribute)
 
 ## Support for private features
 
