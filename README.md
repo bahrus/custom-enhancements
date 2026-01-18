@@ -826,13 +826,13 @@ This is an area likely to require some critical feedback from browser vendors, b
 This proposal is hoping that the browser engineers can figure out a way to not count these spawned enhancements when doing reference counting, and when the reference count minus spawned enhancements reaches 0, call the (configurable) dispose method of the function prototype / class and purge.
 
 
-One time it definitely would **not** be purged is if the (enh-*) attributes, if present, are removed from the enhanced element, since as we've discussed, the custom attribute aspect is only one way to attach an enhancement.  A developer may want to remove the attributes to reduce clutter, optimize for template instantiation, or before transferring to another Shadow DOM realm to avoid unexpected side effects of being transported in.
+One time it definitely would **not** be purged is if the (enh-*) attributes, if present, are removed from the enhanced element, since as we've discussed, the custom attribute aspect is only one way to invoke//spawn/attach an enhancement.  A developer may want to remove the attributes to reduce clutter, optimize for template instantiation, or before transferring to another Shadow DOM realm to avoid unexpected side effects of being transported in.
 
 I could see scenarios where the enhancement would want to know that its host has been disconnected and (re) connected.  So the custom enhancement should have a way of being notified that this transfer took place.
 
 One way to do this is if the platform adds an event that can be subscribed to for elements:  Elements currently have a built-in property, "isConnected".  It would be great if the elements also emitted a standard event when the element becomes [connected and (possibly another)](https://github.com/whatwg/dom/issues/533) [event](https://twitter.com/jaffathecake/status/1521023821003767808) or [signal](https://github.com/whatwg/dom/issues/1296) when it becomes disconnected.
 
-Another way would be to allow developers to specify a key name for the connected and disconnected callbacks.  I prefer the previous solution.
+Another way would be to allow developers to specify a key name for the connected and disconnected callbacks.  I prefer the previous suggestion.
 
 ## How to programmatically dispose of an enhancement
 
