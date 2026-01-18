@@ -515,11 +515,11 @@ The reason I think it would be reasonable for the prefix enh-* to be required, o
 2.  But should a custom enhancement author choose a name that happens to coincide with one of the attribute names of another author's custom element, which seems quite likely to happen frequently, it still leaves the messy situation that the custom element's attribute gets improperly flagged as an enhancement.
 3.  However, it could be argued, depending on how smoothly working with scoped registry proves to be in this context, that such catastrophes could be averted using the scoped registry.  This proposal provides out-of-the-box support for renaming any and all the attributes associated with an enhancement.  So maybe it shouldn't be required, and may seem silly for developers working in a closed environment, with enhancements they have no interest in publishing for general consumption.  But even so, I think it would be quite useful for the platform to at a minimum provide for a key prefix that developers can use to help avoid having to be always on the watch out for such collisions (which might not become immediately apparent until some user discovers it in production).
 
-#  When should the spawn and/or do mount operations be supported by the platform?
+#  When should the spawn and/or do operations be supported by the platform?
 
-## Spawning/referencing methods of the enhancements property
+## Spawning/referencing methods of the enh property
 
-Unlike dataset, the enhancements property, added to the Element prototype, would have several methods available, making it easy for developers / frameworks to reference, and even spawning enhancements imperatively (without the need for attributes), for example during template instantiation (or later).
+Unlike dataset, the enh property, added to the Element prototype, would have several methods available, making it easy for developers / frameworks to reference, and even spawning enhancements imperatively (without the need for attributes), for example during template instantiation (or later).
 
 ```JavaScript
 // use this if "spawn" points to an already imported class
@@ -551,7 +551,7 @@ The whenResolved method would throw an error (catchable via try/catch with await
 The purpose of having this "whenResolved" feature is explained towards the end of this proposal.
 
 > [!NOTE]
-> I think it would be quite reasonable for these methods to accept an additional parameter where the registry and enhancement info can be passed in, and call the "inject" (subject to change) method on that registry when applicable, and throw an error if a conflicting enhancement has already been registered.  Not at all needed for day one.
+> I think it would be quite reasonable for these methods to accept an additional parameter where the registry and enhancement info can be passed in, and call the "mount" method on that registry when applicable, and throw an error if a conflicting enhancement has already been registered.  Not at all needed for day one.
 
 ## Reducing developer guilt and allowing for a nice API by formally endorsing attaching the spawned instance to the element's "enhancements" property gateway
 
@@ -576,9 +576,10 @@ customElements.mount({
             // could choose to modify the name(s), either globally, 
             // or inside a scoped registry in a different file.
             enhancedElement.addEventListener('click', e => {
+                const {target} = e
                 console.log(
-                       enhancedElement.getAttribute(`enh-${baseAttr}`)
-                    || enhancedElement.getAttribute(base)
+                       target.getAttribute(`enh-${baseAttr}`)
+                    || target.getAttribute(base)
                 ); 
             });
         }
@@ -602,7 +603,7 @@ There are some very strong use cases for the developer to go ahead and opt to na
 If no enhKey is specified by the parties registering the enhancement in the registry, I think the platform should still provide a less elegant mechanism to access the spawned instance, and in fact was already provided above:
 
 ```JavaScript
-const enhancementInstance = oElement.enh.get(mountInfo);
+const spawnedInstance = oElement.enh.get(mountInfo);
 ```
 
 ### Does it make sense to define a spawn mount with no enhKey and no base attribute and no whereElementMatches?
