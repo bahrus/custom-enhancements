@@ -1086,8 +1086,8 @@ Simply prefix the key with a #.  This will cause the FeatureAdded event to fire,
 ```TypeScript
 class ClubMember extends HTMLElement {
     
-    photoTaker: MyPhotoTaker | undefined;
-    badgeMaker: YourBadgeMaker | undefined;
+    #photoTaker: MyPhotoTaker | undefined;
+    #badgeMaker: YourBadgeMaker | undefined;
 }
 
 customElementRegistry.define('club-member', ClubMember, {
@@ -1110,13 +1110,13 @@ For really large components that make use of many features / behaviors / enhance
 I think given that these categories would tend to be fairly stable over time, and not have much custom logic if any,  we could leave much up to the developer to "hard code" these property bag classes without the benefit of dependency injection:
 
 ```TypeScript
-class MyPhotoTaker extends CustomElementFeature(EventTarget) implements MyPhotoTaker{}
-class MyBadgeMaker extends CustomElementFeature(EventTarget) implements MyBadgeMaker{}
+class MyPhotoTaker implements PhotoTaker{}
+class MyBadgeMaker implements BadgeMaker{}
 
 // Properties could be added to the prototype, probably producing better performance
 class RegistrationFeatures {
-    myPhotoTaker: MyPhotoTaker | undefined;
-    myBadgeMaker: MyBadgeMaker | undefined;
+    photoTaker: PhotoTaker | undefined;
+    badgeMaker: BadgeMaker | undefined;
 }
 
 class ClubMember extends HTMLElement{
@@ -1225,7 +1225,7 @@ interface CustomButton {
 }
 
 //or a mixin would work well also, I think
-class CommandCustomElementFeature extends CustomElementFeature(EventTarget) implements CommandInterface{
+class CommandCustomElementFeature implements CommandInterface{
     #internals;
     constructor(customElement: HTMLElement, commandFeatureInfo: FeatureInfo){
         super();
