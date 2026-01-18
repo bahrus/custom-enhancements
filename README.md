@@ -1293,7 +1293,7 @@ There are many scenarios where it makes sense to have one "central" element mana
 
 Unlike the other enhancements that this proposal supports, these element managers would not be enhancing the behavior of the element it provides, but rather focused squarely on binding and hydrating the light children of the element it adorns.  
 
-This proposal is advocating enhancing the itemscope attribute, so that it can optionally specify the name of a registered class, instances of which frameworks could then easily pass values to, or invoke methods, or dispatch events to.  These classes would need very little in terms of integration with the DOM API's, as their focus is meant to be on "business domain logic" -- no support for owned attributes is needed, for example.  Nor specifying any restrictions of which types of elements that we are targeting.  These classes would be so generic in manner that the element type is largely immaterial.
+This proposal is advocating enhancing the itemscope attribute, so that it can optionally specify the name of a registered class, instances of which frameworks could then easily pass values to, or invoke methods, or dispatch and listen for events to/from.  These classes would need very little in terms of integration with the DOM API's, as their focus is meant to be on "business domain logic" -- no support for owned attributes is needed, for example.  Nor specifying any restrictions of which types of elements that we are targeting.  These classes would be so generic in manner that the element type is largely immaterial.
 
 So I am advocating no fewer than three "registries", as far as categories of classes / function prototypes:
 
@@ -1301,7 +1301,11 @@ So I am advocating no fewer than three "registries", as far as categories of cla
 2.  Custom Enhancements, that extends ElementEnhancement (the bulk of this proposal)
 3.  Itemscope managers, that extends ItemscopeManager (the addendum to this proposal we are discussing now).  
 
-So, just to provide a sample API to make things less abstract, suppose the API for registering the Itemscope managers looks like this:
+## Proposed API
+
+```JavaScript
+customElementRegistry.
+```
 
 ```JavaScript
 document.body.registerItemScopeManager('my-item', class extends ItemscopeManager(Object){
