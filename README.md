@@ -814,7 +814,7 @@ The problem with using this inline binding in our template, which we might want 
 
 Because this proposal is advocating that the MountInfo interface that is passed into the define method has enough information to map from the attribute to the parsed properties, it's my view that this would allow template instantiation supported by the platform (or userland implementations) to avoid unnecessary string parsing, by making judicious use of caching.
 
-Again, I think [this](https://github.com/bahrus/spawning) is probably optimal way.
+Again, I think [this](https://github.com/bahrus/spawning) is probably the optimal way.
 
 ## Support for connected/disconnected callback of the element being enhanced?
 
