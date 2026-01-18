@@ -167,7 +167,7 @@ const mountInfo: MountInfo = {
     enhKey: 'greetings',
     //optional
     baseAttr: 'my-greetings',
-    //optional -- only applicable if base is present
+    //optional -- only applicable if baseAttr is present
     attrTree:[
         //allow for standalone base attribute
         '', 
@@ -180,14 +180,17 @@ const mountInfo: MountInfo = {
     ]
     //optional
     map: {
+        //base attribute my-greetings
         '0': {
             instanceOf: 'Object',
             mapsTo: '.'
         },
+        //my-greetings-hello
         '1': {
             instanceOf: 'Boolean',
             mapsTo: 'isHello'
         },
+        //my-greetings-hello-how-are-you
         '1.1': {
             instanceOf: 'String',
             mapsTo: 'firstHelloGreeting'
@@ -276,7 +279,7 @@ class MyEnhancement<
     
 
     //Entirely optional
-    static supportedCSSMatches = 'textarea, input';
+    static supportedCSSMatches = 'textarea[type="text"], input';
 
 }
 ```
