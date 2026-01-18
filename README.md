@@ -127,7 +127,7 @@ A function prototype can also be used.  The word "spawn" as opposed to "do" indi
 
 1.  Spawn will use "new ..." before "invoking" the class constructor or function signature
 2.  Unlike "do", "spawn" will cause a weak reference keyed off the passed in mount info object (more on that later), in order to provide a way for other parties to gain access to the instance.
-3.  As mentioned earlier, spawned instances will be publicly accessible as described below.
+
 
 The do function only gets called the first time all the criteria contained in mountInfo is met.  Likewise, the spawn instance only gets created once, unless the developer disposes it, as described below.
 
