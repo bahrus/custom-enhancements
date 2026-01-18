@@ -1,10 +1,12 @@
+# Mounting built-in enhancements, custom element features, itemscope managers
+
 ## Author
 
 Bruce B. Anderson
 
 PR's, Issues [welcome](https://github.com/bahrus/custom-enhancements)
 
-Last update: Jan 17, 2026
+Last update: Jan 18, 2026
 
 This is [one](https://github.com/whatwg/html/issues/2271) [of](https://eisenbergeffect.medium.com/2023-state-of-web-components-c8feb21d4f16) [a](https://github.com/WICG/webcomponents/issues/1029) [number](https://github.com/WICG/webcomponents/issues/727) of interesting proposals, one of which (or some combination?) can hopefully get buy-in from all three browser vendors.  This proposal borrows heavily from the others.
 
@@ -125,7 +127,7 @@ customElementRegistry.mount({
 
 A function prototype can also be used.  The word "spawn" as opposed to "do" indicates a number of significant differences in behavior:
 
-1.  Spawn will use "new ..." before "invoking" the class constructor or function signature
+1.  Spawn will use "new ..." before "invoking" the class constructor or function prototype signature
 2.  Unlike "do", "spawn" will cause a weak reference keyed off the passed in mount info object (more on that later), in order to provide a way for other parties to gain access to the instance.
 
 
@@ -150,20 +152,23 @@ export const isHello = Symbol.for('o8u9z9so50iLU_WwKk6O7Q');
 const mountInfo: MountInfo = {
     //optional
     do(el: Element, {info, signal}: {info: MountInfo, signal: AbortSignal}){}
-    //optional.
-    //Can point directly to an already loaded Class constructor, or
-    //as shown below, it can point to an async loader that allows
-    //for lazy loading on demand.
-    // either "do" or "spawn" is required.  Both is also fine.
+    /** optional.
+    Can point directly to an already loaded Class constructor, or
+    as shown below, it can point to an async loader that allows
+    for lazy loading on demand.
+    either "do" or "spawn" is required.  Both is also fine.
+    */
     spawn: async () => {
         return MyEnhancementClassConstructor
     },
-    //optional -- this is one place we can optionally find the instance of the spawned class that gets created:
-    // oElement.enh[enhKey], e.g. oElement.enh.greetings
-    // Don't be afraid to use, but you can avoid possible name clashes by not
-    // using if there's no need
-    // to publicly expose the api outside of tightly constrained JavaScript
-    /** @type {string | symbol | undefined} **/
+    /**
+    optional -- this is one place we can optionally find the instance 
+    of the spawned class that gets created: oElement.enh[enhKey], 
+    e.g. oElement.enh.greetings
+    Don't be afraid to use, but you can avoid possible name clashes by not
+    using if there's no need to publicly expose the api outside of 
+    tightly constrained JavaScript, and also easier debugging.
+    @type {string | symbol | undefined} */
     enhKey: 'greetings',
     //optional
     baseAttr: 'my-greetings',
