@@ -141,7 +141,7 @@ In lots of ways, which we will discuss far below.  We want to make this as conve
 > Adding public properties and methods to the class instance will *not* be accessible directly from the top level of the element being enhanced.
 
 
-## ElementEnhancement API Shape
+## Mount Registry API Shape
 
 The structure below is optimized to allow for renaming things with as little pain as possible.
 
@@ -150,7 +150,7 @@ The structure below is optimized to allow for renaming things with as little pai
 export const isHello = Symbol.for('o8u9z9so50iLU_WwKk6O7Q');
 const mountInfo: MountInfo = {
     //optional
-    do(enhancedElement: Element, {info, signal}: {info: MountInfo, signal: AbortSignal}){}
+    do(el: Element, {info, signal}: {info: MountInfo, signal: AbortSignal}){}
     //optional.
     //Can point directly to an already loaded Class constructor, or
     //as shown below, it can point to an async loader that allows
@@ -566,7 +566,7 @@ customElements.mount({
     enhKey: 'logger',
     baseAttr: 'log-to-console', //canonical name of our (base) custom attribute.
     spawn: class extends ElementEnhancement(EventTarget) {
-        constructor(enhancedElement: Element, mountInfo: MountInfo){
+        constructor(el, {mountInfo}){
             super();
             const {baseAttr} = mountInfo;
             // in this example, base will simply equal 'log-to-console', 
@@ -697,7 +697,7 @@ inputEl.assignGingerly({
     [isHappy]: true,
     [isMellow]: true,
     '?.style.height': '40px',
-    '?.enhancements?.mellowYellow?.madAboutFourteen': true
+    '?.enh?.mellowYellow?.madAboutFourteen': true
 });
 inputEl.set[isMellow] = false;
 divContainer.appendChild(inputEl);
