@@ -61,7 +61,7 @@ Just a suggestion.  It ties in with this [additional / primitive proposal](https
 
 ## Why the long attribute names?
 
-It would be great if we could use a short attribute name, like "log".  That can be done for custom elements, why not custom enhancements?  This is especially important to consider because, as we will see, this proposal supports multiple attributes "owned" by an enhancement, so allowing for small names would help reduce carpal syndrome.
+It would be great if we could use a short attribute name, like "log".  That can be done for custom elements, why not here?  This is especially important to consider because, as we will see, this proposal supports multiple attributes "owned" by an enhancement, so allowing for small names would help reduce carpal syndrome.
 
 While it is a bit dicey to be supporting these single word attributes for custom elements, attributes that could conflict with future global attributes, that ship has sailed, and I view it as similar to key words in JavaScript, just a risk we have agreed is acceptable.
 
@@ -392,9 +392,9 @@ This proposal is focusing somewhat on managing attributes, similar to custom ele
 
 I agree with others that the support that the platform currently provides for managing attributes with custom elements is insufficient.  So further compounding that shortcoming by creating a whole new api without additional support doesn't seem right. 
 
-I like the promising ideas presented [here](https://github.com/WICG/webcomponents/issues/1029) as far as providing declarative support for managing properties and attributes.  Based on the reasoning above, I think it makes sense to consider such [improvements to custom elements themselves](https://github.com/WICG/webcomponents/issues/1045), and I see no reason not to carry over such ideas to custom enhancements, which this proposal does in fact do (with some variations where it makes sense).  
+I like the promising ideas presented [here](https://github.com/WICG/webcomponents/issues/1029) as far as providing declarative support for managing properties and attributes.  Based on the reasoning above, I think it makes sense to consider such [improvements to custom elements themselves](https://github.com/WICG/webcomponents/issues/1045), and I see no reason not to carry over such ideas in this space, which this proposal does in fact do (with some variations where it makes sense).  
 
-Or maybe it would make more sense to "pilot" such ideas on custom enhancements, and then apply to custom elements.  I think those ideas are 100% compatible with this proposal, and shouldn't break it in any way. 
+Or maybe it would make more sense to "pilot" such ideas on here, and then apply to custom elements.  I think those ideas are 100% compatible with this proposal, and shouldn't break it in any way. 
 
 
 ## Backdrop
@@ -456,7 +456,7 @@ So if server-rendered HTML looks as follows:
 
 The requirement for the prefix can be dropped only if built-in elements are targeted, in which case the only requirement is that the attribute(s) contain (a) dash(es) or non ascii characters.  
 
-Another aspect of this proposal that I think should be considered is that as the template instantiation proposal gels, looking for opportunities for these enhancements to play a role in the template instantiation process would be great. Many of the most popular such libraries do provide similar binding support as what template instantiation aims to support.  Basically, look for opportunities to make custom element enhancements serve the dual purpose of making template instantiation extendable, especially if that adds even a small benefit to performance.
+Another aspect of this proposal that I think should be considered is that as the template instantiation proposal gels, looking for opportunities for these enhancements to play a role in the template instantiation process would be great. Many of the most popular such libraries do provide similar binding support as what template instantiation aims to support.  Basically, look for opportunities to make these spawned class definitions to serve the dual purpose of making template instantiation extendable, especially if that adds even a small benefit to performance.
 
 ## A note about naming
 
@@ -554,7 +554,7 @@ The purpose of having this "whenResolved" feature is explained towards the end o
 
 ## Reducing developer guilt and allowing for a nice API by formally endorsing attaching the spawned instance to the element's "enh" property gateway
 
-A key config setting in the enhacementInfo, "enhKey," would cause the spawned instance to be attached at that name to the new, proposed "enhancements" property gateway that would be added to the Element prototype.
+A key config setting in the mountInfo, "enhKey," would cause the spawned instance to be attached at that name to the new, proposed "enh" property gateway that would be added to the Element prototype.
 
 Use of the enhKey means that the developer will be responsible for avoiding name-spacing conflicts with other enhancements registered in the same registry. 
 
@@ -562,7 +562,7 @@ For example:
 
 ```JS
 customElements.mount({
-    //name of our "custom prop", accessible via oElement.enhancements[enhKey], 
+    //name of our "custom prop", accessible via oElement.enh[enhKey], 
     //which is where we will find an instance of the class defined below.
     enhKey: 'logger',
     baseAttr: 'log-to-console', //canonical name of our (base) custom attribute.
@@ -722,7 +722,7 @@ My suspicion is that the best performing solution would be to do a "template com
 Another integration nicety I would like to see supported by built-in template instantiation is to be able to bind sub objects from the host to the enhancements gateway.  So for example:
 
 ```html
-<input :enhancements.steelEnhancer.carbonPercent={{carbonPercent}} >
+<input :enh.steelEnhancer.carbonPercent={{carbonPercent}} >
 ```
 
 would work (using FAST web component syntax here.  Lit uses a . instead).
@@ -871,9 +871,7 @@ The attribute could also be used for purposes of disabling functionality within 
 
 ## Namespacing events
 
-Because custom enhancements extend the EventTarget, it is quite possible (and probably optimal) to subscribe to events directly from the enhancement, as we've seen above with the "resolved" event.
-
-However, I've encountered quite a few use cases where we want the enhancement to dispatch an event from the element it adorns.
+I've encountered quite a few use cases where we want the enhancement to dispatch an event from the element it adorns.
 
 To be able to distinguish that:
 
