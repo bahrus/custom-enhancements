@@ -222,7 +222,7 @@ const mountInfo: MountInfo = {
     // whose ame we have to argue about endlessly
     lifecycleKeys:{
         /**
-        optional -- if need to prevent memory leaks, mutation observers, etc
+        optional -- if need to prevent memory leaks, cleanup mutation observers, etc
         specify name of method of class instance (or function prototype) to use
         this would be called before the enhanced element is about to be
         purged from memory, assuming it is possible to prevent
