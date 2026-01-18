@@ -1305,6 +1305,7 @@ So I am advocating no fewer than three "registries", as far as categories of cla
 
 ```JavaScript
 customElementRegistry.define('my-item', class {
+    constructor(el: Element, initVals: unknown){}
     get ssn(){
         ...
     }
