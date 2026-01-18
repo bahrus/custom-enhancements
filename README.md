@@ -127,7 +127,7 @@ A function prototype can also be used.  The word "spawn" as opposed to "do" indi
 
 1.  Spawn will use "new ..." before "invoking" the class constructor or function signature
 2.  Unlike "do", "spawn" will cause a weak reference keyed off the passed in mount info object (more on that later), in order to provide a way for other parties to gain access to the instance.
-3.  As mentioned earlier, spawned instances will be publicly accessible as described below.
+
 
 The do function only gets called the first time all the criteria contained in mountInfo is met.  Likewise, the spawn instance only gets created once, unless the developer disposes it, as described below.
 
@@ -160,7 +160,8 @@ const mountInfo: MountInfo = {
     },
     //optional -- this is one place we can optionally find the instance of the spawned class that gets created:
     // oElement.enh[enhKey], e.g. oElement.enh.greetings
-    // Don't be afraid to use, but you can avoid possible name clashes by not using if there's no need
+    // Don't be afraid to use, but you can avoid possible name clashes by not
+    // using if there's no need
     // to publicly expose the api outside of tightly constrained JavaScript
     /** @type {string | symbol | undefined} **/
     enhKey: 'greetings',
@@ -323,7 +324,7 @@ This would allow for more readable syntax:
 
 Having filtering support is there to benefit the developer first and foremost -- the developer is essentially publishing a "contract" of what kinds of elements they can support.  
 
-Another key reason for adding this filtering capability is performance -- there is a cost to instantiating an enhancement class, adding it to the enhancements gateway, invoking the callback, and holding on to the class instance in memory, so anything we can do to declaratively prevent that seems like a win for all involved.
+Another key reason for adding this filtering capability is performance -- there is a cost to instantiating a class, adding it to the enh gateway, and holding on to the class instance in memory, so anything we can do to declaratively prevent that seems like a win for all involved.
 
 The idea for using supportedInstanceTypes, proposed [here](https://github.com/WICG/webcomponents/issues/1029) seems like it has some quite positive benefits:
 
@@ -333,7 +334,7 @@ The idea for using supportedInstanceTypes, proposed [here](https://github.com/WI
 
 
 >[!NOTE]
->Bear in mind that if no "whereElementMatches/whereInstanceTypes" is specified (the default), and if the "base/attrTree" option is also not specified or is empty, the platform will *not* automatically enhance every element.  The platform will only act when it finds a matching attribute pattern and/or css match and/or instanceType.  But it will **allow** enhancements to be programmatically spawned by the developer on all element types in that scenario.  In fact, the platform will **ignore** the base/branches/leaves criteria altogether when the developer programmatically spawns an enhancement, only using the "allowed*" value(s) (combined with the static supported* values specified by the enhancement author) to prevent unauthorized enhancements. 
+>Bear in mind that if no "whereElementMatches/whereInstanceTypes" is specified (the default), and if the "base/attrTree" option is also not specified or is empty, the platform will *not* automatically enhance every element.  The platform will only act when it finds a matching attribute pattern and/or css match and/or instanceType.  But it will **allow** enhancements to be programmatically spawned by the developer on all element types in that scenario.  In fact, the platform will **ignore** the base/attrTree criteria altogether when the developer programmatically spawns an enhancement, only using the "allowed*" value(s) (combined with the static supported* values specified by the enhancement author) to prevent unauthorized enhancements. 
 
 ###  What, if any, are the benefits of having a "has" (or some other equivalent) attribute?
 
@@ -434,7 +435,7 @@ oMyCustomElement.enh.yourEnhancement.bar = foo;
 
 in a way that is recognized by the platform.
 
-The most minimal solution, then, is for the web platform to simply announce that no built-in element will ever use a property with name "enhancements", push the message to web component developers not to use that name, that it is a reserved property, similar to dataset,  only to be used by third-party enhancement libraries.  Of course, the final name would need to be agreed to.  This is just my suggestion.  Some analysis would be needed to make sure that "enhancements" isn't already in heavy use by any web component library in common usage.
+The most minimal solution, then, is for the web platform to simply announce that no built-in element will ever use a property with name "enh", push the message to web component developers not to use that name, that it is a reserved property, similar to dataset,  only to be used by third-party enhancement libraries.  Of course, the final name would need to be agreed to.  This is just my suggestion.  Some analysis would be needed to make sure that "enh" isn't already in heavy use by any web component library in common usage.
 
 I think that would be a great start.  But the rest of this proposal outlines some ways the platform could assist third parties in implementing their enhancements in a more orderly fashion, so they can work together, and with the platform, in harmony.
 
@@ -460,7 +461,7 @@ Another aspect of this proposal that I think should be considered is that as the
 ## A note about naming
 
 > [!NOTE]
-> The use of the term "enhancement" has been greatly reduced as this proposal has become increasingly "unopinionated", hence the importance of the name has likely greatly diminished.
+> The use of the term "enhancement" has been greatly reduced as this proposal has become increasingly "unopinionated", hence the importance of the name has greatly diminished.
 
 I started this journey placing great emphasis on the HTML attribute aspect of this, but as the concepts have marinated over time, I think it is a mistake to over emphasize that aspect.  The fundamental thing we are trying to do is to enhance existing elements, not attach strings to them.  
 
@@ -482,7 +483,7 @@ Some enhancements could be adding some common paragraph containing copyright tex
 
 Many are adding binding support to elements, which may or not resonate with developers as being a "behavior".
 
-So "enhancements" seems to cover all bases.
+So "enhancements" (enh) seems to cover all bases.
 
 Another reason to consider:  I think it would be wonderful if built-in elements started providing structured, namespaced paths to various features of the element.  Like what was done with styles from the get-go. As it is, having all the key properties at the top level, sometimes splitting up related properties like command and commandFor, has made the api rather unwieldy.    I think "behaviors" would be a great property name for built-in elements to use to indicate these are platform behaviors.  If so, use of "enhancements" for third party, well, enhancements, makes a lot of sense, I think.  So developers could access these built in behaviors via:
 
@@ -503,9 +504,7 @@ Even in our current day when the platform provides no such structure, it would n
 
 Granted, some frameworks might not support the ability to tap into this at first, but I suspect would accommodate it if the platform went in this direction.
 
-Others prefer "behaviors" (but the others who do seem to think it is of zero consequence, whereas I think there is some substantial consequence to the decision, if that counts for anything). I'm open to both, maybe my reasoning above is wrong (but no one has yet to address my concerns head on).
-
-Choosing the right name seems important, as it ought to align somewhat with the reserved sub-property of the element, as well as the reserved prefix for attributes (think data- / dataset).
+Others prefer "behaviors". I'm open to both, maybe my reasoning above is wrong (but no one has yet to address my concerns head on).
 
 ## Should use of enh-* prefix for server-rendered (progressive) enhancement of custom elements be required (or even strongly suggested?)
 
@@ -541,19 +540,19 @@ The whenResolved promise will only resolve when:
 2.  The enhancement author defines a class that extends EventTaget, and does:
 
 ```JavaScript
-const {resolvedKey} = mountInfo
+const {resolvedKey} = mountInfo;
 this[resolvedKey] = true;
-this.dispatchEvent(new Event(resolvedKey))
+this.dispatchEvent(new Event(resolvedKey));
 ```
 
-The whenResolved method would throw an error (catchable via try/catch with await or .catch() if using the more traditional promise approach) when the developer sets this.resolved = false;
+The whenResolved method would throw an error if no resoveldKey is specified, or the class doesn't extend EventTarget, or the resolvedKey value is false when the event fires.
 
 The purpose of having this "whenResolved" feature is explained towards the end of this proposal.
 
 > [!NOTE]
 > I think it would be quite reasonable for these methods to accept an additional parameter where the registry and enhancement info can be passed in, and call the "mount" method on that registry when applicable, and throw an error if a conflicting enhancement has already been registered.  Not at all needed for day one.
 
-## Reducing developer guilt and allowing for a nice API by formally endorsing attaching the spawned instance to the element's "enhancements" property gateway
+## Reducing developer guilt and allowing for a nice API by formally endorsing attaching the spawned instance to the element's "enh" property gateway
 
 A key config setting in the enhacementInfo, "enhKey," would cause the spawned instance to be attached at that name to the new, proposed "enhancements" property gateway that would be added to the Element prototype.
 
@@ -576,7 +575,7 @@ customElements.mount({
             // could choose to modify the name(s), either globally, 
             // or inside a scoped registry in a different file.
             enhancedElement.addEventListener('click', e => {
-                const {target} = e
+                const {target} = e;
                 console.log(
                        target.getAttribute(`enh-${baseAttr}`)
                     || target.getAttribute(base)
@@ -587,7 +586,7 @@ customElements.mount({
 });
 ```
 
-In the above example, we have two strings that we need to consider from the point of view of colliding with other enhancements (and with attributes of the (custom) elements themselves):  The name of the enhancement - "logger" - and the attribute(s) tied to it, if any:  'log-to-console'.  This proposal holds that the attributes for a single enhancement must share the same base, if help from the platform is desired.  Other enhancements can share that same base, and even share the entire  base-branch-leaf-prefix combo between different enhancements. It would result in multiple enhancements getting spawned. 
+In the above example, we have two strings that we need to consider from the point of view of colliding with other enhancements (and with attributes of the (custom) elements themselves):  The name of the enhancement - "logger" - and the attribute(s) tied to it, if any:  'log-to-console'.  This proposal holds that the attributes for a single enhancement must share the same base, if help from the platform is desired.  Other enhancements can share that same base, and even share the entire  baseAttr/attrTree combo between different enhancements. It would result in multiple enhancements getting spawned. 
 
 [TODO] Give a good example of two enhancements that would want to share the same 
 
