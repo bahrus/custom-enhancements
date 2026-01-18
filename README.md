@@ -216,7 +216,7 @@ const mountInfo: MountInfo = {
     //optional
     //can only enhance element if base attribute is present
     //very low priority requirement
-    baseRequired: false,
+    baseAttrRequired: false,
     //optional -- if need to prevent memory leaks, mutation observers, etc
     //specify name of method of class instance (or function prototype) to use
     //this would be called before the enhanced element is about to be
