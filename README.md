@@ -681,10 +681,9 @@ class MyEnhancement{
 
 The enhancement author would probably want those initVals to be merged into the object so that from the outside, no interruption of property values can be observe during the switchover.
 
-If no such registry is found at the moment of this call, the platform needn't worry.  In fact, this would allow developers to simply store an object on the element, an often requested feature (data-* only stores storing strings).
-
-
 The attaching in the background convenience would only be possible if the developer has already registered enhKey = "steelEnhancer" in an applicable registry.
+
+If no such registry is found at the moment of this call, the platform needn't worry.  In fact, this would allow developers to simply store an object on the element, an often requested feature (data-* only stores storing strings).
 
 Due to this lazy property, set, being a proxy, the convenience of this approach likely comes at a cost.  Proxies do impose a bit of a performance penalty, so a framework or library that uses this feature would be well-advised to add a little bit of nuance to the code, to set properties directly to the enhancement once it is known that the enhancement has attached.  For example, use this property the first time setting a property value, and then more directly for subsequent times.  Or, alternatively, implement the identical logic described above within the library code, thus avoiding the use of this special property altogether.
 
