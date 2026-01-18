@@ -160,7 +160,8 @@ const mountInfo: MountInfo = {
     },
     //optional -- this is one place we can optionally find the instance of the spawned class that gets created:
     // oElement.enh[enhKey], e.g. oElement.enh.greetings
-    // Don't be afraid to use, but you can avoid possible name clashes by not using if there's no need
+    // Don't be afraid to use, but you can avoid possible name clashes by not
+    // using if there's no need
     // to publicly expose the api outside of tightly constrained JavaScript
     /** @type {string | symbol | undefined} **/
     enhKey: 'greetings',
