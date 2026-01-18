@@ -1304,11 +1304,7 @@ So I am advocating no fewer than three "registries", as far as categories of cla
 ## Proposed API
 
 ```JavaScript
-customElementRegistry.
-```
-
-```JavaScript
-document.body.registerItemScopeManager('my-item', class extends ItemscopeManager(Object){
+customElementRegistry.define('my-item', class {
     get ssn(){
         ...
     }
@@ -1321,8 +1317,9 @@ document.body.registerItemScopeManager('my-item', class extends ItemscopeManager
     set name(val){
         ...
     }
-});
+}, {as: "ItemScopeManager"});
 ```
+
 
 
 Then libraries could integrate with these managers.  For example, with lit-html:
