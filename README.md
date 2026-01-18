@@ -228,7 +228,7 @@ const mountInfo: MountInfo = {
         these enhancements from being referenced counted as far as garbage collection.
         only applicable if spawn has a value
         */
-        disposeKey: 'dispose',
+        dispose: 'dispose',
         /**
         optional -- only applicable if spawn has a value
         if scheduling enhancements in sequence is needed, 
@@ -236,13 +236,13 @@ const mountInfo: MountInfo = {
         and have a property with name specified below 
         and dispatch event name when property switches to true:
         */
-        resolvedKey: 'resolved',
+        resolved: 'resolved',
         /**
         optional -- name of method that handles attribute changes
         though personally I would rather we go with better mapping support
         it is quite easy for developers to add mutation observers for this
         */
-        attributeChangeKey: 'attributeChangedCallback',
+        attributeChangedCallback: 'attributeChangedCallback',
     }
 
 };
@@ -954,16 +954,22 @@ Here, no "enh-" prefix is required for attributes.  In fact, enh- prefixed attri
 
 ```TypeScript
 interface PhotoTaker{}
-class MyPhotoTaker extends CustomElementFeature(EventTarget) implements PhotoTaker{
+class MyPhotoTaker implements PhotoTaker{
     constructor(customElement: HTMLElement, {info}: {info: MyPhotoTakerFeatureInfo}){
         super();
         ...
     }
+    set internals?(elementInternals: HTMLElementInternals){
+        ...
+    }
 }
 interface BadgeMaker{}
-class YourBadgeMaker extends CustomElementFeature(EventTarget) implements BadgeMaker{
+class YourBadgeMaker implements BadgeMaker{
     constructor(customElement: HTMLElement, {info}: {info: YourPhotoTakerFeatureInfo}){
         super();
+        ...
+    }
+    set internals?(elementInternals: HTMLElementInternals){
         ...
     }
 }
@@ -988,6 +994,8 @@ class ClubMember extends HTMLElement implements ClubMemberProps{
             .atProp('badgeMaker');
     }
 
+    //use a decorator or some other means to convert these fields
+    //into propertiees as needed
     photoTaker: PhotoTaker;
 
     badgeMaker: BadgeMaker;
@@ -1000,25 +1008,29 @@ I think this would allow for testable Mock Objects, especially if these methods 
 
 This code can be run at any time, not just in the constructor.
 
-The type definition for FeatureInfo would closely resemble that of MountInfo, but some fields of MountInfo don't quite make sense in this context, and other fields may make more sense in the context of features, like the last two:
+We would not call customElementRegistry.mount for this.
+
+Instead, we define a small variation of MountInfo, called FeatureInfo.  The type definition for FeatureInfo would closely resemble that of MountInfo, but some fields of MountInfo don't quite make sense in this context, and other fields may make more sense in the context of features:
+
 
 ```TypeScript
-type Feature = {new(): CustomElementFeature} | () => Promise<{new(): CustomElementFeature}>
+type Feature = {new(): unknown} | () => Promise<{new(): unknown}>
 interface FeatureInfo {
     spawn: Feature
-    base?: Base
-    branches?: Branches
-    leaves?: Leaves
-    map: {key: AttrCoordinates: AttrHandlerInfo}
-    //only attach the feature if the base attribute is present on the element
-    attachOnBase?: boolean
+    baseAttr?: Base
+    attrMap?:...
+    map?...
     //Instantiate the feature immediately when the custom element is created.
     //Applicable to the declarative support described below.
     loadEagerly?: boolean
+    lifeCycleKeys:{
+        internalsSetter: 'internals'
+    }
+
 }
 ```
 
-No support for supportInstanceTypes, supportedCssMatches is needed, for example. 
+I don't it makes sense for FeatureInfo to support enhKey, whereInstanceOf, for example.
 
 ## Support for adding features to the custom element prototype declaratively with dependency injection
 
@@ -1033,8 +1045,8 @@ class ClubMember extends HTMLElement {
 
 customElementRegistry.define('club-member', ClubMember, {
     features: {
-        photoTaker: MyPhotoTakerFeatureInfo,
-        badgeMaker: YourBadgeMakerFeatureInfo
+        photoTaker: MyPhotoTakerMountInfo,
+        badgeMaker: YourBadgeMakerMountInfo
     }
 });
 
@@ -1042,7 +1054,7 @@ customElementRegistry.define('club-member', ClubMember, {
 
 Here the platform would attach the feature in the base HTML class (preferably in the constructor, I think) using the afore mentioned methods, if loadEagerly is set to true.  If loadEagerly is false (the default), the platform will only instantiate it when it finds a matching attribute or detects property access in ways that have been described above.
 
-Both ways of attaching the enhancement would result in dispatching an event, '"featureadded", allowing the userland code to pass in such things as private data and element internals to the enhancement.
+Both ways of attaching the enhancement (imperatively and declaratively) would result the custom element instance in the platform dispatching a non bubbling event, "featureadded", allowing the userland code to pass in such things as private data and element internals to the enhancement.  It would be great if the platform could prevent outsiders from dispatching this event.
 
 ## Serving dual roles
 
@@ -1052,17 +1064,7 @@ I think it should (almost?) always be possible to use the same class to support 
 class MyPhotoTaker extends ElementEnhancement(CustomElementFeature(EventTarget))
 ```
 
-## Differences between the two mixins
 
-I think it makes sense for the CustomElementFeature to have a standard, reserved setter (similar to connectedCallback) for passing in the custom element internals:
-
-```TypeScript
-interface CustomElementFeature{
-    resolved?: boolean
-    set internals?(elementInternals: HTMLElementInternals)
-    channelEvent(event: Event, options: EventInitOptions)
-}
-```
 
 # But wait, there's more!!!
 
