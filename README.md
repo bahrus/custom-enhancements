@@ -110,7 +110,6 @@ customElementRegistry.mount({
     baseAttr: 'log-to-console', //canonical name of our (base) custom attribute.
     spawn: class {
         constructor(enhancedElement, {mountInfo}){
-            super();
             const {baseAttr} = mountInfo;
             enhancedElement.addEventListener('click', e => {
                 const {target} = e;
@@ -460,6 +459,9 @@ Another aspect of this proposal that I think should be considered is that as the
 
 ## A note about naming
 
+> [!NOTE]
+> The use of the term "enhancement" has been greatly reduced as this proposal has become increasingly "unopinionated", hence the importance of the name has likely greatly diminished.
+
 I started this journey placing great emphasis on the HTML attribute aspect of this, but as the concepts have marinated over time, I think it is a mistake to over emphasize that aspect.  The fundamental thing we are trying to do is to enhance existing elements, not attach strings to them.  
 
 When we enhance existing elements during template instantiation, the attributes (can) go away, in order to optimize performance.  It is much faster and flexible to pass data through a common gateway property, not through attributes.  For similar reasons, when one big enhancement needs to cobble smaller enhancements together, again, the best gateway is not through attributes, which again would be inefficient, and would result in big-time cluttering of the DOM, but rather through the same common property gateway through which all these enhancements would be linked. 
@@ -565,9 +567,8 @@ customElements.mount({
     //which is where we will find an instance of the class defined below.
     enhKey: 'logger',
     baseAttr: 'log-to-console', //canonical name of our (base) custom attribute.
-    spawn: class extends ElementEnhancement(EventTarget) {
+    spawn: class {
         constructor(el, {mountInfo}){
-            super();
             const {baseAttr} = mountInfo;
             // in this example, base will simply equal 'log-to-console', 
             // but this code is demonstrating how to code defensively, so that
