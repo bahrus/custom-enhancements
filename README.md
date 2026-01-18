@@ -743,7 +743,7 @@ The suggestion to use Symbol.for with a guid, as opposed to just Symbol(), is ba
 
 ## Doing/Spawning/Attaching based on presence of attributes and/or whereElementMatches and/or whereInstanceOf
 
-If any one of the  (enh-*) attributes matching the pattern of baseAttr/attrTree is found on an element in the live DOM tree, this would cause the platform to instantiate an instance of the corresponding class, assuming other conditions are also met (whereElementMatches, whereInstanceOf).
+If any one of the  (enh-*) attributes matching the pattern of baseAttr/attrTree is found on an element in the live DOM tree, this would cause the platform to invoke the do function and/or instantiate the spawn class, assuming other conditions are also met (whereElementMatches, whereInstanceOf).
 
 If no baseAttr is specified (and thus attrTree is not applicable), but "whereElementMatches" is specified, this would also cause the spawn and/or do reactions.  Likewise with "whereInstanceOf".  Perhaps in the latter case, the prototype can be modified, assuming no additional conditions (low, low priority).
 
