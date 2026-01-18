@@ -559,12 +559,15 @@ The whenResolved promise will only resolve when:
 2.  The enhancement author defines a class that extends EventTaget, and does:
 
 ```JavaScript
-const {resolvedKey} = mountInfo;
-this[resolvedKey] = true;
-this.dispatchEvent(new Event(resolvedKey));
+const {lifecycleKeys} = mountInfo;
+if(lifecycleKeys){
+    const {resolvedKey} = lifecycleKeys;
+    this[resolvedKey] = true;
+    this.dispatchEvent(new Event(resolvedKey));
+}
 ```
 
-The whenResolved method would throw an error if no resoveldKey is specified, or the class doesn't extend EventTarget, or the resolvedKey value is false when the event fires.
+The whenResolved method would throw an error if no resolvedKey is specified, or the class doesn't extend EventTarget, or the resolvedKey value is false when the event fires.
 
 The purpose of having this "whenResolved" feature is explained towards the end of this proposal.
 
