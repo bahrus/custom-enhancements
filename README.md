@@ -264,9 +264,9 @@ class MyEnhancement<
     SVGElement, 
     HTMLMarqueeElement> {
 
-    constructor(enhancedElement: TSupportedElements, enhanceInfo: MountInfo, initVals?: unknown){}
+    constructor(enhancedElement: TSupportedElements, {mountInfo}, initVals?: unknown){}
 
-    dispose(enhancedElement: TSupportedElements, enhanceInfo: MountInfo){
+    dispose(enhancedElement: TSupportedElements, {mountInfo}){
         //prior to garbage collection
         //assuming it is possible to prevent
         //these enhancements from being referenced counted.
@@ -605,7 +605,7 @@ customElements.mount({
 });
 ```
 
-In the above example, we have two strings that we need to consider from the point of view of colliding with other enhancements (and with attributes of the (custom) elements themselves):  The name of the enhancement - "logger" - and the attribute(s) tied to it, if any:  'log-to-console'.  This proposal holds that the attributes for a single enhancement must share the same base, if help from the platform is desired.  Other enhancements can share that same base, and even share the entire  baseAttr/attrTree combo between different enhancements. It would result in multiple enhancements getting spawned. 
+In the above example, we have two strings that we need to consider from the point of view of colliding with other enhancements (and with attributes of the (custom) elements themselves):  The name of the enhancement - "logger" - and the attribute(s) tied to it, if any:  'log-to-console'.  This proposal holds that the attributes for a single enhancement must share the same base, if help from the platform is desired.  Other enhancements can share that same base, and even share the entire baseAttr/attrTree combo between different enhancements. It would result in multiple enhancements getting spawned. This, in my view, is a rather useful feature.
 
 [TODO] Give a good example of two enhancements that would want to share the same 
 
@@ -617,6 +617,7 @@ There are some very strong use cases for the developer to go ahead and opt to na
 1.   The name will be useful anytime we are outside the domain of JavaScript -- in particular referencing enhancement properties from declarative HTML (server-rendered) Markup.
 2.  Accessing the properties value / methods of the instance is more natural to the developer using traditional dot (".") nested access, and feels less clunky.  
 3.  Some protocols for distinguishing between "safe", declarative, side-effect-free code versus imperative code may use the existence of parenthesis as the defining characteristic for separating the two.
+4.  Debugging is a h*ll of a lot easier.
 
 If no enhKey is specified by the parties registering the enhancement in the registry, I think the platform should still provide a less elegant mechanism to access the spawned instance, and in fact was already provided above:
 
@@ -624,7 +625,7 @@ If no enhKey is specified by the parties registering the enhancement in the regi
 const spawnedInstance = oElement.enh.get(mountInfo);
 ```
 
-### Does it make sense to define a spawn mount with no enhKey and no base attribute and no whereElementMatches?
+### Does it make sense to define a spawn mount with no enhKey and no other automatic mounting criteria?
 
 I think it does.  In this case, the platform would be providing something like JQuery's [data](https://api.jquery.com/data/) feature, but more powerful (supporting one per enhancement).
  
@@ -645,7 +646,7 @@ These value settings would either get applied directly to oElement.enh.steelEnha
 
 ```JavaScript
 if(oElement.enh.steelEnhancer=== undefined) {
-    //get enhancement info for property "steelEnhancer"
+    //get enhancement info that has enhKey: "steelEnhancer"
     //if found:
     {
         //is steelEnhancerMountInfo.spawn a class constructor?
@@ -655,7 +656,7 @@ if(oElement.enh.steelEnhancer=== undefined) {
         //else it must be an async lazy dynamic loader to a class constructor
         {
             oElement.enh.steelEnhancer = {};
-            //attach asynchronously in the background
+            //spawn and attach asynchronously in the background
         }
     }
     //else
@@ -669,6 +670,19 @@ oElement.enh.steelEnhancer.carbonPercent = 0.2;
 ```
 
 In the case of an async attach definition, the property value object would sit there, ready to be absorbed into the enhancement in the constructor, which could happen right away if already loaded, or whenever the customElements.whenMounted is resolved for this enhancement.
+
+The original values found sitting there get passed in as an additional parameter in the constructor:
+
+```JavaScript
+class MyEnhancement{
+    constructor(el, {mountInfo}, initVals){}
+}
+```
+
+The enhancement author would probably want those initVals to be merged into the object so that from the outside, no interruption of property values can be observe during the switchover.
+
+If no such registry is found at the moment of this call, the platform needn't worry.  In fact, this would allow developers to simply store an object on the element, an often requested feature (data-* only stores storing strings).
+
 
 The attaching in the background convenience would only be possible if the developer has already registered enhKey = "steelEnhancer" in an applicable registry.
 
