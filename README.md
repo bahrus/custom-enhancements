@@ -604,7 +604,7 @@ If no enhKey is specified by the parties registering the enhancement in the regi
 const enhancementInstance = oElement.enh.get(mountInfo);
 ```
 
-### Does it make sense to define a spawn mount with no enhKey and no base attribute and no whereCssMatches?
+### Does it make sense to define a spawn mount with no enhKey and no base attribute and no whereElementMatches?
 
 I think it does.  In this case, the platform would be providing something like JQuery's [data](https://api.jquery.com/data/) feature, but more powerful (supporting one per enhancement).
  
@@ -708,11 +708,11 @@ The platform would search the registry for any enhancements that has a mapping w
 
 The suggestion to use Symbol.for with a guid, as opposed to just Symbol(), is based on some negative experiences I've had with multiple versions of the same library being referenced, but is not required.  Regular symbols could also be used when that risk can be avoided.
 
-## Spawning/Attaching based on presence of attributes and/or whereCssMatches
+## Spawning/Attaching based on presence of attributes and/or whereElementMatches
 
-If any one of the  (enh-*) attributes matching the pattern of base/branch/leaf is found on an element in the live DOM tree, this would cause the platform to instantiate an instance of the corresponding class, assuming other conditions are also met (whereCssMatches, whereInstanceOf).
+If any one of the  (enh-*) attributes matching the pattern of base/branch/leaf is found on an element in the live DOM tree, this would cause the platform to instantiate an instance of the corresponding class, assuming other conditions are also met (whereElementMatches, whereInstanceOf).
 
-If no base is specified (and thus attrTree is not applicable), but "whereCssMatches" is specified, this would also cause the spawn and/or do reactions.  Likewise with "whereInstanceOf".  Perhaps in the latter case, the prototype can be modified, assuming no additional conditions (low, low priority).
+If no base is specified (and thus attrTree is not applicable), but "whereElementMatches" is specified, this would also cause the spawn and/or do reactions.  Likewise with "whereInstanceOf".  Perhaps in the latter case, the prototype can be modified, assuming no additional conditions (low, low priority).
 
 I also suggest that it would be great if, during template instantiation supported natively by the platform, the platform can do whatever helps in achieving the most efficient outcome as far as recognizing these custom attributes.  One key feature this would provide is a way to extend the template instantiation process -- plug-ins essentially.  Especially if this means things could be done in "one-pass".  I don't claim any expertise in this area.  If the experts find little to no performance gain from this kind of integration, perhaps it is asking too much.  Doing this in userland would be quite straightforward (on a second pass, after the built-in instantiation has completed).
 
