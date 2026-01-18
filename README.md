@@ -332,8 +332,8 @@ This would allow for more readable syntax:
     enh_my-greetings="courtesy of hallmark" 
     enh_my-greetings:hello="select from gloomy section"
     enh_my-greetings:hello--how-are-you="one day closer to death"
-    enh_my-greetings:good-bye="select from funny section"
-    enh_my-greetings:good-bye---last-words="smell you later"
+    enh_my-greetings::good-bye="select from funny section"
+    enh_my-greetings::good-bye---last-words="smell you later"
 >
 ...
 </your-custom-element>
