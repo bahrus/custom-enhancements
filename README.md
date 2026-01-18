@@ -792,7 +792,7 @@ An example, in concept, of such a class, used in a POC for this proposal, can be
         <span #></span>
         <button be-counted='{
             "transform": {
-                "# span": "value"
+                "#{{span}}": "value"
             }
         }'></button>
     </div>
