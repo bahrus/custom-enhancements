@@ -354,7 +354,7 @@ The idea for using supportedInstanceTypes, proposed [here](https://github.com/WI
 
 
 >[!NOTE]
->Bear in mind that if no "whereElementMatches/whereInstanceTypes" is specified (the default), and if the "base/attrTree" option is also not specified or is empty, the platform will *not* automatically enhance every element.  The platform will only act when it finds a matching attribute pattern and/or css match and/or instanceType.  But it will **allow** enhancements to be programmatically spawned by the developer on all element types in that scenario.  In fact, the platform will **ignore** the base/attrTree criteria altogether when the developer programmatically spawns an enhancement, only using the "allowed*" value(s) (combined with the static supported* values specified by the enhancement author) to prevent unauthorized enhancements. 
+>Bear in mind that if no "whereElementMatches/whereInstanceOf" is specified (the default), and if the "base/attrTree" option is also not specified or is empty, the platform will *not* automatically enhance every element.  The platform will only act when it finds a matching attribute pattern and/or css match and/or instanceType.  But it will **allow** enhancements to be programmatically spawned by the developer on all element types in that scenario.  In fact, the platform will **ignore** the base/attrTree criteria altogether when the developer programmatically spawns an enhancement, only using the "allowed*" value(s) (combined with the static supported* values specified by the enhancement author) to prevent unauthorized enhancements. 
 
 ###  What, if any, are the benefits of having a "has" (or some other equivalent) attribute?
 
@@ -476,14 +476,14 @@ So if server-rendered HTML looks as follows:
 
 The requirement for the prefix can be dropped only if built-in elements are targeted, in which case the only requirement is that the attribute(s) contain (a) dash(es) or non ascii characters.  
 
-Another aspect of this proposal that I think should be considered is that as the template instantiation proposal gels, looking for opportunities for these enhancements to play a role in the template instantiation process would be great. Many of the most popular such libraries do provide similar binding support as what template instantiation aims to support.  Basically, look for opportunities to make these spawned class definitions to serve the dual purpose of making template instantiation extendable, especially if that adds even a small benefit to performance.
+Another aspect of this proposal that I think should be considered is that as the template instantiation proposal gels, looking for opportunities for these enhancements to play a role in the template instantiation process would be beneficial. Many of the most popular such libraries do provide similar binding support as what template instantiation aims to support.  Basically, look for opportunities to make these spawned class definitions to serve the dual purpose of making template instantiation extendable, especially if that adds even a small benefit to performance.
 
 ## A note about naming
 
 > [!NOTE]
-> The use of the term "enhancement" has been greatly reduced as this proposal has become increasingly "unopinionated", hence the importance of the name has greatly diminished.
+> The use of the term "enhancement" has been greatly reduced as this proposal has become increasingly "unopinionated", hence the importance of the name has significantly diminished.
 
-I started this journey placing great emphasis on the HTML attribute aspect of this, but as the concepts have marinated over time, I think it is a mistake to over emphasize that aspect.  The fundamental thing we are trying to do is to enhance existing elements, not attach strings to them.  
+I started this journey placing much emphasis on the HTML attribute aspect of this, but as the concepts have marinated over time, I think it is a mistake to over emphasize that aspect.  The fundamental thing we are trying to do is to enhance existing elements, not attach strings to them.  
 
 When we enhance existing elements during template instantiation, the attributes (can) go away, in order to optimize performance.  It is much faster and flexible to pass data through a common gateway property, not through attributes.  For similar reasons, when one big enhancement needs to cobble smaller enhancements together, again, the best gateway is not through attributes, which again would be inefficient, and would result in big-time cluttering of the DOM, but rather through the same common property gateway through which all these enhancements would be linked. 
 
@@ -544,7 +544,7 @@ Unlike dataset, the enh property, added to the Element prototype, would have sev
 // use this if "spawn" points to an already imported class
 const enhancementInstance = oElement.enh.get(mountInfo);
 //use this if "spawn" points to an an async loader or you aren't sure.
-//In the asynchronous case, get should throw an error
+//In the asynchronous case, "get" above should throw an error
 const lazyLoadedInstance = await oElement.enh.await(mountInfo);
 //await is definitely necessary here
 const resolvedInstance = await oElement.enh.whenResolved(mountInfo);
@@ -557,14 +557,17 @@ I'm a little uncertain how important it is to provide for both ".get" and ".awai
 The whenResolved promise will only resolve when:
 
 1.  The registering party specifies the name of the resolveKey in mountInfo
-2.  The enhancement author defines a class that extends EventTaget, and does:
+2.  The enhancement author defines a class that extends EventTarget, and does:
 
 ```JavaScript
 const {lifecycleKeys} = mountInfo;
 if(lifecycleKeys){
     const {resolvedKey} = lifecycleKeys;
-    this[resolvedKey] = true;
-    this.dispatchEvent(new Event(resolvedKey));
+    if(resolvedKey){
+        this[resolvedKey] = true;
+        this.dispatchEvent(new Event(resolvedKey));
+    }
+    
 }
 ```
 
@@ -573,13 +576,13 @@ The whenResolved method would throw an error if no resolvedKey is specified, or 
 The purpose of having this "whenResolved" feature is explained towards the end of this proposal.
 
 > [!NOTE]
-> I think it would be quite reasonable for these methods to accept an additional parameter where the registry and enhancement info can be passed in, and call the "mount" method on that registry when applicable, and throw an error if a conflicting enhancement has already been registered.  Not at all needed for day one.
+> I think it would be quite reasonable for these methods ("get", "await", "whenResolved") to accept an additional parameter where the registry and enhancement info can be passed in, and call the "mount" method on that registry when applicable, and throw an error if a conflicting enhancement has already been registered.  Not at all needed for day one.
 
 ## Reducing developer guilt and allowing for a nice API by formally endorsing attaching the spawned instance to the element's "enh" property gateway
 
 A key config setting in the mountInfo, "enhKey," would cause the spawned instance to be attached at that name to the new, proposed "enh" property gateway that would be added to the Element prototype.
 
-Use of the enhKey means that the developer will be responsible for avoiding name-spacing conflicts with other enhancements registered in the same registry. 
+Use of the enhKey means that the developer will be responsible for avoiding name-spacing conflicts with other enhancement mount info's in the same registry. 
 
 For example:
 
@@ -591,19 +594,7 @@ customElements.mount({
     baseAttr: 'log-to-console', //canonical name of our (base) custom attribute.
     spawn: class {
         constructor(el, {mountInfo}){
-            const {baseAttr} = mountInfo;
-            // in this example, base will simply equal 'log-to-console', 
-            // but this code is demonstrating how to code defensively, so that
-            // the party (or parties) responsible for registering the enhancement 
-            // could choose to modify the name(s), either globally, 
-            // or inside a scoped registry in a different file.
-            enhancedElement.addEventListener('click', e => {
-                const {target} = e;
-                console.log(
-                       target.getAttribute(`enh-${baseAttr}`)
-                    || target.getAttribute(base)
-                ); 
-            });
+            ...
         }
     }
 });
@@ -618,8 +609,8 @@ In the above example, we have two strings that we need to consider from the poin
 
 There are some very strong use cases for the developer to go ahead and opt to name the enhancement, essentially making it more "public", even if it incurs a bit of a "burden" due to the registry uniqueness requirement:
 
-1.   The name will be useful anytime we are outside the domain of JavaScript -- in particular referencing enhancement properties from declarative HTML (server-rendered) Markup.
-2.  Accessing the properties value / methods of the instance is more natural to the developer using traditional dot (".") nested access, and feels less clunky.  
+1.   The name will be useful anytime we are outside the domain of JavaScript -- in particular referencing enhancement properties from declarative HTML (server-rendered) markup.
+2.  Accessing the property values / methods of the instance is more natural to the developer using traditional dot (".") nested access, and feels less clunky.  
 3.  Some protocols for distinguishing between "safe", declarative, side-effect-free code versus imperative code may use the existence of parenthesis as the defining characteristic for separating the two.
 4.  Debugging is a h*ll of a lot easier.
 
@@ -683,7 +674,7 @@ class MyEnhancement{
 }
 ```
 
-The enhancement author would probably want those initVals to be merged into the object so that from the outside, no interruption of property values can be observe during the switchover.
+The enhancement author would probably want those initVals to be merged into the object so that from the point of view of a JS framework or library consumer, no interruption of property values can be observe during the switchover.
 
 The attaching in the background convenience would only be possible if the developer has already registered enhKey = "steelEnhancer" in an applicable registry.
 
