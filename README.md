@@ -910,7 +910,7 @@ The base Event object gets an additional built in property:  "mountInfo", which 
 
 # But wait, there's more!!!
 
-
+[How custom Elements Can Opt-In](https://github.com/bahrus/custom-enhancements?tab=readme-ov-file#how-custom-elements-can-opt-in)
 
 [Custom Element Features](https://github.com/bahrus/custom-enhancements?tab=readme-ov-file#custom-element-features)
 
