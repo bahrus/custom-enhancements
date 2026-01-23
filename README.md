@@ -908,6 +908,22 @@ I propose:
 
 The base Event object gets an additional built in property:  "mountInfo", which is where we pass in the mountInfo registry definition.
 
+# But wait, there's more!!!
+
+
+
+[Custom Element Features](https://github.com/bahrus/custom-enhancements?tab=readme-ov-file#custom-element-features)
+
+[Support for private features](https://github.com/bahrus/custom-enhancements?tab=readme-ov-file#support-for-private-features)
+
+[Support for nested features](https://github.com/bahrus/custom-enhancements?tab=readme-ov-file#support-for-nested-features)
+
+[Support for Prop-Passthrough's to custom element features](https://github.com/bahrus/custom-enhancements?tab=readme-ov-file#support-for-prop-passthroughs-to-custom-element-features)
+
+[Support for a view model DOM fragment manager tied to the itemscope attribute.](https://github.com/bahrus/custom-enhancements?tab=readme-ov-file#support-for-a-view-model-dom-fragment-manager-tied-to-the-itemscope-attribute)
+
+
+
 
 ## How custom elements can opt in
 
@@ -937,17 +953,6 @@ But suppose a behavior/enhancement's functionality is core to a custom element's
 
 I propose a significant amendment to this proposal, support for...:
 
-# But wait, there's more!!!
-
-[Custom Element Features](https://github.com/bahrus/custom-enhancements?tab=readme-ov-file#custom-element-features)
-
-[Support for private features](https://github.com/bahrus/custom-enhancements?tab=readme-ov-file#support-for-private-features)
-
-[Support for nested features](https://github.com/bahrus/custom-enhancements?tab=readme-ov-file#support-for-nested-features)
-
-[Support for Prop-Passthrough's to custom element features](https://github.com/bahrus/custom-enhancements?tab=readme-ov-file#support-for-prop-passthroughs-to-custom-element-features)
-
-[Support for a view model DOM fragment manager tied to the itemscope attribute.](https://github.com/bahrus/custom-enhancements?tab=readme-ov-file#support-for-a-view-model-dom-fragment-manager-tied-to-the-itemscope-attribute)
 
 # Custom Element Features
 
