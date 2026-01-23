@@ -702,8 +702,8 @@ class YourEnhancement extends ElementEnhancement(EventTarget){
 }
 
 //Here's where the dependency injection mapping takes place
-const customEnhancementRegistry = new CustomEnhancementRegistry;
-customEnhancementRegistry.define([
+const customElementRegistry = new CustomEnhancementRegistry;
+customElementRegistry.mount([
     {
         map: {
             [isHappy]: 'isHappy'
@@ -740,7 +740,7 @@ The suggestion to use Symbol.for with a guid, as opposed to just Symbol(), is ba
 
 If any one of the  (enh-*) attributes matching the pattern of baseAttr/attrTree is found on an element in the live DOM tree, this would cause the platform to invoke the do function and/or instantiate the spawn class, assuming other conditions are also met (whereElementMatches, whereInstanceOf).
 
-If no baseAttr is specified (and thus attrTree is not applicable), but "whereElementMatches" is specified, this would also cause the spawn and/or do reactions.  Likewise with "whereInstanceOf".  Perhaps in the latter case, the prototype can be modified, assuming no additional conditions (low, low priority).
+If no baseAttr is specified (and thus attrTree is not applicable), but "whereElementMatches" is specified, this would *also* cause the spawn and/or do reactions.  Likewise with "whereInstanceOf".  Perhaps in the latter case, the prototype can be modified, assuming no additional conditions (low, low priority).
 
 I also suggest that it would be great if, during template instantiation supported natively by the platform, the platform can do whatever helps in achieving the most efficient outcome as far as recognizing these custom attributes.  One key feature this would provide is a way to extend the template instantiation process -- plug-ins essentially.  Especially if this means things could be done in "one-pass".  I don't claim any expertise in this area.  If the experts find little to no performance gain from this kind of integration, perhaps it is asking too much.  Doing this in userland would be quite straightforward (on a second pass, after the built-in instantiation has completed).
 
@@ -815,10 +815,9 @@ Again, I think [this](https://github.com/bahrus/spawning) is probably the optima
 
 When should the enhancement be purged from memory?
 
-
 This is an area likely to require some critical feedback from browser vendors, but I will nevertheless express some thoughts on the matter.
 
-This proposal is hoping that the browser engineers can figure out a way to not count these spawned enhancements when doing reference counting, and when the reference count minus spawned enhancements reaches 0, call the (configurable) dispose method of the function prototype / class and purge.
+This proposal is hoping that the browser engineers can figure out a way to not count these spawned enhancements when doing reference counting, and when the (traditional) reference count minus spawned enhancements reaches 0, call the (configurable) dispose method of the function prototype / class and purge.
 
 
 One time it definitely would **not** be purged is if the (enh-*) attributes, if present, are removed from the enhanced element, since as we've discussed, the custom attribute aspect is only one way to invoke/spawn/attach an enhancement.  A developer may want to remove the attributes to reduce clutter, optimize for template instantiation, or before transferring to another Shadow DOM realm to avoid unexpected side effects of being transported in.
