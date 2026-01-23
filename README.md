@@ -59,7 +59,7 @@ Classes are also supported, as described below.  But for this simple example, a 
 
 ## Why "mount"?
 
-Just a suggestion.  It ties in with this [additional / primitive proposal](https://github.com/WICG/webcomponents/issues/896) which this proposal might be considered to be extending (and vice versa).  Other suggestions are "inject", "enhance", "enhanceWith", "decorate", "decorateWith", the sky is the limit.  The specific suggestion of "inject" will become clearer in what follows, hopefully.
+Just a suggestion.  It ties in with this [additional / primitive proposal](https://github.com/WICG/webcomponents/issues/896) which this proposal might be considered to be extending (and vice versa).  Other suggestions are "inject", "enhance", "enhanceWith", "decorate", "decorateWith", the sky is the limit.  
 
 ## Why the long attribute names?
 
@@ -131,7 +131,7 @@ A function prototype can also be used.  The word "spawn" as opposed to "do" indi
 2.  Unlike "do", "spawn" will cause a weak reference keyed off the passed in mount info object (more on that later), in order to provide a way for other parties to gain access to the instance.
 
 
-The do function only gets called the first time all the criteria contained in mountInfo is met.  Likewise, the spawn instance only gets created once, unless the developer disposes it, as described below.
+The do function only gets called the first time all the criteria contained in mountInfo is met per element.  Likewise, the spawn instance only gets created once for a single element, unless the developer disposes the spawned instance, as described below.
 
 
 ## How do I, or my users, access my class instance, and/or public properties / methods therein?
@@ -142,7 +142,7 @@ In lots of ways, which we will discuss far below.  We want to make this as conve
 > Adding public properties and methods to the class instance will *not* be accessible directly from the top level of the element being enhanced.
 
 
-## Mount Registry API Shape
+## API Shape
 
 The structure below is optimized to allow for renaming things with as little pain as possible.
 
@@ -167,7 +167,7 @@ const mountInfo: MountInfo = {
     e.g. oElement.enh.greetings
     Don't be afraid to use, but you can avoid possible name clashes by not
     using if there's no need to publicly expose the api outside of 
-    tightly constrained JavaScript, and also easier debugging.
+    tightly constrained JavaScript, and no desire to make debugging easy.
     @type {string | symbol | undefined} */
     enhKey: 'greetings',
     //optional
@@ -219,15 +219,15 @@ const mountInfo: MountInfo = {
     baseAttrRequired: false,
     // Doing this allows us to break free from 
     // rigid inheritance or mixin requirements
-    // whose ame we have to argue about endlessly
+    // whose name we have to argue about endlessly
     lifecycleKeys:{
         /**
         optional -- if need to prevent memory leaks, cleanup mutation observers, etc
-        specify name of method of class instance (or function prototype) to use
-        this would be called before the enhanced element is about to be
+        specify name of method of class instance (or function prototype) to use.
+        This would be called before the enhanced element is about to be
         purged from memory, assuming it is possible to prevent
-        these enhancements from being referenced counted as far as garbage collection.
-        only applicable if spawn has a value
+        these enhancements from being reference counted as far as garbage collection.
+        Only applicable if spawn has a value
         */
         dispose: 'dispose',
         /**
