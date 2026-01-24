@@ -212,7 +212,7 @@ const mountInfo: MountInfo = {
         SomeAlreadyLoadedCustomElementClass
     ],
     //optional
-    whereElementMatches: 'input[type="text], textarea',
+    whereElementMatches: 'input[type="text"], textarea',
     //optional
     //can only enhance element if base attribute is present
     //very low priority requirement
@@ -231,10 +231,11 @@ const mountInfo: MountInfo = {
         */
         dispose: 'dispose',
         /**
-        optional -- only applicable if spawn has a value
-        if scheduling enhancements in sequence is needed, 
-        class must extend EventTarget (mixin someday?), 
-        and have a property with name specified below 
+        optional -- only applicable if spawn has a value.
+        If scheduling enhancements in sequence is needed, this
+        is a useful standard way to do so across enhancements.
+        Spawn class must extend EventTarget (mixin someday?), 
+        and have a property with name specified below, 
         and dispatch event name when property switches to true:
         */
         resolved: 'resolved',
@@ -299,7 +300,7 @@ class MyEnhancement<
     
 
     //Entirely optional
-    static supportedCSSMatches = 'textarea[type="text"], input';
+    static supportedCSSMatches = 'textarea, input[type="text"]';
 
 }
 ```
@@ -308,7 +309,7 @@ At the risk of overwhelming the reader, I want to amend the api above with a lit
 
 ```JS
 const mountInfo: MountInfo = {
-    baseAttr: '[_]greetings',
+    baseAttr: '[_]my-greetings',
     attrTree:[
         '', 
         {
