@@ -35,7 +35,7 @@ document.mount({
 <some-custom-element enh-log-to-console="clicked on some custom element"></some-custom-element>
 ```
 
-Formally registering the enhancement declaratively in custom element registry:
+Formally registering an enhancement declaratively into the custom element registry:
 
 ```html
 <script type="emc">
@@ -56,11 +56,11 @@ emc stands for Element Mount Configuration.
 
 The enhConfig ends up getting registered in customElementRegistry.enhancementRegistry
 
-More programmatic ways of registering enhancements are documented in the assign-gingerly polyfill.
+More programmatic ways of registering enhancements are documented in the assign-gingerly polyfill and mentioned below.
 
 ## Why the custom element registry?
 
-The platform indicates this is the best way to organize such things. The `CustomElementRegistry` already provides scoping via Shadow DOM and even just a parent DOM element, which enhancements would greatly benefit from as far as avoiding namespace collisions.
+The platform indicates this is the best way to organize such things. The `CustomElementRegistry` already provides scoping via Shadow DOM and even just a parent DOM elements, which enhancements would greatly benefit from as far as avoiding namespace collisions.
 
 ## Why "mount"?
 
@@ -110,7 +110,7 @@ interface EnhancementConfig<T = any> {
 }
 ```
 
-For the full type definitions, see [assign-gingerly types](https://github.com/bahrus/assign-gingerly/blob/baseline/types/assign-gingerly/types.d.ts).
+For the full type definitions, see [assign-gingerly types](https://github.com/bahrus/types/blob/baseline/assign-gingerly/types.d.ts).
 
 ## Attribute Parsing with `withAttrs`
 
@@ -139,14 +139,14 @@ customElementRegistry.enhancementRegistry.push({
 </time>
 ```
 
-Note that by using template substitution of previously defined attribute stems, we can easily define a tree like structure of attributes that can make to a single class with matching (optionally nested) properties.
+Note that by using template substitution of previously defined attribute stems, we can easily define a tree like structure of attributes that can map to a single class with matching (optionally nested) properties.
 
 The platform parses these attributes into an `initVals` object passed to the constructor:
 ```javascript
 // initVals = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
 ```
 
-For full attribute parsing documentation, see [assign-gingerly: withAttrs](https://github.com/bahrus/assign-gingerly#custom-element-parsing-with-withattrs).
+For full attribute parsing documentation, see [assign-gingerly: withAttrs](https://github.com/bahrus/assign-gingerly#parsing-attributes-with-parsewithattrs).
 
 ## Symbolic Dependency Injection
 
