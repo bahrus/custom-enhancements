@@ -10,26 +10,21 @@ Last update: May 2026
 
 This is [one](https://github.com/whatwg/html/issues/2271) [of](https://eisenbergeffect.medium.com/2023-state-of-web-components-c8feb21d4f16) [a](https://github.com/WICG/webcomponents/issues/1029) [number](https://github.com/WICG/webcomponents/issues/727) of interesting proposals, one of which (or some combination?) can hopefully get buy-in from all three browser vendors. This proposal borrows heavily from the others.
 
-A working polyfill of this proposal is available at [assign-gingerly](https://github.com/bahrus/assign-gingerly) (for the property assignment, dependency injection, and registry APIs) and [mount-observer](https://github.com/bahrus/mount-observer) (for automatic DOM discovery and enhancement attachment).
+A working polyfill of this proposal is available at [assign-gingerly](https://github.com/bahrus/assign-gingerly) (for the property assignment, dependency injection, and registry APIs) and [mount-observer](https://github.com/bahrus/mount-observer) (for automatic DOM discovery and enhancement attachment).  These polyfills is hevily influenced, and  work best within the current constraints of what is easily available to developers, and could probably be streamlined when implementing directly in a browser setting.
 
 # Custom Attributes For [Simple Enhancements](https://www.w3.org/TR/design-principles/#simplicity)
 
 Say all you need to do is to create an isolated behavior/enhancement associated with an attribute — say "log-to-console". It enhances elements adorned with that attribute, logging the value of the attribute to the console when the element is clicked:
 
+Informal, without registering anything:
+
 ```JS
-customElementRegistry.mount({
-    baseAttr: 'log-to-console',
-    spawn: class {
-        constructor(enhancedElement, ctx){
-            const {config} = ctx;
-            const {baseAttr} = config.withAttrs;
-            enhancedElement.addEventListener('click', e => {
-                console.log(
-                    e.target.getAttribute(`enh-${baseAttr}`) 
-                    || e.target.getAttribute(baseAttr)
-                );
-            });
-        }
+document.mount({
+    matching: '[log-to-console]',
+    do: (el) => {
+        el.addEventListener('click', e => {
+            console.log(e.target.getAttribute('log-to-console'));
+        });
     }
 });
 ```
@@ -40,9 +35,32 @@ customElementRegistry.mount({
 <some-custom-element enh-log-to-console="clicked on some custom element"></some-custom-element>
 ```
 
+Formally registering the enhancement declaratively in custom element registry:
+
+```html
+<script type="emc">
+{
+    "matching": "button",
+    "enhConfig": {
+        "spawn": "./button-enhancement.js",
+        "enhKey": "fancyButton",
+        "withAttrs": {
+            "base": "variant"
+        }
+    }
+}
+</script>
+```
+
+emc stands for Element Mount Configuration.
+
+The enhConfig ends up getting registered in customElementRegistry.enhancementRegistry
+
+More programmatic ways of registering enhancements are documented in the assign-gingerly polyfill.
+
 ## Why the custom element registry?
 
-The platform indicates this is the best way to organize such things. The `CustomElementRegistry` already provides scoping via Shadow DOM, which enhancements benefit from.
+The platform indicates this is the best way to organize such things. The `CustomElementRegistry` already provides scoping via Shadow DOM and even just a parent DOM element, which enhancements would greatly benefit from as far as avoiding namespace collisions.
 
 ## Why "mount"?
 
@@ -99,15 +117,17 @@ For the full type definitions, see [assign-gingerly types](https://github.com/ba
 Enhancements can declaratively map element attributes to constructor `initVals`. The `withAttrs` configuration defines a base attribute name and maps sub-attributes to typed properties:
 
 ```TypeScript
-customElementRegistry.mount({
+customElementRegistry.enhancementRegistry.push({
     enhKey: 'intlFormatter',
     spawn: IntlFormatterEnhancement,
     withAttrs: {
         base: 'be-intl',
+        weekday: '${base}-weekday',
+        //unnecessary:  this is what happens by default
         _weekday: { instanceOf: 'String', mapsTo: 'weekday' },
-        _year: { instanceOf: 'String', mapsTo: 'year' },
-        _month: { instanceOf: 'String', mapsTo: 'month' },
-        _day: { instanceOf: 'String', mapsTo: 'day' }
+        year: '${base}-year',
+        month: '${base}-mount',
+        day: '${base}-day'
     }
 });
 ```
@@ -118,6 +138,8 @@ customElementRegistry.mount({
     be-intl-month="long" be-intl-day="numeric">
 </time>
 ```
+
+Note that by using template substitution of previously defined attribute stems, we can easily define a tree like structure of attributes that can make to a single class with matching (optionally nested) properties.
 
 The platform parses these attributes into an `initVals` object passed to the constructor:
 ```javascript
